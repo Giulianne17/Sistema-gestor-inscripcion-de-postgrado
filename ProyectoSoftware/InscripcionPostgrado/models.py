@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator
 
 # Create your models here.
 class Coordinacion(models.Model):
@@ -23,31 +24,29 @@ class Profesor(models.Model):
 	Nombres = models.CharField(max_length=30)
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=3, on_delete=models.CASCADE)
 
-#Esta generando problemas.
 class Trimestre(models.Model):
 	Periodo = models.CharField(primary_key=True, max_length=20)
-	Anio = models.IntegerField(primary_key=True, max_length=4)
+	Anio = models.IntegerField(primary_key=True, validators=[MaxValueValidator(9999)])
 
 class Pertenece(models.Model):
 	Cod_coordinacion = models.ForeignKey(Coordinacion, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, primary_key=True, on_delete=models.CASCADE)
 
-'''
-	class Meta:
-    	unique_together = ('Cod_coordinacion', 'Cod_asignatura',)
-'''
-
 class Cursa(models.Model):
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, primary_key=True, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, primary_key=True, on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, primary_key=True, on_delete=models.CASCADE)
+	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_periodo', primary_key=True, on_delete=models.CASCADE)
+	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_anio', primary_key=True, on_delete=models.CASCADE)
 
 class Se_Ofrece(models.Model):
 	Id_prof = models.ForeignKey(Profesor, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, primary_key=True, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, primary_key=True, on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, primary_key=True, on_delete=models.CASCADE)
+	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', primary_key=True, on_delete=models.CASCADE)
+	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', primary_key=True, on_delete=models.CASCADE)
+
+
+class MedioPago(models.Model):
+	Postiza = models.AutoField(primary_key=True)
 
 class MedioPago(models.Model):
 	Postiza = models.AutoField(primary_key=True)
@@ -55,29 +54,26 @@ class MedioPago(models.Model):
 class Paga_Con(models.Model):
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
 	Postiza = models.ForeignKey(MedioPago, primary_key=True, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, primary_key=True, on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, primary_key=True, on_delete=models.CASCADE)
-
-class MedioPago(models.Model):
-	Postiza = models.AutoField(primary_key=True)
+	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_pago_periodo', primary_key=True, on_delete=models.CASCADE)
+	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_pago_anio', primary_key=True, on_delete=models.CASCADE)
 
 class Debito(models.Model):
-	Nro_Cuenta = models.IntegerField(primary_key=True, max_length=20)
-	Nro_Tarjeta = models.IntegerField(max_length=18)
+	Nro_Cuenta = models.IntegerField(primary_key=True,validators=[MaxValueValidator(99999999999999999999)])
+	Nro_Tarjeta = models.IntegerField(validators=[MaxValueValidator(999999999999999999)])
 	Tipo = models.CharField(max_length=9)
 	Nombre_Banco = models.CharField(max_length=30)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 
 class Credito(models.Model):
-	Nro_Tarjeta = models.IntegerField(primary_key=True,max_length=18)
+	Nro_Tarjeta = models.IntegerField(primary_key=True,validators=[MaxValueValidator(999999999999999999)])
 	Fecha_Vence = models.DateField() 
 	Nombre_Banco = models.CharField(max_length=30)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 
 class Transferencia(models.Model):
-	Nro_Referencia = models.IntegerField(primary_key=True, max_length=20)
+	Nro_Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 
 class Transferencia(models.Model):
-	Referencia = models.IntegerField(primary_key=True, max_length=20)
+	Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
