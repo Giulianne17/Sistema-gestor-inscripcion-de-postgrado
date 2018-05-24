@@ -257,7 +257,10 @@ $(document).ready(function(){
 					</div>
 					<div class="col-sm-6">
 						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Element in {{table_name}}</span></a>
-						<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>						
+						<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>
+						{% if not show_all_tables %}	
+							<a href="/index" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
+						{% endif %}
 					</div>
                 </div>
             </div>
@@ -271,12 +274,20 @@ $(document).ready(function(){
                 <tbody>
                     {% for element in table %}
                     <tr>
-                    	{% for i in element.getallfields %}
-                        <td> {{i}} </td>{% endfor %}
-                        <td>
-                            <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-                        </td>
+                    	{% if not show_all_tables %}
+	                    	{% for i in element.getallfields %}
+	                        <td> {{i}} </td>{% endfor %}
+							<td>
+	                            <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+	                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+	                        </td>
+	                    {% else %}
+	                    	<td> {{element}} </td>
+	                    	<td>
+	                            <a href="/{{element}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+	                            <a href="/index" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+	                        </td>
+	                    {% endif %}
                     </tr> {% endfor %}
                 </tbody>
             </table>
@@ -298,7 +309,7 @@ $(document).ready(function(){
 	<div id="addEmployeeModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<formm>
 					<div class="modal-header">						
 						<h4 class="modal-title">Add {{table_name}}</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -306,7 +317,7 @@ $(document).ready(function(){
 					<div class="modal-body">					
 						{% for columnName in table_column_list%}
 						<div class="form-group">
-							<label>columnName</label>
+							<label>{{columnName}}</label>
 							<input type="text" class="form-control" required>
 						</div> {% endfor %}				
 					</div>
@@ -330,7 +341,7 @@ $(document).ready(function(){
 					<div class="modal-body">					
 						{% for columnName in table_column_list%}
 						<div class="form-group">
-							<label>columnName</label>
+							<label>{{columnName}}</label>
 							<input type="text" class="form-control" required>
 						</div> {% endfor %}				
 					</div>
