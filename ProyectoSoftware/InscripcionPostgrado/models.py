@@ -25,33 +25,43 @@ class Profesor(models.Model):
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=3, on_delete=models.CASCADE)
 
 class Trimestre(models.Model):
-	Periodo = models.CharField(primary_key=True, max_length=20)
-	Anio = models.IntegerField(primary_key=True, validators=[MaxValueValidator(9999)])
+	class Meta:
+		unique_together = (('Periodo', 'Anio'))
+	Periodo = models.CharField(max_length=20)
+	Anio = models.IntegerField(validators=[MaxValueValidator(9999)])
 
 class Pertenece(models.Model):
+	class Meta:
+		unique_together = (('Cod_coordinacion', 'Cod_asignatura'))
 	Cod_coordinacion = models.ForeignKey(Coordinacion, primary_key=True, on_delete=models.CASCADE)
-	Cod_asignatura = models.ForeignKey(Asignatura, primary_key=True, on_delete=models.CASCADE)
+	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
 
 class Cursa(models.Model):
+	class Meta:
+		unique_together=(('Carnet', 'Cod_asignatura', 'Periodo', 'Anio'))
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
-	Cod_asignatura = models.ForeignKey(Asignatura, primary_key=True, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_periodo', primary_key=True, on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_anio', primary_key=True, on_delete=models.CASCADE)
+	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
+	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_periodo', on_delete=models.CASCADE)
+	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_anio', on_delete=models.CASCADE)
 
 class Se_Ofrece(models.Model):
+	class Meta:
+		unique_together = (('Id_prof', 'Cod_asignatura', 'Anio'))
 	Id_prof = models.ForeignKey(Profesor, primary_key=True, on_delete=models.CASCADE)
-	Cod_asignatura = models.ForeignKey(Asignatura, primary_key=True, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', primary_key=True, on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', primary_key=True, on_delete=models.CASCADE)
+	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
+	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
+	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', on_delete=models.CASCADE)
 
 class MedioPago(models.Model):
 	Postiza = models.AutoField(primary_key=True)
 
 class Paga_Con(models.Model):
+	class Meta:
+		unique_together = (('Carnet', 'Postiza', 'Periodo', 'Anio'))
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
-	Postiza = models.ForeignKey(MedioPago, primary_key=True, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_pago_periodo', primary_key=True, on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_pago_anio', primary_key=True, on_delete=models.CASCADE)
+	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
+	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_pago_periodo', on_delete=models.CASCADE)
+	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_pago_anio', on_delete=models.CASCADE)
 
 class Debito(models.Model):
 	Nro_Cuenta = models.IntegerField(primary_key=True,validators=[MaxValueValidator(99999999999999999999)])
