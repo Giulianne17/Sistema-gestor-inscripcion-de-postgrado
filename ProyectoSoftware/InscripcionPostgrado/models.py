@@ -44,10 +44,6 @@ class Se_Ofrece(models.Model):
 	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', primary_key=True, on_delete=models.CASCADE)
 	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', primary_key=True, on_delete=models.CASCADE)
 
-
-class MedioPago(models.Model):
-	Postiza = models.AutoField(primary_key=True)
-
 class MedioPago(models.Model):
 	Postiza = models.AutoField(primary_key=True)
 
@@ -74,6 +70,6 @@ class Transferencia(models.Model):
 	Nro_Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 
-class Transferencia(models.Model):
+class Deposito(models.Model):
 	Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
