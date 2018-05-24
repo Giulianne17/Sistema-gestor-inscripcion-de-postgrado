@@ -5,13 +5,12 @@ from django.core.validators import MaxValueValidator
 class Coordinacion(models.Model):
 	Cod_coordinacion = models.CharField(primary_key=True, max_length=3)
 	Nombre_coordinacion = models.CharField(max_length=30)
-#Duda cuanto es el largo del cod.
 
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6)
 	Nombre_asig = models.CharField(max_length=30)
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=3, on_delete=models.CASCADE)
-	#creditos = models.DecimalField(max_digits=1, decimal_places=2, default=Decimal(0.00))
+	creditos = models.IntegerField(validators=[MaxValueValidator(5)])
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8)
@@ -46,9 +45,10 @@ class Cursa(models.Model):
 
 class Se_Ofrece(models.Model):
 	class Meta:
-		unique_together = (('Id_prof', 'Cod_asignatura', 'Anio'))
+		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio'))
 	Id_prof = models.ForeignKey(Profesor, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
+	Horario = models.CharField(max_length=5)
 	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
 	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', on_delete=models.CASCADE)
 
@@ -58,6 +58,7 @@ class MedioPago(models.Model):
 class Paga_Con(models.Model):
 	class Meta:
 		unique_together = (('Carnet', 'Postiza', 'Periodo', 'Anio'))
+	Precio = models.DecimalField(max_digits=19, decimal_places=4)
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_pago_periodo', on_delete=models.CASCADE)
