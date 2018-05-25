@@ -8,7 +8,7 @@ from .forms import *
 show_all_tables = True
 element_actual = None
 
-# Create your views here.
+# Create your viewss here.
 def index(request):
 	if request.method=="POST":
 		try:
