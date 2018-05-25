@@ -38,6 +38,7 @@ class Asignatura(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"],
 				Creditos = parameters["Creditos"]
 			)
+	creditos = models.IntegerField(validators=[MaxValueValidator(30)])
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8)
