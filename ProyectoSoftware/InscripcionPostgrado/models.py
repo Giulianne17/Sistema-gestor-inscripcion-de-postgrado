@@ -12,6 +12,11 @@ class Coordinacion(models.Model):
 		return ["Cod_coordinacion","Nombre_coordinacion"]
 	def __gettablename__():
 		return "Coordinacion"
+	def __createElement__(parameters):
+		return Coordinacion(
+				Cod_coordinacion = parameters["Cod_coordinacion"],
+				Nombre_coordinacion = parameters["Nombre_coordinacion"]
+			)
 
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6)
@@ -24,6 +29,13 @@ class Asignatura(models.Model):
 		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "creditos"]
 	def __gettablename__():
 		return "Asignatura"
+	def __createElement__(parameters):
+		return Asignatura(
+				Cod_asignatura = parameters["Cod_asignatura"],
+				Nombre_asig = parameters["Nombre_asig"],
+				Cod_coordinacion = parameters["Cod_coordinacion"],
+				Creditos = parameters["Creditos"]
+			)
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8)
@@ -35,6 +47,12 @@ class Estudiante(models.Model):
 		return ["Carnet","Apellidos","Nombres"]
 	def __gettablename__():
 		return "Estudiante"
+	def __createElement__(parameters):
+		return Estudiante(
+				Carnet = parameters["Carnet"],
+				Apellidos = parameters["Apellidos"],
+				Nombres = parameters["Nombres"]
+			)
 
 class Profesor(models.Model):
 	Id_prof = models.CharField(primary_key=True, max_length=7)
@@ -47,6 +65,13 @@ class Profesor(models.Model):
 		return ["Id_prof","Apellidos","Nombres","Cod_coordinacion"]
 	def __gettablename__():
 		return "Profesor"
+	def __createElement__(parameters):
+		return Profesor(
+				Id_prof = parameters["Id_prof"],
+				Apellidos = parameters["Apellidos"],
+				Nombres = parameters["Nombres"],
+				Cod_coordinacion = parameters["Cod_coordinacion"]
+			)
 
 class Trimestre(models.Model):
 	class Meta:
@@ -59,6 +84,11 @@ class Trimestre(models.Model):
 		return ["Periodo","Anio"]
 	def __gettablename__():
 		return "Trimestre"
+	def __createElement__(parameters):
+		return Trimestre(
+				Periodo = parameters["Periodo"],
+				Anio = parameters["Anio"]
+			)
 
 class Cursa(models.Model):
 	class Meta:
@@ -73,6 +103,13 @@ class Cursa(models.Model):
 		return ["Carnet","Cod_asignatura","Periodo","Anio"]
 	def __gettablename__():
 		return "Cursa"
+	def __createElement__(parameters):
+		return Cursa(
+				Carnet = parameters["Carnet"],
+				Cod_asignatura = parameters["Cod_asignatura"],
+				Periodo = parameters["Periodo"],
+				Anio = parameters["Anio"]
+			)
 
 class Se_Ofrece(models.Model):
 	class Meta:
@@ -88,6 +125,15 @@ class Se_Ofrece(models.Model):
 		return ["Id_prof","Cod_asignatura","Horario","Periodo","Anio"]
 	def __gettablename__():
 		return "Se_Ofrece"
+	def __createElement__(parameters):
+		return Se_Ofrece(
+				Id_prof = parameters["Id_prof"],
+				Cod_asignatura = parameters["Cod_asignatura"],
+				Horario = parameters["Horario"],
+				Periodo = parameters["Periodo"],
+				Anio = parameters["Anio"]
+			)
+
 
 class MedioPago(models.Model):
 	Postiza = models.AutoField(primary_key=True)
@@ -97,6 +143,10 @@ class MedioPago(models.Model):
 		return ["Postiza"]
 	def __gettablename__():
 		return "MedioPago"
+	def __createElement__(parameters):
+		return MedioPago(
+				Postiza=parameters["Postiza"]
+			)
 
 class Paga_Con(models.Model):
 	class Meta:
@@ -112,6 +162,14 @@ class Paga_Con(models.Model):
 		return ["Precio","Carnet","Cod_asignatura","Periodo","Anio"]
 	def __gettablename__():
 		return "Paga_Con"
+	def __createElement__(parameters):
+		return Paga_Con(
+				Precio = parameters["Precio"],
+				Carnet = parameters["Carnet"],
+				Postiza = parameters["Postiza"],
+				Periodo = parameters["Periodo"],
+				Anio = parameters["Anio"]
+			)
 
 class Debito(models.Model):
 	Nro_Cuenta = models.IntegerField(primary_key=True,validators=[MaxValueValidator(99999999999999999999)])
@@ -125,6 +183,14 @@ class Debito(models.Model):
 		return ["Nro_Cuenta","Nro_Tarjeta","Tipo","Nombre_Banco","Postiza MedioPago"]
 	def __gettablename__():
 		return "Debito"
+	def __createElement__(parameters):
+		return Debito(
+				Nro_Cuenta = parameters["Nro_Cuenta"],
+				Nro_Tarjeta = parameters["Nro_Tarjeta"],
+				Tipo = parameters["Tipo"],
+				Nombre_Banco = parameters["Nombre_Banco"],
+				Postiza = parameters["Postiza"]
+			)
 
 class Credito(models.Model):
 	Nro_Tarjeta = models.IntegerField(primary_key=True,validators=[MaxValueValidator(999999999999999999)])
@@ -137,6 +203,13 @@ class Credito(models.Model):
 		return ["Nro_Tarjeta","Fecha_Vence","Nombre_Banco","Postiza MedioPago"]
 	def __gettablename__():
 		return "Credito"
+	def __createElement__(parameters):
+		return Credito(
+				Nro_Tarjeta = parameters["Nro_Tarjeta"],
+				Fecha_Vence = parameters["Fecha_Vence"],
+				Nombre_Banco = parameters["Nombre_Banco"],
+				Postiza = parameters["Postiza"]
+			)
 
 class Transferencia(models.Model):
 	Nro_Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
@@ -147,6 +220,11 @@ class Transferencia(models.Model):
 		return ["Nro_Referencia","Postiza MedioPago"]
 	def __gettablename__():
 		return "Transferencia"
+	def __createElement__(parameters):
+		return Debito(
+				Nro_Referencia = parameters["Nro_Referencia"],
+				Postiza = parameters["Postiza"]
+			)
 
 class Deposito(models.Model):
 	Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
@@ -157,3 +235,8 @@ class Deposito(models.Model):
 		return ["Referencia","Postiza MedioPago"]
 	def __gettablename__():
 		return "Deposito"
+	def __createElement__(parameters):
+		return Debito(
+				Referencia = parameters["Referencia"],
+				Postiza = parameters["Postiza"]
+			)

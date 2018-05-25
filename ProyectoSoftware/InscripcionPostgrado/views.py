@@ -4,24 +4,19 @@ from django.db import connection
 from django.apps import apps
 from .models import *
 
-show_all_tables = True
+show_all_tables = False
 element_actual = None
 
 # Create your views here.
 def index(request):
 	if request.method=="POST":
-		#IMPLEMENTAR
 		try:
 			name=request.path.split("/")[1]
-			context=_buildContext__(name,True)
-			parameters = { }
-			for i in context["column_list"]:
-				parameters[i]=request.POST.get(i)
-			__modififyDB__(context["table"], parameters)
-			return  HttpResponseRedirect(name)
+			__modififyDB__(name, __getParameters__(name))
+			return  HttpResponseRedirect("/"+name)
 		except:
 			print("No se pudo modificar la BD")
-			return  HttpResponseRedirect('')
+			return  HttpResponseRedirect('/index')
 	else:
 		if request.path!="" and request.path!="/" and "index" not in request.path:
 			show_all_tables = False
@@ -55,6 +50,14 @@ def __buildContext__(name,ismodel):
 		}
 	return context
 
-def __modififyDB__(table, parameters):
+def __getParameters__(name):
+	context=__buildContext__(name,True)
+	parameters = { }
+	for i in context["table_column_list"]:
+		parameters[i]=request.POST.get(i)
+	return parameters
+
+def __modififyDB__(name, parameters):
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 	element=table.__createElement__(parameters)
 	element.save()
