@@ -28,7 +28,7 @@ class Asignatura(models.Model):
 	def getallfields(self):
 		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos]
 	def __getallfieldNames__():
-		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "creditos"]
+		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos"]
 	def __gettablename__():
 		return "Asignatura"
 	def __createElement__(parameters):
@@ -38,7 +38,6 @@ class Asignatura(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"],
 				Creditos = parameters["Creditos"]
 			)
-	creditos = models.IntegerField(validators=[MaxValueValidator(30)])
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8)

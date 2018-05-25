@@ -32,7 +32,7 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE-102',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': '4',
-            'creditos': '4'
+            'Creditos': '4'
         }
         form = AsignaturaForm(data = form_data)
         form.save()
@@ -45,7 +45,7 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE-105',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': '4',
-            'creditos': '50'
+            'Creditos': '50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())

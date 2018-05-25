@@ -66,14 +66,10 @@ def __modififyDB__(name, parameters,request):
 		else:
 			raise
 	elif "asignatura" in name:
-		print(request.POST)
 		form = AsignaturaForm(request.POST)
-		print(form)
 		if form.is_valid():
 			form.save()
 		else:
-			form.save()
-			print("no")
 			raise
 	else:
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
