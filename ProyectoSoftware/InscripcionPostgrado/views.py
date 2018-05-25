@@ -19,7 +19,7 @@ def index(request):
 			print("No se pudo modificar la BD")
 			return  HttpResponseRedirect('/index')
 	else:
-		if request.path!="" and request.path!="/" and "index" not in request.path:
+		if request.path!="" and request.path!="/" and "index" not in request.path and "favicon" not in request.path:
 			name=request.path.split("/")[1]
 			return render(request, 'crud/index.html', __buildContext__(name,True))
 		else:
@@ -63,10 +63,11 @@ def __modififyDB__(name, parameters,request):
 		form=CoordinacionForm(request.POST)
 		if form.is_valid():
 			form.save()
-	# elif "Asignatura"==name:
-	# 	form = AsignaturaForm(request.POST)
-	# 	if form.is_valid():
-	# 		form.save()
+	elif "Asignatura"==name:
+		form = AsignaturaForm(request.POST)
+		form['Cod_coordinacion'] = Coordinacion.object.get(Cod_coordinacion = form['Cod_coordinacion'])
+		if form.is_valid():
+	 		form.save()
 	else:
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)
