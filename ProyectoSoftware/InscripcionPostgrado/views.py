@@ -59,15 +59,22 @@ def __getParameters__(name,request):
 	return parameters
 
 def __modififyDB__(name, parameters,request):
-	if "Coordinacion"==name:
+	if "coordinacion" in name:
 		form=CoordinacionForm(request.POST)
 		if form.is_valid():
 			form.save()
-	elif "Asignatura"==name:
+		else:
+			raise
+	elif "asignatura" in name:
+		print(request.POST)
 		form = AsignaturaForm(request.POST)
-		form['Cod_coordinacion'] = Coordinacion.object.get(Cod_coordinacion = form['Cod_coordinacion'])
+		print(form)
 		if form.is_valid():
-	 		form.save()
+			form.save()
+		else:
+			form.save()
+			print("no")
+			raise
 	else:
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)
