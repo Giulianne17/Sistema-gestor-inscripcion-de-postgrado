@@ -1,5 +1,7 @@
 from django.db import models
 from django.core.validators import MaxValueValidator
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class Coordinacion(models.Model):
@@ -10,7 +12,7 @@ class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6)
 	Nombre_asig = models.CharField(max_length=30)
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=3, on_delete=models.CASCADE)
-	creditos = models.IntegerField(validators=[MaxValueValidator(5)])
+	creditos = models.IntegerField(validators=[MaxValueValidator(30)])
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8)
