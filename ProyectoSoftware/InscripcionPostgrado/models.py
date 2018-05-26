@@ -4,10 +4,22 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
+class Decanato(models.Model):
+	Nombre_decanato = models.CharField(primary_key=True, max_length=30)
+	def getallfields(self):
+		return [self.Nombre_decanato]
+	def __getallfieldNames__():
+		return ["Nombre_decanato"]
+	def __gettablename__():
+		return "Decanato"
+	def __createElement__(parameters):
+		return Decanato(
+				Nombre_decanato = parameters["Nombre_decanato"]
+			)
+
 class Coordinacion(models.Model):
-	Cod_coordinacion = models.CharField(primary_key=True, max_length=3)
+	Cod_coordinacion = models.CharField(primary_key=True, max_length=2)
 	Nombre_coordinacion = models.CharField(max_length=30)
-#Duda cuanto es el largo del cod.
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __getallfieldNames__():
@@ -20,10 +32,27 @@ class Coordinacion(models.Model):
 				Nombre_coordinacion = parameters["Nombre_coordinacion"]
 			)
 
+class Pertenece(models.Model):
+	class Meta:
+		unique_together=(('Nombre_decanato', 'Cod_coordinacion'))
+	Nombre_decanato = models.ForeignKey(Decanato, on_delete=models.CASCADE)
+	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
+	def getallfields(self):
+		return [self.Nombre_decanato,self.Cod_coordinacion]
+	def __getallfieldNames__():
+		return ["Nombre_decanato","Cod_coordinacion"]
+	def __gettablename__():
+		return "Pertenece"
+	def __createElement__(parameters):
+		return Decanato(
+				Nombre_decanato = parameters["Nombre_decanato"],
+				Cod_coordinacion = parameters["Cod_coordinacion"]
+			)
+
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6)
 	Nombre_asig = models.CharField(max_length=30)
-	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=3, on_delete=models.CASCADE)
+	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30)])
 	def getallfields(self):
 		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos]
@@ -57,10 +86,10 @@ class Estudiante(models.Model):
 			)
 
 class Profesor(models.Model):
-	Id_prof = models.CharField(primary_key=True, max_length=7)
+	Id_prof = models.CharField(primary_key=True, max_length=8)
 	Apellidos = models.CharField(max_length=30)
 	Nombres = models.CharField(max_length=30)
-	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=3, on_delete=models.CASCADE)
+	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
 	def __getallfieldNames__():
@@ -115,16 +144,17 @@ class Cursa(models.Model):
 
 class Se_Ofrece(models.Model):
 	class Meta:
-		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio'))
+		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio','Cod_coordinacion'))
 	Id_prof = models.ForeignKey(Profesor, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
 	Horario = models.CharField(max_length=5)
 	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
 	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', on_delete=models.CASCADE)
+	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
-		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo,self.Anio]
+		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo,self.Anio, self.Cod_coordinacion]
 	def __getallfieldNames__():
-		return ["Id_prof","Cod_asignatura","Horario","Periodo","Anio"]
+		return ["Id_prof","Cod_asignatura","Horario","Periodo","Anio", "Cod_coordinacion"]
 	def __gettablename__():
 		return "Se_Ofrece"
 	def __createElement__(parameters):
@@ -133,7 +163,8 @@ class Se_Ofrece(models.Model):
 				Cod_asignatura = parameters["Cod_asignatura"],
 				Horario = parameters["Horario"],
 				Periodo = parameters["Periodo"],
-				Anio = parameters["Anio"]
+				Anio = parameters["Anio"],
+				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
 
 

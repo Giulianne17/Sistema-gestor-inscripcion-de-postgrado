@@ -71,6 +71,18 @@ def __modififyDB__(name, parameters,request):
 			form.save()
 		else:
 			raise
+	elif "profesor" in name:
+		form = ProfesorForm(request.POST)
+		if form.is_valid():
+			form.save()
+		else:
+			raise
+	elif "pertenece" in name:
+		form = PerteneceForm(request.POST)
+		if form.is_valid():
+			form.save()
+		else:
+			raise
 	else:
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)

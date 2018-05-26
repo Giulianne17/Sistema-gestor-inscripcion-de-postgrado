@@ -12,3 +12,15 @@ class CoordinacionForm(ModelForm):
     class Meta:
         model = Coordinacion
         fields = ['Cod_coordinacion', 'Nombre_coordinacion']
+
+# Form para añadir un profesor
+class ProfesorForm(ModelForm):
+    class Meta:
+        model = Profesor
+        fields = ["Id_prof","Apellidos","Nombres","Cod_coordinacion"]
+
+# Form para añadir un pertenece
+class PerteneceForm(ModelForm):
+    class Meta:
+        model = Pertenece
+        fields = ["Nombre_decanato","Cod_coordinacion"]
