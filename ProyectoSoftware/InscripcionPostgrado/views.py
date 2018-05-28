@@ -21,10 +21,28 @@ def index(request):
 	else:
 		if request.path!="" and request.path!="/" and "index" not in request.path and "favicon" not in request.path:
 			name=request.path.split("/")[1]
+			print(name)
+			if "coordinacion_" in request.path:
+				return coordinacion(request)
 			return render(request, 'crud/index.html', __buildContext__(name,True))
 		else:
 			return render(request, 'crud/index.html', __buildContext__("todas las Tablas",False))
 
+def coordinacion(request):
+	if request.method=="POST":
+		pass
+		# try:
+		# 	name=request.path.split("/")[1]
+		# 	__modififyDB__(name, __getParameters__(name,request),request)
+		# 	return  HttpResponseRedirect("/"+name)
+		# except:
+		# 	print("No se pudo modificar la BD")
+		# 	return  HttpResponseRedirect('/index')
+	else:
+		CodCoordinacion = request.path.split("/")[1].split("_")[1]
+		print(CodCoordinacion)
+		return render(request, 'crud/coordinacion.html', __buildContextAsignatura__(CodCoordinacion))
+		
 def __getDBList__():
 	all_tables = connection.introspection.table_names()
 	tables_to_use = []
@@ -45,6 +63,19 @@ def __buildContext__(name,ismodel):
 		show_all_tables=True
 	context = {
 			'table_name' : name,
+			'table_column_list' : column_list,
+			'table' : table,
+			'show_all_tables' : show_all_tables
+		}
+	return context
+
+def __buildContextAsignatura__(CodCoordinacion):
+	model = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
+	column_list=["Cod_asignatura","Nombre_asig", "Creditos"]
+	table=model.objects.filter(Cod_coordinacion = CodCoordinacion)
+	show_all_tables=False
+	context = {
+			'table_name' : "asignaturas",
 			'table_column_list' : column_list,
 			'table' : table,
 			'show_all_tables' : show_all_tables
