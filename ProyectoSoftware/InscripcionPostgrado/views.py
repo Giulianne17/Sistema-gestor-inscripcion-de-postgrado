@@ -12,37 +12,59 @@ element_actual = None
 def index(request):
 	if request.method=="POST":
 		try:
-			name=request.path.split("/")[1]
+			name=__getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
 			return  HttpResponseRedirect("/"+name)
 		except:
 			print("No se pudo modificar la BD")
-			return  HttpResponseRedirect('/index')
+			return  HttpResponseRedirect('/index')	
 	else:
-		if request.path!="" and request.path!="/" and "index" not in request.path and "favicon" not in request.path:
-			name=request.path.split("/")[1]
-			print(name)
-			if "coordinacion_" in request.path:
-				return coordinacion(request)
-			return render(request, 'crud/index.html', __buildContext__(name,True))
-		else:
-			return render(request, 'crud/index.html', __buildContext__("todas las Tablas",False))
+		if "coordinacion_" in request.path:
+			return coordinacion(request)
+		return __renderViewGET__(request)
 
 def coordinacion(request):
 	if request.method=="POST":
-		pass
-		# try:
-		# 	name=request.path.split("/")[1]
-		# 	__modififyDB__(name, __getParameters__(name,request),request)
-		# 	return  HttpResponseRedirect("/"+name)
-		# except:
-		# 	print("No se pudo modificar la BD")
-		# 	return  HttpResponseRedirect('/index')
+		try:
+			name=__getTableName__(request)
+			__modififyDB__(name, __getParameters__(name,request),request)
+			return  HttpResponseRedirect("/"+name)
+		except:
+			print("No se pudo modificar la BD")
+			return  HttpResponseRedirect('/index')	
 	else:
-		CodCoordinacion = request.path.split("/")[1].split("_")[1]
-		print(CodCoordinacion)
-		return render(request, 'crud/coordinacion.html', __buildContextAsignatura__(CodCoordinacion))
-		
+		return __renderViewGET__(request)
+
+def __renderViewGET__(request):
+	newpath = __decideNewPath__(request.path)
+	if request.path!="" and request.path!="/" and "index" not in request.path and "favicon" not in request.path:
+		name = __getTableName__(request)
+		return render(request, newpath, __getContext__(request,name,True))
+	else:
+		return render(request, newpath, __getContext__(request,"todas las Tablas",False))
+
+def __renderViewPOST__(request):
+	try:
+		name = __getTableName__(request)
+		__modififyDB__(name, __getParameters__(name,request),request)
+		return  HttpResponseRedirect("/"+name)
+	except:
+		print("No se pudo modificar la BD")
+		return  HttpResponseRedirect('/index')
+
+def __getTableName__(request):
+	if "coordinacion_" in request.path:
+		return request.path.split("/")[1].split("_")[1]
+	else:
+		return request.path.split("/")[1]
+
+def __decideNewPath__(stringPath):
+	string = "crud/"
+	if "coordinacion_" in stringPath:
+		return string + "coordinacion.html"
+	else:
+		return string + "index.html"
+
 def __getDBList__():
 	all_tables = connection.introspection.table_names()
 	tables_to_use = []
@@ -51,6 +73,12 @@ def __getDBList__():
 			tables_to_use.append(i.split("_",1)[1])
 	return tables_to_use
 
+def __getContext__(request, name, ismodel):
+	if "coordinacion_" in request.path:
+		return __buildContextAsignatura__(name)
+	else:
+		return __buildContext__(name,ismodel)
+		
 def __buildContext__(name,ismodel):
 	if ismodel:
 		model = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
@@ -71,11 +99,13 @@ def __buildContext__(name,ismodel):
 
 def __buildContextAsignatura__(CodCoordinacion):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
-	column_list=["Cod_asignatura","Nombre_asig", "Creditos"]
-	table=model.objects.filter(Cod_coordinacion = CodCoordinacion)
-	show_all_tables=False
+	column_list = ["Cod_asignatura","Nombre_asig", "Creditos"]
+	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
+	show_all_tables = False
+	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
+	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion
 	context = {
-			'table_name' : "asignaturas",
+			'table_name' : "asignaturas de " + nameofcoordinacion,
 			'table_column_list' : column_list,
 			'table' : table,
 			'show_all_tables' : show_all_tables
@@ -87,6 +117,8 @@ def __getParameters__(name,request):
 	parameters = { }
 	for i in context["table_column_list"]:
 		parameters[i]=request.POST.get(i)
+	if "coordinacion_" in request.path:
+		parameters["Cod_coordinacion"] = name
 	return parameters
 
 def __modififyDB__(name, parameters,request):
