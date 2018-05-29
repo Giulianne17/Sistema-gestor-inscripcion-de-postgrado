@@ -277,11 +277,11 @@ $(document).ready(function(){
                     	{% if not show_all_tables %}
 							<td> {{element.Cod_asignatura}} </td>
 							<td> {{element.Nombre_asig}} </td>
-							<td> {{element.Creditos}} </td>
-							{% if "coordinacion" in table_name %}						
-							<a href="/coordinacion_{{element.Cod_coordinacion}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
-							<a href="#" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							{% endif %}
+							<td> {{element.Creditos}} </td>		
+							<td>		
+							<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+							<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+							</td>
 	                    {% else %}
 	                    	<td> {{element}} </td>
 	                    	<td>
@@ -359,14 +359,15 @@ $(document).ready(function(){
 	<div id="deleteEmployeeModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form method="post">
+					{% csrf_token %}
 					<div class="modal-header">						
-						<h4 class="modal-title">Delete {{table_name}}</h4>
+						<h4 class="modal-title">Borrar asignatura</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">					
-						<p>Are you sure you want to delete these Records?</p>
-						<p class="text-warning"><small>This action cannot be undone.</small></p>
+						<p>¿Está seguro que quiere borrar esta asignatura?</p>
+						<p class="text-warning"><small>No puede deshacer esta acción.</small></p>
 					</div>
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">

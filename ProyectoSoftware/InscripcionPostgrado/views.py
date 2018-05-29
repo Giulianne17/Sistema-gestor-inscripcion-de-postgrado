@@ -30,10 +30,21 @@ def index(request):
 # Aqui se redirigen los request que van a una coordinacion en
 # particular.
 def coordinacion(request):
+	if "delete" in request.path:
+		return deleteAsignatura(request)
 	if request.method=="POST":
 		return __renderViewPOST__(request,request.path, '/coordinacion_')
 	else:
 		return __renderViewGET__(request)
+
+# Vista para borrar asignaturas
+# Aqui llegan los request para borrar una entrada de la tabla de
+# asignaturas de una coordinacion
+def deleteAsignatura(request):
+	[path,codasig] = request.path.split("/delete_")
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
+	table.objects.filter(Cod_asignatura = codasig).delete()
+	return  HttpResponseRedirect(path)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
@@ -189,14 +200,22 @@ def __modififyDB__(name, parameters,request):
 		else:
 			raise
 	elif "coordinacion_" in request.path:
-		form = AsignaturaForm(data = parameters)
-		print(parameters)
-		print(form)
-		if form.is_valid():
-			form.save()
-		else:
-			raise
+		if not __updateAsignatura__(parameters):
+			form = AsignaturaForm(data = parameters)
+			if form.is_valid():
+				form.save()
+			else:
+				raise
 	else:
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)
 		element.save()
+
+def __updateAsignatura__(parameters):
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
+	element = table.objects.filter(Cod_asignatura = parameters["Cod_asignatura"])
+	if not element:
+		return False
+	element.update(**parameters)
+	return True
+		
