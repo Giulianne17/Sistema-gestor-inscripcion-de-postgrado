@@ -1,11 +1,14 @@
+import datetime
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 class Decanato(models.Model):
-	Nombre_decanato = models.CharField(primary_key=True, max_length=30)
+	Nombre_decanato = models.CharField(primary_key=True, max_length=30,
+						validators=[RegexValidator(regex='[a-zA-Z]')])
 	def getallfields(self):
 		return [self.Nombre_decanato]
 	def __getallfieldNames__():
@@ -18,8 +21,9 @@ class Decanato(models.Model):
 			)
 
 class Coordinacion(models.Model):
-	Cod_coordinacion = models.CharField(primary_key=True, max_length=2)
-	Nombre_coordinacion = models.CharField(max_length=30)
+	Cod_coordinacion = models.CharField(primary_key=True, max_length=2,
+										validators=[RegexValidator(regex='[A-Z]{2}')])
+	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __getallfieldNames__():
@@ -50,8 +54,9 @@ class Pertenece(models.Model):
 			)
 
 class Asignatura(models.Model):
-	Cod_asignatura = models.CharField(primary_key=True, max_length=6)
-	Nombre_asig = models.CharField(max_length=30)
+	Cod_asignatura = models.CharField(primary_key=True, max_length=6,
+					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}')])
+	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30)])
 	def getallfields(self):
@@ -69,9 +74,10 @@ class Asignatura(models.Model):
 			)
 
 class Estudiante(models.Model):
-	Carnet = models.CharField(primary_key=True, max_length=8)
-	Apellidos = models.CharField(max_length=30)
-	Nombres = models.CharField(max_length=30)
+	Carnet = models.CharField(primary_key=True, max_length=8, 
+			validators=[RegexValidator(regex='[0-9]{2}\-[0-9]{5}')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
 	def getallfields(self):
 		return [self.Carnet,self.Apellidos,self.Nombres]
 	def __getallfieldNames__():
@@ -86,9 +92,9 @@ class Estudiante(models.Model):
 			)
 
 class Profesor(models.Model):
-	Id_prof = models.CharField(primary_key=True, max_length=8)
-	Apellidos = models.CharField(max_length=30)
-	Nombres = models.CharField(max_length=30)
+	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
@@ -104,11 +110,21 @@ class Profesor(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
 
+def periodo_trimestre_restr(periode):
+	if not (periode.lower()=='ene-mar' or periode.lower()=='abr-jul' or periode.lower()=='sep-dic'):
+		raise ValidationError(_('Trimestre invalido'))
+	return periode
+
+def anio_trimestre_restr(year):
+	if not (1970 <= year <= (datetime.date.today().year)+1):
+		raise ValidationError(_('Trimestre invalido'))
+	return year
+
 class Trimestre(models.Model):
 	class Meta:
 		unique_together = (('Periodo', 'Anio'))
-	Periodo = models.CharField(max_length=20)
-	Anio = models.IntegerField(validators=[MaxValueValidator(9999)])
+	Periodo = models.CharField(max_length=20, validators=[periodo_trimestre_restr])
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	def getallfields(self):
 		return [self.Periodo,self.Anio]
 	def __getallfieldNames__():
@@ -142,12 +158,21 @@ class Cursa(models.Model):
 				Anio = parameters["Anio"]
 			)
 
+def hora_se_ofrece_restr(hora):
+	if not (len(hora)>2):
+		raise ValidationError(_('Horario invalido'))
+	else:
+		horas = hora.split('-')
+		if not (0 < int(hora[0]) < int(hora[1]) <14):
+			raise ValidationError(_('Horario invalido'))
+	return hora
+
 class Se_Ofrece(models.Model):
 	class Meta:
 		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio','Cod_coordinacion'))
 	Id_prof = models.ForeignKey(Profesor, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
-	Horario = models.CharField(max_length=5)
+	Horario = models.CharField(max_length=5, validators=[hora_se_ofrece_restr])
 	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
 	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', on_delete=models.CASCADE)
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
@@ -192,7 +217,7 @@ class Paga_Con(models.Model):
 	def getallfields(self):
 		return [self.Precio,self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
 	def __getallfieldNames__():
-		return ["Precio","Carnet","Cod_asignatura","Periodo","Anio"]
+		return ["Precio","Carnet","Postiza","Periodo","Anio"]
 	def __gettablename__():
 		return "Paga_Con"
 	def __createElement__(parameters):
@@ -204,16 +229,21 @@ class Paga_Con(models.Model):
 				Anio = parameters["Anio"]
 			)
 
+def tipo_debito_restr(type):
+	if not (type.lower()=="ahorro" or type.lower()=="corriente"):
+		raise ValidationError(_('Tipo de cuenta invalido'))
+	return type
+
 class Debito(models.Model):
-	Nro_Cuenta = models.IntegerField(primary_key=True,validators=[MaxValueValidator(99999999999999999999)])
-	Nro_Tarjeta = models.IntegerField(validators=[MaxValueValidator(999999999999999999)])
-	Tipo = models.CharField(max_length=9)
+	Nro_Cuenta = models.CharField(primary_key=True, max_length = 20,validators = [RegexValidator(regex='[0-9]{20}')])
+	Nro_Tarjeta = models.CharField(max_length = 18,validators=[RegexValidator(regex='[0-9]{18}')])
+	Tipo = models.CharField(max_length=9, validators=[tipo_debito_restr])
 	Nombre_Banco = models.CharField(max_length=30)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nro_Cuenta,self.Nro_Tarjeta,self.Tipo,self.Nombre_Banco,self.Postiza]
 	def __getallfieldNames__():
-		return ["Nro_Cuenta","Nro_Tarjeta","Tipo","Nombre_Banco","Postiza MedioPago"]
+		return ["Nro_Cuenta","Nro_Tarjeta","Tipo","Nombre_Banco","Postiza"]
 	def __gettablename__():
 		return "Debito"
 	def __createElement__(parameters):
@@ -226,14 +256,14 @@ class Debito(models.Model):
 			)
 
 class Credito(models.Model):
-	Nro_Tarjeta = models.IntegerField(primary_key=True,validators=[MaxValueValidator(999999999999999999)])
+	Nro_Tarjeta = models.CharField(primary_key=True,max_length = 18,validators=[RegexValidator(regex='[0-9]{18}')])
 	Fecha_Vence = models.DateField() 
 	Nombre_Banco = models.CharField(max_length=30)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nro_Tarjeta,self.Fecha_Vence,self.Nombre_Banco,self.Postiza]
 	def __getallfieldNames__():
-		return ["Nro_Tarjeta","Fecha_Vence","Nombre_Banco","Postiza MedioPago"]
+		return ["Nro_Tarjeta","Fecha_Vence","Nombre_Banco","Postiza"]
 	def __gettablename__():
 		return "Credito"
 	def __createElement__(parameters):
@@ -245,12 +275,12 @@ class Credito(models.Model):
 			)
 
 class Transferencia(models.Model):
-	Nro_Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
+	Nro_Referencia = models.CharField(primary_key=True,max_length = 20, validators=[RegexValidator(regex='[0-9]{20}')])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nro_Referencia,self.Postiza]
 	def __getallfieldNames__():
-		return ["Nro_Referencia","Postiza MedioPago"]
+		return ["Nro_Referencia","Postiza"]
 	def __gettablename__():
 		return "Transferencia"
 	def __createElement__(parameters):
@@ -260,12 +290,12 @@ class Transferencia(models.Model):
 			)
 
 class Deposito(models.Model):
-	Referencia = models.IntegerField(primary_key=True, validators=[MaxValueValidator(99999999999999999999)])
+	Referencia = models.CharField(primary_key=True, max_length = 20, validators=[RegexValidator(regex='[0-9]{20}')])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Referencia,self.Postiza]
 	def __getallfieldNames__():
-		return ["Referencia","Postiza MedioPago"]
+		return ["Referencia","Postiza"]
 	def __gettablename__():
 		return "Deposito"
 	def __createElement__(parameters):
