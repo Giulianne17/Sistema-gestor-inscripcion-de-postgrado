@@ -68,6 +68,19 @@ class CoordinacionTestCase(TestCase):
         form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
 
+# Caso de prueba para verificar si se añaden instancias cuya longitud del nombre  
+# de la asignatura es menor al maximo.
+
+    def test_coordinacion_min_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        form.save()
+        coord1 = Coordinacion.objects.get(Cod_coordinacion = "AA")
+        self.assertEqual(coord1.Nombre_coordinacion, "Arquitectura")
+
 # Caso de prueba para verificar si se añaden instancias que posean la longitud 
 # maxima del nombre de la coordinacion.
 
