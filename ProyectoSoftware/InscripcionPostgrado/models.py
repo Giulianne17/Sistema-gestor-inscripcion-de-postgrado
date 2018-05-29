@@ -192,7 +192,7 @@ class Paga_Con(models.Model):
 	def getallfields(self):
 		return [self.Precio,self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
 	def __getallfieldNames__():
-		return ["Precio","Carnet","Cod_asignatura","Periodo","Anio"]
+		return ["Precio","Carnet","Postiza","Periodo","Anio"]
 	def __gettablename__():
 		return "Paga_Con"
 	def __createElement__(parameters):
@@ -213,7 +213,7 @@ class Debito(models.Model):
 	def getallfields(self):
 		return [self.Nro_Cuenta,self.Nro_Tarjeta,self.Tipo,self.Nombre_Banco,self.Postiza]
 	def __getallfieldNames__():
-		return ["Nro_Cuenta","Nro_Tarjeta","Tipo","Nombre_Banco","Postiza MedioPago"]
+		return ["Nro_Cuenta","Nro_Tarjeta","Tipo","Nombre_Banco","Postiza"]
 	def __gettablename__():
 		return "Debito"
 	def __createElement__(parameters):
@@ -233,7 +233,7 @@ class Credito(models.Model):
 	def getallfields(self):
 		return [self.Nro_Tarjeta,self.Fecha_Vence,self.Nombre_Banco,self.Postiza]
 	def __getallfieldNames__():
-		return ["Nro_Tarjeta","Fecha_Vence","Nombre_Banco","Postiza MedioPago"]
+		return ["Nro_Tarjeta","Fecha_Vence","Nombre_Banco","Postiza"]
 	def __gettablename__():
 		return "Credito"
 	def __createElement__(parameters):
@@ -250,7 +250,7 @@ class Transferencia(models.Model):
 	def getallfields(self):
 		return [self.Nro_Referencia,self.Postiza]
 	def __getallfieldNames__():
-		return ["Nro_Referencia","Postiza MedioPago"]
+		return ["Nro_Referencia","Postiza"]
 	def __gettablename__():
 		return "Transferencia"
 	def __createElement__(parameters):
@@ -265,7 +265,7 @@ class Deposito(models.Model):
 	def getallfields(self):
 		return [self.Referencia,self.Postiza]
 	def __getallfieldNames__():
-		return ["Referencia","Postiza MedioPago"]
+		return ["Referencia","Postiza"]
 	def __gettablename__():
 		return "Deposito"
 	def __createElement__(parameters):
