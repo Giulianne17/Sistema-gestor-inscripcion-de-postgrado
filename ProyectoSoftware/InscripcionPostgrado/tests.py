@@ -24,6 +24,21 @@ class CoordinacionTestCase(TestCase):
         coord1 = Coordinacion.objects.get(Cod_coordinacion = "AA")
         self.assertEqual(coord1.Nombre_coordinacion, "Arquitectura")
 
+    # Verificar que se elimina una coordinacion
+
+    def test_asignatura_eliminar(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arquitectura"
+        }
+        form = CoordinacionForm(data = form_data)
+        form.save()
+        coord1 = Coordinacion.objects.get(Nombre_coordinacion = "Arquitectura").delete()
+        try:
+            coord1 = Coordinacion.objects.get(Nombre_coordinacion = "Arquitectura")
+        except:
+            pass
+
 # Caso de prueba para verificar si se añaden instancias que exceden la longitud 
 # maxima del codigo de la coordinacion.
 
