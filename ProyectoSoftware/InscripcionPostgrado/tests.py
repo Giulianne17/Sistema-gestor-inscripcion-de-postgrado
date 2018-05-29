@@ -7,11 +7,13 @@ from InscripcionPostgrado.forms import *
 
 # Pruebas de la tabla Coordinaciones
 # Caso de prueba para verificar que se añaden bien a la BD las coordinaciones
+
 class AsignaturaTestCase(TestCase):
     def setUp(self):
         coord = Coordinacion.objects.create(Cod_coordinacion = "EE", Nombre_coordinacion = "Arquitectura")
 
-    # Verificar que se añade una asignatura
+    # Verificar que se añade una asignatura 
+
     def test_asignatura_crear(self):
         form_data = {
             'Cod_asignatura': 'EE1020',
@@ -24,7 +26,33 @@ class AsignaturaTestCase(TestCase):
         asig = Asignatura.objects.get(Nombre_asig = "Estudios generales")
         self.assertEqual(asig.Cod_asignatura, 'EE1020')
 
+    # Verificar si no se añade una asignatura cuyo codigo tiene caracteres especiales
+
+    def test_asignatura_crear_especial(self):
+        form_data = {
+            'Cod_asignatura': 'EE-020',
+            'Nombre_asig': 'Estudios generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar si no se añade una asignatura cuya cantidad de creditos son caracteres
+
+    def test_asignatura_crear_cred_letras(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': 'Estudios generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': 'aa'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
+
     # Verificar que se busca una asignatura
+
     def test_asignatura_consulta(self):
 
         form_data = {
@@ -39,6 +67,7 @@ class AsignaturaTestCase(TestCase):
         self.assertEqual(asig[0].Cod_asignatura, 'MA1111')
 
     # Verificar que se elimina una asignatura
+
     def test_asignatura_eliminar(self):
         form_data = {
             'Cod_asignatura': 'EE1020',
@@ -100,6 +129,20 @@ class AsignaturaTestCase(TestCase):
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
+
+    # Verificar que se añade asignatura cuyo nombre tiene una longitud menor a 30
+
+    def test_asignatura_minnombre(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': 'Estudios generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        form.save()
+        asig = Asignatura.objects.get(Nombre_asig = "Estudios generales")
+        self.assertEqual(asig.Cod_asignatura, 'EE1020')
 
     # Verificar que se añade una asignatura con la longitud maxima para el nombre
 
