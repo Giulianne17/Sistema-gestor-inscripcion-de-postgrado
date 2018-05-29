@@ -11,6 +11,9 @@ element_actual = None
 # Create your viewss here.
 def index(request):
 	if request.method=="POST":
+		if "coordinacion_" in request.path:
+			print("Aqui")
+			return coordinacion(request)
 		try:
 			name=__getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
@@ -27,6 +30,7 @@ def coordinacion(request):
 	if request.method=="POST":
 		try:
 			name=__getTableName__(request)
+			print(name)
 			__modififyDB__(name, __getParameters__(name,request),request)
 			return  HttpResponseRedirect("/"+name)
 		except:
@@ -113,12 +117,12 @@ def __buildContextAsignatura__(CodCoordinacion):
 	return context
 
 def __getParameters__(name,request):
-	context=__buildContext__(name,True)
+	context=__getContext__(request,name,True)
+	print(context)
 	parameters = { }
 	for i in context["table_column_list"]:
 		parameters[i]=request.POST.get(i)
-	if "coordinacion_" in request.path:
-		parameters["Cod_coordinacion"] = name
+	print(parameters)
 	return parameters
 
 def __modififyDB__(name, parameters,request):
@@ -128,8 +132,9 @@ def __modififyDB__(name, parameters,request):
 			form.save()
 		else:
 			raise
-	elif "asignatura" in name:
+	elif "asignatura" in name or "coordinacion_" in request.path:
 		form = AsignaturaForm(request.POST)
+		print(form)
 		if form.is_valid():
 			form.save()
 		else:

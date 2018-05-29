@@ -275,8 +275,9 @@ $(document).ready(function(){
                     {% for element in table %}
                     <tr>
                     	{% if not show_all_tables %}
-	                    	{% for i in element.getallfields %}
-							<td> {{i}} </td>{% endfor %}	
+							<td> {{element.Cod_asignatura}} </td>
+							<td> {{element.Nombre_asig}} </td>
+							<td> {{element.Creditos}} </td>
 							{% if "coordinacion" in table_name %}						
 							<a href="/coordinacion_{{element.Cod_coordinacion}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
 							<a href="#" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
