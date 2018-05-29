@@ -46,6 +46,17 @@ class CoordinacionTestCase(TestCase):
         form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
 
+# Caso de prueba para verificar si se añaden instancias que poseen numeros en
+# el codigo de la coordinacion.
+
+    def test_coordinacion_num_cod(self):
+        form_data = {
+            'Cod_coordinacion': "4", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
 # Caso de prueba para verificar si se añaden instancias que exceden la longitud 
 # maxima del nombre de la coordinacion.
 
