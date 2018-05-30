@@ -467,3 +467,26 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
 
+    # Verificar que se añade una asignatura con la cantidad invalida para los creditos
+
+    def test_asignatura_cred_negativos(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '-3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade una asignatura con la cantidad invalida para los creditos
+
+    def test_asignatura_cred_letra(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '2e'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
