@@ -33,7 +33,16 @@ def coordinacion(request):
 	if "delete" in request.path:
 		return deleteAsignatura(request)
 	if request.method=="POST":
-		return __renderViewPOST__(request,request.path, '/coordinacion_')
+		try:
+			name = __getTableName__(request)
+			__modififyDB__(name, __getParameters__(name,request),request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			form = AsignaturaForm(request.POST)
+			context = __buildContextAsignatura__(name)
+			context['form'] = form
+			return render(request, 'crud/coordinacion.html', context)
 	else:
 		return __renderViewGET__(request)
 
@@ -134,7 +143,7 @@ def __buildContext__(name,ismodel):
 		column_list=["Nombre de la tabla"]
 		table=__getDBList__()
 		show_all_tables=True
-	return __contextTemplate__(name,column_list,table,show_all_tables)
+	return __contextTemplate__(name,column_list,table,show_all_tables,None)
 
 # Funcion que dado el Codigo de una coordinacion retorna el
 # contexto para el template con solo las asignaturas de dicha
@@ -145,16 +154,18 @@ def __buildContextAsignatura__(CodCoordinacion):
 	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
 	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
 	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion
-	return __contextTemplate__("asignaturas de " + nameofcoordinacion,column_list,table,False)
+	form=AsignaturaForm()
+	return __contextTemplate__("asignaturas de " + nameofcoordinacion,column_list,table,False,form)
 
 # Funcion que dado los parametros listados rellena la plantilla
 # de contexto que se va a pasar al front.
-def __contextTemplate__(tableName, columnList,table,show_all_tables):
+def __contextTemplate__(tableName, columnList,table,show_all_tables,givenForm):
 	context = {
 			'table_name' : tableName,
 			'table_column_list' : columnList,
 			'table' : table,
-			'show_all_tables' : show_all_tables
+			'show_all_tables' : show_all_tables,
+			'form' : givenForm
 		}
 	return context
 
@@ -200,12 +211,11 @@ def __modififyDB__(name, parameters,request):
 		else:
 			raise
 	elif "coordinacion_" in request.path:
-		if not __updateAsignatura__(parameters):
-			form = AsignaturaForm(data = parameters)
-			if form.is_valid():
-				form.save()
-			else:
-				raise
+		form = AsignaturaForm(request.POST)
+		if form.is_valid():
+			form.save()
+		else:
+			raise
 	else:
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)

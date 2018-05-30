@@ -303,4 +303,3 @@ class AsignaturaTestCase(TestCase):
         form.save()
         asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios Generales')
         self.assertEqual(asig1.Cod_asignatura, 'EE1050')
-
