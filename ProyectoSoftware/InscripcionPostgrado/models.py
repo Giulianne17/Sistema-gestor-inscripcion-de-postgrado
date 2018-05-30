@@ -26,6 +26,8 @@ class Coordinacion(models.Model):
 	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
+	def __str__(self):
+		return "%s" % (self.Nombre_coordinacion)
 	def __getallfieldNames__():
 		return ["Cod_coordinacion","Nombre_coordinacion"]
 	def __gettablename__():
@@ -55,10 +57,10 @@ class Pertenece(models.Model):
 
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6,
-					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}')])
-	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}', message="Código inválido")])
+	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message="Nombre inválido")])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
-	Creditos = models.IntegerField(validators=[MaxValueValidator(30)])
+	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos.")])
 	def getallfields(self):
 		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos]
 	def __getallfieldNames__():
