@@ -113,6 +113,8 @@ class CoordinacionTestCase(TestCase):
             'Nombre_coordinacion': "Arquitectura333"
         }       
         form = CoordinacionForm(data=form_data) 
+        #form.save()
+        #print(Coordinacion.objects.get(Nombre_coordinacion='Arquitectura333'))
         self.assertFalse(form.is_valid())
 
 # Caso de prueba para verificar si se añaden instancias que poseen espacios en
@@ -307,6 +309,44 @@ class AsignaturaTestCase(TestCase):
     def test_asignatura_mincod(self):
         form_data = {
             'Cod_asignatura': 'EE005',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que no se añade asignatura con cantidad de letras menor a 2 en el codigo
+    # y mas de 4 digitos
+
+    def test_asignatura_una_letra(self):
+        form_data = {
+            'Cod_asignatura': 'E00005',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())    
+
+    # Verificar que no se añade asignatura con cantidad de letras mayor a 2 en el codigo
+    # y menos de 4 digitos
+
+    def test_asignatura_tres_letra(self):
+        form_data = {
+            'Cod_asignatura': 'EEE005',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que no se añade asignatura con letras de codigo minusculas 
+
+    def test_asignatura_letra_minuscula(self):
+        form_data = {
+            'Cod_asignatura': 'ee0005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '3'
