@@ -271,6 +271,13 @@ $(document).ready(function(){
 					});
 				</script>
 			{% endif %}
+			{% if editAsig %}
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$("#editEmployeeModal").modal('show');
+					});
+				</script>
+			{% endif %}
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -286,7 +293,7 @@ $(document).ready(function(){
 							<td> {{element.Nombre_asig}} </td>
 							<td> {{element.Creditos}} </td>		
 							<td>		
-							<a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+							<a href="./edit_{{element.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
 							<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
 							</td>
 	                    {% else %}
@@ -338,17 +345,14 @@ $(document).ready(function(){
 	<div id="editEmployeeModal" class="modal fade">
 		<div class="modal-dialog">
 			<div class="modal-content">
-				<form>
+				<form method="post" href="#">
+					{% csrf_token %}
 					<div class="modal-header">						
-						<h4 class="modal-title">Editar {{element}}</h4>
+						<h4 class="modal-title">Editar asignatura</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
-					<div class="modal-body">					
-						{% for columnName in table_column_list%}
-						<div class="form-group">
-							<label>{{columnName}}</label>
-							<input type="text" class="form-control" name="{{columnName}}" value="{{element.columnName}}" required>
-						</div> {% endfor %}				
+					<div class="modal-body">
+						{{ form.as_p }}			
 					</div>
 					<div class="modal-footer">
 						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">

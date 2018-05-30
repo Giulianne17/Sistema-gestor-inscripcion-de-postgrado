@@ -32,6 +32,8 @@ def index(request):
 def coordinacion(request):
 	if "delete" in request.path:
 		return deleteAsignatura(request)
+	if "edit" in request.path:
+		return editAsignatura(request)
 	if request.method=="POST":
 		try:
 			name = __getTableName__(request)
@@ -54,6 +56,33 @@ def deleteAsignatura(request):
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
 	table.objects.filter(Cod_asignatura = codasig).delete()
 	return  HttpResponseRedirect(path)
+
+def editAsignatura(request):
+	name = __getTableName__(request)
+	cod = request.path.split('/edit_')[1]
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
+	element = table.objects.get(Cod_asignatura = cod)
+	if request.method=="POST":
+		element.delete()
+		return updateAsignatura(request,element)
+	else:
+		context = __buildContextAsignatura__(name)
+		context['editAsig'] = True
+		form = AsignaturaForm(instance = element)
+		context['form'] = form
+		return render(request, 'crud/coordinacion.html', context)
+
+
+def updateAsignatura(request,oldElement):
+	[path,codasig] = request.path.split("/edit_")
+	form = AsignaturaForm(request.POST)
+	if form.is_valid():
+		form.save()
+		return HttpResponseRedirect(path)
+	else:
+		oldElement.save()
+		print("No se pudo modificar la BD")
+		return HttpResponseRedirect(path)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
@@ -155,7 +184,8 @@ def __buildContextAsignatura__(CodCoordinacion):
 	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
 	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion
 	form=AsignaturaForm()
-	return __contextTemplate__("asignaturas de " + nameofcoordinacion,column_list,table,False,form)
+	context = __contextTemplate__("asignaturas de " + nameofcoordinacion,column_list,table,False,form)
+	return context
 
 # Funcion que dado los parametros listados rellena la plantilla
 # de contexto que se va a pasar al front.
@@ -221,11 +251,5 @@ def __modififyDB__(name, parameters,request):
 		element=table.__createElement__(parameters)
 		element.save()
 
-def __updateAsignatura__(parameters):
-	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
-	element = table.objects.filter(Cod_asignatura = parameters["Cod_asignatura"])
-	if not element:
-		return False
-	element.update(**parameters)
-	return True
+
 		
