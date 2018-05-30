@@ -354,6 +354,30 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
 
+    # Verificar que se añade asignatura cuyo nombre es un string vacio
+
+    def test_asignatura_nombre_vacio(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': '',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade asignatura cuyo nombre tiene una longitud menor a 30
+
+    def test_asignatura_num_nombre(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': 'Estudios generales33',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
     # Verificar que se añade asignatura cuyo nombre tiene una longitud menor a 30
 
     def test_asignatura_minnombre(self):
