@@ -434,3 +434,14 @@ class AsignaturaTestCase(TestCase):
         asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios Generales')
         self.assertEqual(asig1.Cod_asignatura, 'EE1050')
 
+    # Verificar que se añade una asignatura con la cantidad invalida para los creditos
+
+    def test_asignatura_cero_cred(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '0'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
