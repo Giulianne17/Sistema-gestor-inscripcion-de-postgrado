@@ -292,7 +292,7 @@ class Transferencia(models.Model):
 			)
 
 class Deposito(models.Model):
-	Referencia = models.CharField(primary_key=True, max_length = 20, validators=[RegexValidator(regex='[0-9]{20}'), message='Nro Referencia incorrecto'])
+	Referencia = models.CharField(primary_key=True, max_length = 20, validators=[RegexValidator(regex='[0-9]{20}', message='Nro Referencia incorrecto')])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Referencia,self.Postiza]
