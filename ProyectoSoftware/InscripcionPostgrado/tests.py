@@ -6,46 +6,121 @@ from InscripcionPostgrado.forms import *
 # Create your tests here.
 
 # Pruebas de la tabla Coordinaciones
-# Caso de prueba para verificar que se añaden bien a la BD las coordinaciones
+
 class CoordinacionTestCase(TestCase):
     def setUp(self):
         pass
+
+# Caso de prueba para verificar que se añaden bien a la BD las coordinaciones
+# Falla si no se ha creado la BD
     
     def test_coordinacion_crear(self):
         form_data = {
-            'Cod_coordinacion': "4", 
+            'Cod_coordinacion': "AA", 
             'Nombre_coordinacion': "Arquitectura"
         }
         form = CoordinacionForm(data=form_data)
         form.save()
-        coord1 = Coordinacion.objects.get(Cod_coordinacion = 4)
+        coord1 = Coordinacion.objects.get(Cod_coordinacion = "AA")
         self.assertEqual(coord1.Nombre_coordinacion, "Arquitectura")
 
-# Pruebas de la tabla Asignatura
-class AsignaturaTestCase(TestCase):
-    def setUp(self):
-        coord = Coordinacion.objects.create(Cod_coordinacion = "4", Nombre_coordinacion = "Arquitectura")
+    # Verificar que se elimina una coordinacion
 
-    # Verificar que se añade una asignatura
-    def test_asignatura_crear(self):
+    def test_asignatura_eliminar(self):
         form_data = {
-            'Cod_asignatura': 'EE-102',
-            'Nombre_asig': 'Estudios generales',
-            'Cod_coordinacion': '4',
-            'Creditos': '4'
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arquitectura"
         }
-        form = AsignaturaForm(data = form_data)
+        form = CoordinacionForm(data = form_data)
         form.save()
-        asig = Asignatura.objects.get(Nombre_asig = "Estudios generales")
-        self.assertEqual(asig.Cod_asignatura, "EE-102")
+        coord1 = Coordinacion.objects.get(Nombre_coordinacion = "Arquitectura").delete()
+        try:
+            coord1 = Coordinacion.objects.get(Nombre_coordinacion = "Arquitectura")
+        except:
+            pass
 
-    # Verificar que no se añade asignatura con una cantidad de creditos mayores a 30
-    def test_asignatura_maxcredit(self):
+# Caso de prueba para verificar si se añaden instancias que exceden la longitud 
+# maxima del codigo de la coordinacion.
+
+    def test_coordinacion_max_cod(self):
         form_data = {
-            'Cod_asignatura': 'EE-105',
-            'Nombre_asig': 'Estudios Generales',
-            'Cod_coordinacion': '4',
-            'Creditos': '50'
-        }
-        form = AsignaturaForm(data=form_data)
+            'Cod_coordinacion': "ABC", 
+            'Nombre_coordinacion': "Arquitectura"
+        }   	
+        form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen longitud menor 
+# a 2 para el codigo de la coordinacion.
+
+    def test_coordinacion_min_cod(self):
+        form_data = {
+            'Cod_coordinacion': "A", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen numeros en
+# el codigo de la coordinacion.
+
+    def test_coordinacion_num_cod(self):
+        form_data = {
+            'Cod_coordinacion': "4", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que exceden la longitud 
+# maxima del nombre de la coordinacion.
+
+    def test_coordinacion_max_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "ArquitecturaArquitecturaArquitectura"
+        }   	
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias cuya longitud del nombre  
+# de la asignatura es menor al maximo.
+
+    def test_coordinacion_min_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        form.save()
+        coord1 = Coordinacion.objects.get(Cod_coordinacion = "AA")
+        self.assertEqual(coord1.Nombre_coordinacion, "Arquitectura")
+
+# Caso de prueba para verificar si se añaden instancias que posean la longitud 
+# maxima del nombre de la coordinacion.
+
+
+    def test_coordinacion_exacto_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "ArquitecturaArquitecturaArquit"
+        }   	
+        form = CoordinacionForm(data=form_data) 
+        form.save()
+        coord1 = Coordinacion.objects.get(Cod_coordinacion = "AA")
+        self.assertEqual(coord1.Nombre_coordinacion, "ArquitecturaArquitecturaArquit")
+
+# Caso de prueba para verificar si se añaden instancias que posean la longitud 
+# maxima del codigo de la coordinacion.
+
+
+    def test_coordinacion_exacto_cod(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arquitectura"
+        }   	
+        form = CoordinacionForm(data=form_data) 
+        form.save()
+        coord1 = Coordinacion.objects.get(Cod_coordinacion = "AA")
+        self.assertEqual(coord1.Nombre_coordinacion, "Arquitectura")        
+
