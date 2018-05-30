@@ -6,6 +6,11 @@ class AsignaturaForm(ModelForm):
     class Meta:
         model = Asignatura
         fields = ["Cod_asignatura", "Nombre_asig", "Cod_coordinacion", "Creditos"]
+        error_messages = {
+            'Cod_asignatura': {
+                'unique': ("Error la asignatura ya existe"),
+            }
+        }
 
 # Form para añadir una coordinacion
 class CoordinacionForm(ModelForm):
