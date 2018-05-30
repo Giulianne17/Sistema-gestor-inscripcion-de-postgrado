@@ -1,0 +1,37 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Table Style</title>
+	<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+
+	    {%load staticfiles %}
+        <!-- Main CSS --> 
+        <link rel="stylesheet" href="{% static 'css/tabla.css' %}">
+</head>
+
+<body>
+<div class="table-title">
+<h3>Asignaturas</h3>
+</div>
+<table class="table-fill">
+<thead>
+<tr>
+<th class="text-left">Nombre</th>
+<th class="text-left">Código</th>
+<th class="text-left">Créditos</th>
+</tr>
+</thead>
+<tbody class="table-hover">
+{% for element in table %}
+	<tr>
+	<td class="text-left">{{element.Cod_asignatura}}</td>
+	<td class="text-left">{{element.Nombre_asig}}</td>
+	<td class="text-left">{{element.Creditos}}</td>
+	</tr>
+{%endfor %}
+
+</tbody>
+</table>
+  
+
+  </body>

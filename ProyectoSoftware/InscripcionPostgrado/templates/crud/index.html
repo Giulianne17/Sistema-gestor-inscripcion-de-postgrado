@@ -257,7 +257,7 @@ $(document).ready(function(){
 					</div>
 					<div class="col-sm-6">
 						{% if not show_all_tables %}	
-						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Element in {{table_name}}</span></a>
+						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar elemento en {{table_name}}</span></a>
 						<!-- <a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a> -->
 						<a href="/index" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 						{% endif %}
@@ -276,11 +276,13 @@ $(document).ready(function(){
                     <tr>
                     	{% if not show_all_tables %}
 	                    	{% for i in element.getallfields %}
-	                        <td> {{i}} </td>{% endfor %}
-							<!-- <td>
-	                            <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-	                            <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-	                        </td> -->
+							<td> {{i}} </td>{% endfor %}	
+							{% if "coordinacion" in table_name %}
+							<td>						
+							<a href="/coordinacion_{{element.Cod_coordinacion}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+							<a href="#" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+							</td>
+							{% endif %}
 	                    {% else %}
 	                    	<td> {{element}} </td>
 	                    	<td>
@@ -312,7 +314,7 @@ $(document).ready(function(){
 				<form method="post" href="#">
 					{% csrf_token %}
 					<div class="modal-header">						
-						<h4 class="modal-title">Add {{table_name}}</h4>
+						<h4 class="modal-title">Agregar {{table_name}}</h4>
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">					
