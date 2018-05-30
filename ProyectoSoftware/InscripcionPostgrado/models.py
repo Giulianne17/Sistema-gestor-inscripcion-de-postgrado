@@ -8,7 +8,7 @@ from django.utils.translation import gettext_lazy as _
 # Create your models here.
 class Decanato(models.Model):
 	Nombre_decanato = models.CharField(primary_key=True, max_length=30,
-						validators=[RegexValidator(regex='[a-zA-Z]')])
+						validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
 	def getallfields(self):
 		return [self.Nombre_decanato]
 	def __getallfieldNames__():
@@ -22,8 +22,8 @@ class Decanato(models.Model):
 
 class Coordinacion(models.Model):
 	Cod_coordinacion = models.CharField(primary_key=True, max_length=2,
-										validators=[RegexValidator(regex='[A-Z]{2}')])
-	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+										validators=[RegexValidator(regex='[A-Z]{2}', message='Codigo incorrecto')])
+	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __getallfieldNames__():
@@ -55,8 +55,8 @@ class Pertenece(models.Model):
 
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6,
-					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}')])
-	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}'), message='Codigo incorrecto'])
+	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30)])
 	def getallfields(self):
@@ -75,9 +75,9 @@ class Asignatura(models.Model):
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8, 
-			validators=[RegexValidator(regex='[0-9]{2}\-[0-9]{5}')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+			validators=[RegexValidator(regex='[0-9]{2}\-[0-9]{5}', message='Carnet incorrecto')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Apellido incorrecto')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
 	def getallfields(self):
 		return [self.Carnet,self.Apellidos,self.Nombres]
 	def __getallfieldNames__():
@@ -92,9 +92,9 @@ class Estudiante(models.Model):
 			)
 
 class Profesor(models.Model):
-	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Apellido incorrecto')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
@@ -235,8 +235,8 @@ def tipo_debito_restr(type):
 	return type
 
 class Debito(models.Model):
-	Nro_Cuenta = models.CharField(primary_key=True, max_length = 20,validators = [RegexValidator(regex='[0-9]{20}')])
-	Nro_Tarjeta = models.CharField(max_length = 18,validators=[RegexValidator(regex='[0-9]{18}')])
+	Nro_Cuenta = models.CharField(primary_key=True, max_length = 20,validators = [RegexValidator(regex='[0-9]{20}', message='Nro cuenta incorrecto')])
+	Nro_Tarjeta = models.CharField(max_length = 18,validators=[RegexValidator(regex='[0-9]{18}', message='Nro tarjeta incorrecto')])
 	Tipo = models.CharField(max_length=9, validators=[tipo_debito_restr])
 	Nombre_Banco = models.CharField(max_length=30)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
@@ -256,7 +256,7 @@ class Debito(models.Model):
 			)
 
 class Credito(models.Model):
-	Nro_Tarjeta = models.CharField(primary_key=True,max_length = 18,validators=[RegexValidator(regex='[0-9]{18}')])
+	Nro_Tarjeta = models.CharField(primary_key=True,max_length = 18,validators=[RegexValidator(regex='[0-9]{18}', message='Nro tarjeta incorrecto')])
 	Fecha_Vence = models.DateField() 
 	Nombre_Banco = models.CharField(max_length=30)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
@@ -275,7 +275,7 @@ class Credito(models.Model):
 			)
 
 class Transferencia(models.Model):
-	Nro_Referencia = models.CharField(primary_key=True,max_length = 20, validators=[RegexValidator(regex='[0-9]{20}')])
+	Nro_Referencia = models.CharField(primary_key=True,max_length = 20, validators=[RegexValidator(regex='[0-9]{20}', message='Nro Referencia incorrecto')])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nro_Referencia,self.Postiza]
@@ -290,7 +290,7 @@ class Transferencia(models.Model):
 			)
 
 class Deposito(models.Model):
-	Referencia = models.CharField(primary_key=True, max_length = 20, validators=[RegexValidator(regex='[0-9]{20}')])
+	Referencia = models.CharField(primary_key=True, max_length = 20, validators=[RegexValidator(regex='[0-9]{20}'), message='Nro Referencia incorrecto'])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Referencia,self.Postiza]
