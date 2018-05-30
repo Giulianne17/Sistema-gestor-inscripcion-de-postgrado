@@ -126,6 +126,17 @@ class CoordinacionTestCase(TestCase):
         form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
 
+# Caso de prueba para verificar si se añaden instancias que poseen numeros en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_num_medio_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arqui33tectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
 # Caso de prueba para verificar si se añaden instancias que poseen espacios en
 # el nombre de la coordinacion.
 
@@ -393,6 +404,18 @@ class AsignaturaTestCase(TestCase):
         form_data = {
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': '33Estudios generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade asignatura cuyo nombre tiene numeros
+
+    def test_asignatura_num_medio_nombre(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': 'Estudios33 generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '4'
         }
