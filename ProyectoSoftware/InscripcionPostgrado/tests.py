@@ -49,6 +49,39 @@ class CoordinacionTestCase(TestCase):
         form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
 
+# Caso de prueba para verificar si se añaden instancias en las que el codigo de 
+# la coordinacion son dos letras minusculas
+
+    def test_coordinacion_minusculas(self):
+        form_data = {
+            'Cod_coordinacion': "aa", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias en las que el codigo de 
+# la coordinacion es una letra minuscula
+
+    def test_coordinacion_una_minuscula(self):
+        form_data = {
+            'Cod_coordinacion': "a", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias en las que el codigo de 
+# la coordinacion son tres letras minusculas
+
+    def test_coordinacion_max_minusculas(self):
+        form_data = {
+            'Cod_coordinacion': "aaa", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
 # Caso de prueba para verificar si se añaden instancias que poseen longitud menor 
 # a 2 para el codigo de la coordinacion.
 
@@ -67,6 +100,39 @@ class CoordinacionTestCase(TestCase):
         form_data = {
             'Cod_coordinacion': "4", 
             'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen numeros en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_num_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arquitectura333"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen espacios en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_espacio_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "CI", 
+            'Nombre_coordinacion': "Coordinacion de Computacion"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertTrue(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen strings vacios en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_vacio_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "CI", 
+            'Nombre_coordinacion': ""
         }       
         form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
