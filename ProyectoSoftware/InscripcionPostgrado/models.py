@@ -1,6 +1,7 @@
 import datetime
 from django.db import models
 from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
@@ -58,7 +59,7 @@ class Asignatura(models.Model):
 					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}')])
 	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='([a-zA-Z])+$')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
-	Creditos = models.IntegerField(validators=[MaxValueValidator(30)])
+	Creditos = models.IntegerField(validators=[MaxValueValidator(30), MinValueValidator(1)])
 	def getallfields(self):
 		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos]
 	def __getallfieldNames__():
