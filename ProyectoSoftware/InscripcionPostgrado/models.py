@@ -23,7 +23,7 @@ class Decanato(models.Model):
 class Coordinacion(models.Model):
 	Cod_coordinacion = models.CharField(primary_key=True, max_length=2,
 										validators=[RegexValidator(regex='[A-Z]{2}')])
-	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]')])
+	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='([a-zA-Z])+$')])
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __getallfieldNames__():
