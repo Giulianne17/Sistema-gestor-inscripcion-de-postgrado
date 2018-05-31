@@ -170,12 +170,12 @@ class Cursa(models.Model):
 			)
 
 def hora_se_ofrece_restr(hora):
-	if not (len(hora)>2):
+	# if not (len(hora)>3):
+	# 	raise ValidationError(_('Horario invalido'))
+	# else:
+	hora = hora.split('-')
+	if not (0 < int(hora[0]) < int(hora[1]) <14):
 		raise ValidationError(_('Horario invalido'))
-	else:
-		horas = hora.split('-')
-		if not (0 < int(hora[0]) < int(hora[1]) <14):
-			raise ValidationError(_('Horario invalido'))
 	return hora
 
 class Se_Ofrece(models.Model):

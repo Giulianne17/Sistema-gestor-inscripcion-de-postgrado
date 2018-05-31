@@ -172,9 +172,14 @@ def __renderViewGET__(request):
 			return render(request, newpath, __getContext__(request,"todas las Tablas",False))
 		else:
 			name = __getTableName__(request)
-			return render(request, newpath, __getContext__(request,name,True))
+			context = __getContext__(request,name,True)
+			context["form"] = __returnForm__(name,request)
+			return render(request, newpath, context)
 	else:
-		return render(request, newpath, __getContext__(request,"coordinacion",True))
+		name="coordinacion"
+		context = __getContext__(request,name,True)
+		context["form"] = __returnForm__(name,request)
+		return render(request, newpath, __getContext__(request,name,True))
 
 # Funcion que renderiza un template de un POST request.
 # Toma dos path que se utilizan según el caso
@@ -271,8 +276,8 @@ def __buildContext__(name,ismodel):
 # contexto para el template con solo las asignaturas de dicha
 # coordinacion.
 def __buildContextAsignatura__(CodCoordinacion):
-	model = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
-	column_list = ["Codigo","Nombre", "Creditos","Fecha","Visto","Programa","Operaciones"]
+	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
+	column_list = ["Codigo", "U.C","Denominacion","Profesor","Programa","Horario","Operaciones"]
 	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
 	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
 	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion
@@ -324,14 +329,32 @@ def __modififyDB__(name, parameters,request):
 # correspondiente, o None si no es de los casos dados.
 def __returnForm__(name,request):
 	if "coordinacion" in name:
+		if not request.POST:
+			return CoordinacionForm()
 		return CoordinacionForm(request.POST)
 	elif "asignatura" in name:
+		if not request.POST:
+			return AsignaturaForm()
 		return AsignaturaForm(request.POST)
 	elif "profesor" in name:
+		if not request.POST:
+			return ProfesorForm()
 		return ProfesorForm(request.POST)
 	elif "pertenece" in name:
+		if not request.POST:
+			return PerteneceForm()
 		return PerteneceForm(request.POST)
 	elif "coordinacion_" in request.path:
+		if not request.POST:
+			return AsignaturaForm()
 		return AsignaturaForm(request.POST)
+	elif "se_ofrece" in request.path:
+		if not request.POST:
+			return Se_OfreceForm()
+		return Se_OfreceForm(request.POST)
+	elif "trimestre" in request.path:
+		if not request.POST:
+			return TrimestreForm()
+		return TrimestreForm(request.POST)	
 	else:
 		return None

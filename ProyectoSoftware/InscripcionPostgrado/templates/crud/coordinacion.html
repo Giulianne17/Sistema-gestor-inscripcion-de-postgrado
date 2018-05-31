@@ -304,17 +304,17 @@ $(document).ready(function(){
                     {% for element in table %}
                     <tr>
                     	{% if not show_all_tables %}
-							<td> {{element.Cod_asignatura}} </td>
-							<td> {{element.Nombre_asig}} </td>
-							<td> {{element.Creditos}} </td>		
-							<td> {{element.Fecha}} </td>		
-							<td> {{element.Visto}} </td>		
+							<td> {{element.Cod_asignatura.Cod_asignatura}} </td>
+							<td> {{element.Cod_asignatura.Creditos}} </td>		
+							<td> {{element.Cod_asignatura.Nombre_asig}} </td>
+							<td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>		
 							<td> 
-								<a target="_blank" href="{{element.Programa}}"> Link </a>
+								<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
 							</td>	
+							<td> {{element.Horario}} </td>
 							<td>		
-							<a href="./edit_{{element.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
-							<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+							<a href="./edit_{{element.Cod_asignatura.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+							<a href="./delete_{{element.Cod_asignatura.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
 							</td>
 	                    {% else %}
 	                    	<td> {{element}} </td>
