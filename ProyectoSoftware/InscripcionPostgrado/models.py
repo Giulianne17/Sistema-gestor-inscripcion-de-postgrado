@@ -66,7 +66,7 @@ class Asignatura(models.Model):
 	Visto = models.BooleanField(default=False)
 	Programa = models.URLField()
 	def getallfields(self):
-		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos,self.Fecha,self.Visto]
+		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos,self.Fecha,self.Visto,self.Programa]
 	def __getallfieldNames__():
 		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos", "Fecha", "Visto", "Programa"]
 	def __gettablename__():
