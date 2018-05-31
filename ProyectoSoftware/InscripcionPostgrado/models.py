@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
-# Create your models here.
+# Tabla de los decanatos.
 class Decanato(models.Model):
 	Nombre_decanato = models.CharField(primary_key=True, max_length=30,
 						validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
@@ -21,6 +21,7 @@ class Decanato(models.Model):
 				Nombre_decanato = parameters["Nombre_decanato"]
 			)
 
+# Tabla de las coordinaciones, tiene el codigo y el nombre.
 class Coordinacion(models.Model):
 	Cod_coordinacion = models.CharField(primary_key=True, max_length=2,
 										validators=[RegexValidator(regex='[A-Z]{2}', message='Codigo incorrecto')])
@@ -39,6 +40,7 @@ class Coordinacion(models.Model):
 				Nombre_coordinacion = parameters["Nombre_coordinacion"]
 			)
 
+# Tabla de relacion de Coordinacion pertenece a Decanato.
 class Pertenece(models.Model):
 	class Meta:
 		unique_together=(('Nombre_decanato', 'Cod_coordinacion'))
@@ -56,6 +58,7 @@ class Pertenece(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
 
+# Tabla de Asignaturas que contiene el codigo, nombre, creditos, fecha de creacion, visto y el link del programa.
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6,
 					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}', message="Código inválido")])
@@ -84,6 +87,7 @@ class Asignatura(models.Model):
 	def __str__(self):
 		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig) + " " + str(self.Cod_coordinacion) + " " + str(self.Creditos)
 
+# Tabla de estudiantes, tiene carnet, apellidos y nombres.
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8, 
 			validators=[RegexValidator(regex='[0-9]{2}\-[0-9]{5}', message='Carnet incorrecto')])
@@ -102,6 +106,7 @@ class Estudiante(models.Model):
 				Nombres = parameters["Nombres"]
 			)
 
+# Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
 	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
 	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Apellido incorrecto')])
@@ -121,16 +126,19 @@ class Profesor(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
 
+# Funcion que indica los campos permitidos en el nombre del periodo.
 def periodo_trimestre_restr(periode):
 	if not (periode.lower()=='ene-mar' or periode.lower()=='abr-jul' or periode.lower()=='sep-dic'):
 		raise ValidationError(_('Trimestre invalido'))
 	return periode
 
+# Funcion que indica los campos permitidos en el año del periodo.
 def anio_trimestre_restr(year):
 	if not (1970 <= year <= (datetime.date.today().year)+1):
 		raise ValidationError(_('Trimestre invalido'))
 	return year
 
+# Tabla de los trimestre, cuya clave es (periodo, anio)
 class Trimestre(models.Model):
 	class Meta:
 		unique_together = (('Periodo', 'Anio'))
@@ -148,6 +156,7 @@ class Trimestre(models.Model):
 				Anio = parameters["Anio"]
 			)
 
+# Tabla de relacion de cursa, Estudiante cursa asignatura en trimestre.
 class Cursa(models.Model):
 	class Meta:
 		unique_together=(('Carnet', 'Cod_asignatura', 'Periodo', 'Anio'))
@@ -169,6 +178,7 @@ class Cursa(models.Model):
 				Anio = parameters["Anio"]
 			)
 
+# Funcion que verifica si el formato de la hora es valido.
 def hora_se_ofrece_restr(hora):
 	# if not (len(hora)>3):
 	# 	raise ValidationError(_('Horario invalido'))
@@ -178,6 +188,7 @@ def hora_se_ofrece_restr(hora):
 		raise ValidationError(_('Horario invalido'))
 	return hora
 
+# Tabla de relacion se_ofrece, Coordinacion ofrece asignatura en trimestre con profesor.  
 class Se_Ofrece(models.Model):
 	class Meta:
 		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio','Cod_coordinacion'))
@@ -203,7 +214,7 @@ class Se_Ofrece(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
 
-
+# Tabla de Medio Pago
 class MedioPago(models.Model):
 	Postiza = models.AutoField(primary_key=True)
 	def getallfields(self):
@@ -217,6 +228,7 @@ class MedioPago(models.Model):
 				Postiza=parameters["Postiza"]
 			)
 
+# Tabla relacion de Paga_con, Estudiante paga con medio de pago la inscripcion del trimestre
 class Paga_Con(models.Model):
 	class Meta:
 		unique_together = (('Carnet', 'Postiza', 'Periodo', 'Anio'))
@@ -240,11 +252,13 @@ class Paga_Con(models.Model):
 				Anio = parameters["Anio"]
 			)
 
+# Funcion que indica los campos permitidos en el tipo de tarjeta de debito.
 def tipo_debito_restr(type):
 	if not (type.lower()=="ahorro" or type.lower()=="corriente"):
 		raise ValidationError(_('Tipo de cuenta invalido'))
 	return type
 
+# Tabla de Tarjeta de debito
 class Debito(models.Model):
 	Nro_Cuenta = models.CharField(primary_key=True, max_length = 20,validators = [RegexValidator(regex='[0-9]{20}', message='Nro cuenta incorrecto')])
 	Nro_Tarjeta = models.CharField(max_length = 18,validators=[RegexValidator(regex='[0-9]{18}', message='Nro tarjeta incorrecto')])
@@ -266,6 +280,7 @@ class Debito(models.Model):
 				Postiza = parameters["Postiza"]
 			)
 
+# Tabla de tarjeta de credito.
 class Credito(models.Model):
 	Nro_Tarjeta = models.CharField(primary_key=True,max_length = 18,validators=[RegexValidator(regex='[0-9]{18}', message='Nro tarjeta incorrecto')])
 	Fecha_Vence = models.DateField() 
@@ -285,6 +300,7 @@ class Credito(models.Model):
 				Postiza = parameters["Postiza"]
 			)
 
+# Tabla de las tranferencias.
 class Transferencia(models.Model):
 	Nro_Referencia = models.CharField(primary_key=True,max_length = 20, validators=[RegexValidator(regex='[0-9]{20}', message='Nro Referencia incorrecto')])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
@@ -300,6 +316,7 @@ class Transferencia(models.Model):
 				Postiza = parameters["Postiza"]
 			)
 
+#Tabla de los depositos.
 class Deposito(models.Model):
 	Referencia = models.CharField(primary_key=True, max_length = 20, validators=[RegexValidator(regex='[0-9]{20}', message='Nro Referencia incorrecto')])
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
