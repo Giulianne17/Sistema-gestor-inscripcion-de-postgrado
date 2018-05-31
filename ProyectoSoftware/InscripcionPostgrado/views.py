@@ -154,8 +154,11 @@ def __renderViewPOST__(request,initialpath,auxpath):
 	except:
 		print("No se pudo modificar la BD")
 		form = __returnForm__(name,request)
-		if form != None:
+		if "index" in request.path or "coordinacion" in request.path or "/"==request.path:
+			context = __buildContext__("coordinacion",True)
+		else:
 			context = __buildContext__(name,True)
+		if form != None:
 			context['form'] = form
 		return render(request, 'crud/index.html', context)
 
@@ -168,7 +171,10 @@ def __getTableName__(request):
 	if "coordinacion_" in request.path:
 		return request.path.split("/")[1].split("_")[1]
 	else:
-		return request.path.split("/")[1]
+		if "favicon" in request.path or "/"==request.path or "index" in request.path:
+			return "coordinacion"
+		else:
+			return request.path.split("/")[1]
 
 # Funcion que dado la ruta actual retorna la ruta del template
 # que debe renderizarse.
