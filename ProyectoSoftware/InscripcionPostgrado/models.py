@@ -61,7 +61,7 @@ class Asignatura(models.Model):
 					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}', message="Código inválido")])
 	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message="Nombre inválido")])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
-	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos.")])
+	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos."),MinValueValidator(1,message="Número de creditos inválidos.")])
 	Fecha = models.DateField(auto_now_add=True) 
 	Visto = models.BooleanField(default=False)
 	Programa = models.URLField()
