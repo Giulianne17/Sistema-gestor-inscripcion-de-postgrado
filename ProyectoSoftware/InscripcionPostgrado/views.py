@@ -46,6 +46,7 @@ def coordinacion(request):
 		except:
 			print("No se pudo modificar la BD")
 			form = AsignaturaForm(request.POST)
+			form.fields['Cod_coordinacion'].widget = forms.HiddenInput()
 			context = __buildContextAsignatura__(name)
 			context['form'] = form
 			return render(request, 'crud/coordinacion.html', context)
@@ -83,6 +84,8 @@ def editAsignatura(request):
 		context = __buildContextAsignatura__(name)
 		context['editAsig'] = True
 		form = AsignaturaForm(instance = element)
+		form.fields['Cod_coordinacion'].widget = forms.HiddenInput()
+		form.Cod_coordinacion = name
 		context['form'] = form
 		return render(request, 'crud/coordinacion.html', context)
 
@@ -122,6 +125,18 @@ def searchAsignatura(request):
 		else:
 			context['searchAsig'] = True
 			return render(request, 'crud/coordinacion.html', context)
+	if request.method == "POST":
+		try:
+			name = __getTableName__(request)
+			__modififyDB__(name, __getParameters__(name,request),request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			form = AsignaturaForm(request.POST)
+			form.fields['Cod_coordinacion'].widget = forms.HiddenInput()
+			context = __buildContextAsignatura__(name)
+			context['form'] = form
+			return render(request, 'crud/coordinacion.html', context)
 	context = __returnContextWithSearchTable__(request.path,context)
 	context['searchBool'] = True
 	context['backPath'] = request.path.split("/search_")[0]
@@ -151,6 +166,18 @@ def __returnContextWithSearchTable__(currentpath,context):
 #		Se ha llegado por una ruta como "/orderby_attr". Filtra la tabla completa
 #		de la coordinacion con estos datos y se le pasa al template.
 def orderbyAsignatura(request):
+	if request.method == "POST":
+		try:
+			name = __getTableName__(request)
+			__modififyDB__(name, __getParameters__(name,request),request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			form = AsignaturaForm(request.POST)
+			form.fields['Cod_coordinacion'].widget = forms.HiddenInput()
+			context = __buildContextAsignatura__(name)
+			context['form'] = form
+			return render(request, 'crud/coordinacion.html', context)
 	CodCoordinacion = __getTableName__(request)
 	context = __buildContextAsignatura__(CodCoordinacion)
 	[path,orderparam] = request.path.split("/orderby_")
@@ -173,12 +200,13 @@ def __renderViewGET__(request):
 		else:
 			name = __getTableName__(request)
 			context = __getContext__(request,name,True)
-			context["form"] = __returnForm__(name,request)
+			form = __returnForm__(name,request)
+			context["form"] = form
 			return render(request, newpath, context)
 	else:
 		name="coordinacion"
 		context = __getContext__(request,name,True)
-		context["form"] = __returnForm__(name,request)
+		context['form'] = __returnForm__(name,request)
 		return render(request, newpath, context)
 
 # Funcion que renderiza un template de un POST request.
@@ -281,7 +309,9 @@ def __buildContextAsignatura__(CodCoordinacion):
 	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
 	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
 	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion
-	form=AsignaturaForm()
+	form = AsignaturaForm(initial={'Cod_coordinacion': CodCoordinacion})
+	form.fields['Cod_coordinacion'].widget = forms.HiddenInput()
+	form.Cod_coordinacion = CodCoordinacion
 	context = __contextTemplate__("asignaturas de " + nameofcoordinacion,column_list,table,False,form)
 	return context
 
@@ -346,8 +376,11 @@ def __returnForm__(name,request):
 		return PerteneceForm(request.POST)
 	elif "coordinacion_" in request.path:
 		if not request.POST:
-			return AsignaturaForm()
-		return AsignaturaForm(request.POST)
+			form = AsignaturaForm(initial={'Cod_coordinacion': name})
+			form.fields['Cod_coordinacion'].widget = forms.HiddenInput()
+			return form
+		form = AsignaturaForm(request.POST)
+		return form
 	elif "se_ofrece" in request.path:
 		if not request.POST:
 			return Se_OfreceForm()
