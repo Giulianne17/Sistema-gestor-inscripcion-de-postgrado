@@ -65,7 +65,7 @@ class Asignatura(models.Model):
 	Fecha = models.DateField(auto_now_add=True) 
 	Visto = models.BooleanField(default=False)
 	def getallfields(self):
-		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos,self.Visto]
+		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos,self.Fecha,self.Visto]
 	def __getallfieldNames__():
 		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos", "Fecha", "Visto"]
 	def __gettablename__():

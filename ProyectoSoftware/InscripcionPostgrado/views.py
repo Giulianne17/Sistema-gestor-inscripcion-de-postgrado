@@ -203,7 +203,7 @@ def __buildContext__(name,ismodel):
 # coordinacion.
 def __buildContextAsignatura__(CodCoordinacion):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
-	column_list = ["Cod_asignatura","Nombre_asig", "Creditos"]
+	column_list = ["Codigo","Nombre", "Creditos","Fecha","Visto","Operaciones"]
 	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
 	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
 	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion

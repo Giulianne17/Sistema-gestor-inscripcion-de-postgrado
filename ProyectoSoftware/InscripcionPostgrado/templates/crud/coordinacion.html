@@ -307,6 +307,8 @@ $(document).ready(function(){
 							<td> {{element.Cod_asignatura}} </td>
 							<td> {{element.Nombre_asig}} </td>
 							<td> {{element.Creditos}} </td>		
+							<td> {{element.Fecha}} </td>		
+							<td> {{element.Visto}} </td>		
 							<td>		
 							<a href="./edit_{{element.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
 							<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
@@ -390,9 +392,11 @@ $(document).ready(function(){
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">					
-						<p>Seleccione un atributo</p>
-						<input checked="checked" name="attr" type="radio" value="Nombre_asig" /> Nombre
-						<input name="attr" type="radio" value="Cod_asig" /> Codigo
+						<p>Seleccione un atributo para la busqueda:</p>
+						<tr>
+						<td><input checked="checked" name="attr" type="radio" value="Nombre_asig" /> Nombre</td>
+						<td><input name="attr" type="radio" value="Cod_asig" /> Codigo</td>
+						</tr>	
 						<p> </p>
 						<p>Criterio de Busqueda: <input type="text" class="form-control" name="criterio" required></p>
 					</div>
