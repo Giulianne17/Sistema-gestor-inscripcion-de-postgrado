@@ -64,10 +64,11 @@ class Asignatura(models.Model):
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos.")])
 	Fecha = models.DateField(auto_now_add=True) 
 	Visto = models.BooleanField(default=False)
+	Programa = models.URLField()
 	def getallfields(self):
 		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos,self.Fecha,self.Visto]
 	def __getallfieldNames__():
-		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos", "Fecha", "Visto"]
+		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos", "Fecha", "Visto", "Programa"]
 	def __gettablename__():
 		return "Asignatura"
 	def __createElement__(parameters):
@@ -77,7 +78,8 @@ class Asignatura(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"],
 				Creditos = parameters["Creditos"],
 				Fecha = parameters["Fecha"],
-				Visto = parameters["Visto"]
+				Visto = parameters["Visto"],
+				Programa = parameters["Programa"]
 			)
 	def __str__(self):
 		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig) + " " + str(self.Cod_coordinacion) + " " + str(self.Creditos)
