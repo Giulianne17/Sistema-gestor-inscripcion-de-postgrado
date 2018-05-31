@@ -6,7 +6,7 @@ from InscripcionPostgrado.models import *
 class AsignaturaForm(ModelForm):
     class Meta:
         model = Asignatura
-        fields = ["Cod_asignatura", "Nombre_asig", "Cod_coordinacion", "Creditos", "Visto"]
+        fields = ["Cod_asignatura", "Nombre_asig", "Cod_coordinacion", "Creditos", "Visto", "Programa"]
         error_messages = {
             'Cod_asignatura': {
                 'unique': ("Error la asignatura ya existe"),
