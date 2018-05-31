@@ -49,6 +49,39 @@ class CoordinacionTestCase(TestCase):
         form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
 
+# Caso de prueba para verificar si se añaden instancias en las que el codigo de 
+# la coordinacion son dos letras minusculas
+
+    def test_coordinacion_minusculas(self):
+        form_data = {
+            'Cod_coordinacion': "aa", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias en las que el codigo de 
+# la coordinacion es una letra minuscula
+
+    def test_coordinacion_una_minuscula(self):
+        form_data = {
+            'Cod_coordinacion': "a", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias en las que el codigo de 
+# la coordinacion son tres letras minusculas
+
+    def test_coordinacion_max_minusculas(self):
+        form_data = {
+            'Cod_coordinacion': "aaa", 
+            'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
 # Caso de prueba para verificar si se añaden instancias que poseen longitud menor 
 # a 2 para el codigo de la coordinacion.
 
@@ -67,6 +100,61 @@ class CoordinacionTestCase(TestCase):
         form_data = {
             'Cod_coordinacion': "4", 
             'Nombre_coordinacion': "Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen numeros en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_num_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arquitectura333"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen numeros en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_num_principio_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "333Arquitectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen numeros en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_num_medio_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "AA", 
+            'Nombre_coordinacion': "Arqui33tectura"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertFalse(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen espacios en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_espacio_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "CI", 
+            'Nombre_coordinacion': "Coordinacion de Computacion"
+        }       
+        form = CoordinacionForm(data=form_data) 
+        self.assertTrue(form.is_valid())
+
+# Caso de prueba para verificar si se añaden instancias que poseen strings vacios en
+# el nombre de la coordinacion.
+
+    def test_coordinacion_vacio_nombre(self):
+        form_data = {
+            'Cod_coordinacion': "CI", 
+            'Nombre_coordinacion': ""
         }       
         form = CoordinacionForm(data=form_data) 
         self.assertFalse(form.is_valid())
@@ -248,6 +336,92 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
 
+    # Verificar que no se añade asignatura con cantidad de letras menor a 2 en el codigo
+    # y mas de 4 digitos
+
+    def test_asignatura_una_letra(self):
+        form_data = {
+            'Cod_asignatura': 'E00005',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())    
+
+    # Verificar que no se añade asignatura con cantidad de letras mayor a 2 en el codigo
+    # y menos de 4 digitos
+
+    def test_asignatura_tres_letra(self):
+        form_data = {
+            'Cod_asignatura': 'EEE005',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que no se añade asignatura con letras de codigo minusculas 
+
+    def test_asignatura_letra_minuscula(self):
+        form_data = {
+            'Cod_asignatura': 'ee0005',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade asignatura cuyo nombre es un string vacio
+
+    def test_asignatura_nombre_vacio(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': '',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade asignatura cuyo nombre tiene numeros
+
+    def test_asignatura_num_nombre(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': 'Estudios generales33',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade asignatura cuyo nombre tiene numeros
+
+    def test_asignatura_num_principio_nombre(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': '33Estudios generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade asignatura cuyo nombre tiene numeros
+
+    def test_asignatura_num_medio_nombre(self):
+        form_data = {
+            'Cod_asignatura': 'EE1020',
+            'Nombre_asig': 'Estudios33 generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '4'
+        }
+        form = AsignaturaForm(data = form_data)
+        self.assertFalse(form.is_valid())
+
     # Verificar que se añade asignatura cuyo nombre tiene una longitud menor a 30
 
     def test_asignatura_minnombre(self):
@@ -303,3 +477,39 @@ class AsignaturaTestCase(TestCase):
         form.save()
         asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios Generales')
         self.assertEqual(asig1.Cod_asignatura, 'EE1050')
+
+    # Verificar que se añade una asignatura con la cantidad invalida para los creditos
+
+    def test_asignatura_cero_cred(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '0'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade una asignatura con la cantidad invalida para los creditos
+
+    def test_asignatura_cred_negativos(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '-3'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade una asignatura con la cantidad invalida para los creditos
+
+    def test_asignatura_cred_letra(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '2e'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())

@@ -1,6 +1,7 @@
 import datetime
 from django.db import models
 from django.core.validators import MaxValueValidator
+from django.core.validators import MinValueValidator
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
@@ -23,7 +24,7 @@ class Decanato(models.Model):
 class Coordinacion(models.Model):
 	Cod_coordinacion = models.CharField(primary_key=True, max_length=2,
 										validators=[RegexValidator(regex='[A-Z]{2}', message='Codigo incorrecto')])
-	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
+	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message='Nombre incorrecto')])
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __str__(self):
@@ -58,7 +59,7 @@ class Pertenece(models.Model):
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=6,
 					validators=[RegexValidator(regex='[A-Z]{2}[0-9]{4}', message="Código inválido")])
-	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message="Nombre inválido")])
+	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message="Nombre inválido")])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos.")])
 	def getallfields(self):
