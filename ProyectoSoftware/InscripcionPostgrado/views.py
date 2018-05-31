@@ -19,10 +19,10 @@ def __redirectCenter__(request):
 
 # Vista del index.
 # Aqui se redirigen todos los request que no vayan a una
-# coordinacion
+# coordinacion particular.
 def index(request):
 	if request.method=="POST":
-		return __renderViewPOST__(request,'/index','/')
+		return __renderViewPOST__(request,'/superuser','/')
 	else:
 		return __renderViewGET__(request)
 
@@ -59,6 +59,16 @@ def deleteAsignatura(request):
 	table.objects.filter(Cod_asignatura = codasig).delete()
 	return  HttpResponseRedirect(path)
 
+#Vista para editar asignaturas
+# Aqui llegan los request para editar una asignatura.
+# *Si es un POST:
+# 		Ya el usuario ha enviado datos a traves del modal, se
+# 		redirige a la funcion para el update.
+# *Si es un GET:
+#		El usuario ha hecho click en el edit de un elemento,
+#		se debe renderizar el template pasando como contexto
+#		el formulario para el elemento y un booleano para indicar
+#		que se debe abrir el modal directamente.
 def editAsignatura(request):
 	name = __getTableName__(request)
 	cod = request.path.split('/edit_')[1]
@@ -74,7 +84,7 @@ def editAsignatura(request):
 		context['form'] = form
 		return render(request, 'crud/coordinacion.html', context)
 
-
+# Vista para actualizar una asignatura.
 def updateAsignatura(request,oldElement):
 	[path,codasig] = request.path.split("/edit_")
 	form = AsignaturaForm(request.POST)
@@ -87,6 +97,18 @@ def updateAsignatura(request,oldElement):
 		print("No se pudo modificar la BD")
 		return HttpResponseRedirect(path)
 
+# Vista para buscar una asignatura dados unos parametros en el request
+# *Si SearchInd esta en el path:
+#		Esto indica que se esta interactuando con el modal de busqueda.
+#		->Si es POST:
+#			El modal de busqueda ha sido rellenado y debe redirigirse a
+# 			la ruta de busqueda correspondiente.
+# 		->Si es GET:
+# 			Se quiere abrir el modal. Se renderiza el template con un booleano
+# 			para indicar que debe abrise.		
+# *En otros casos:
+#		Se ha llegado por una ruta como "/search_attr=value". Filtra la tabla
+#		completa de la coordinacion con estos datos y se le pasa al template.
 def searchAsignatura(request):
 	CodCoordinacion = __getTableName__(request)
 	context = __buildContextAsignatura__(CodCoordinacion)
@@ -112,10 +134,13 @@ def searchAsignatura(request):
 def __renderViewGET__(request):
 	newpath = __decideNewPath__(request.path)
 	if request.path!="" and request.path!="/" and "index" not in request.path and "favicon" not in request.path:
-		name = __getTableName__(request)
-		return render(request, newpath, __getContext__(request,name,True))
+		if "/superuser" in request.path:
+			return render(request, newpath, __getContext__(request,"todas las Tablas",False))
+		else:
+			name = __getTableName__(request)
+			return render(request, newpath, __getContext__(request,name,True))
 	else:
-		return render(request, newpath, __getContext__(request,"todas las Tablas",False))
+		return render(request, newpath, __getContext__(request,"coordinacion",True))
 
 # Funcion que renderiza un template de un POST request.
 # Toma dos path que se utilizan según el caso
@@ -128,7 +153,11 @@ def __renderViewPOST__(request,initialpath,auxpath):
 		return  HttpResponseRedirect(auxpath+name)
 	except:
 		print("No se pudo modificar la BD")
-		return  HttpResponseRedirect(initialpath)
+		form = __returnForm__(name,request)
+		if form != None:
+			context = __buildContext__(name,True)
+			context['form'] = form
+		return render(request, 'crud/index.html', context)
 
 # Funcion que consigue un string dependiendo del caso:
 # * Si se esta en una coordinacion:
@@ -240,32 +269,8 @@ def __getParameters__(name,request):
 # Funcion que dependiendo de la tabla que se esta viendo
 # crea los formularios respectivos para modificarla.
 def __modififyDB__(name, parameters,request):
-	if "coordinacion" in name:
-		form=CoordinacionForm(request.POST)
-		if form.is_valid():
-			form.save()
-		else:
-			raise
-	elif "asignatura" in name:
-		form = AsignaturaForm(request.POST)
-		if form.is_valid():
-			form.save()
-		else:
-			raise
-	elif "profesor" in name:
-		form = ProfesorForm(request.POST)
-		if form.is_valid():
-			form.save()
-		else:
-			raise
-	elif "pertenece" in name:
-		form = PerteneceForm(request.POST)
-		if form.is_valid():
-			form.save()
-		else:
-			raise
-	elif "coordinacion_" in request.path:
-		form = AsignaturaForm(request.POST)
+	form = __returnForm__(name,request)
+	if form != None :
 		if form.is_valid():
 			form.save()
 		else:
@@ -274,3 +279,19 @@ def __modififyDB__(name, parameters,request):
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)
 		element.save()
+
+# Funcion que dependiendo de la tabla retorna el fomulario
+# correspondiente, o None si no es de los casos dados.
+def __returnForm__(name,request):
+	if "coordinacion" in name:
+		return CoordinacionForm(request.POST)
+	elif "asignatura" in name:
+		return AsignaturaForm(request.POST)
+	elif "profesor" in name:
+		return ProfesorForm(request.POST)
+	elif "pertenece" in name:
+		return PerteneceForm(request.POST)
+	elif "coordinacion_" in request.path:
+		return AsignaturaForm(request.POST)
+	else:
+		return None
