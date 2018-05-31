@@ -225,7 +225,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         form.save()
@@ -239,7 +240,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE-020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         self.assertFalse(form.is_valid())
@@ -251,7 +253,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': 'aa'
+            'Creditos': 'aa',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         self.assertFalse(form.is_valid())
@@ -265,7 +268,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'MA1111',
             'Nombre_asig': 'Matematicas I',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         form.save()
@@ -279,7 +283,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         form.save()
@@ -295,7 +300,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '50'
+            'Creditos': '50',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -307,7 +313,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios GeneralesEstudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -319,7 +326,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE00555',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -331,7 +339,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -344,7 +353,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'E00005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())    
@@ -357,7 +367,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EEE005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -369,7 +380,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'ee0005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -381,7 +393,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': '',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         self.assertFalse(form.is_valid())
@@ -393,7 +406,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': 'Estudios generales33',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         self.assertFalse(form.is_valid())
@@ -405,7 +419,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': '33Estudios generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         self.assertFalse(form.is_valid())
@@ -417,7 +432,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': 'Estudios33 generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         self.assertFalse(form.is_valid())
@@ -429,7 +445,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '4'
+            'Creditos': '4',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data = form_data)
         form.save()
@@ -443,7 +460,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE0050',
             'Nombre_asig': 'Estudios GeneralesEstudios Gen',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         form.save()
@@ -457,7 +475,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '3'
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         form.save()
@@ -471,7 +490,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '30'
+            'Creditos': '30',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         form.save()
@@ -485,7 +505,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '0'
+            'Creditos': '0',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -497,7 +518,8 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '-3'
+            'Creditos': '-3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -509,7 +531,50 @@ class AsignaturaTestCase(TestCase):
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
-            'Creditos': '2e'
+            'Creditos': '2e',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade una asignatura con visto en True
+
+    def test_asignatura_visto_true(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '2',
+            'Visto': True,
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
+        }
+        form = AsignaturaForm(data=form_data)
+        form.save()
+        asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios Generales')
+        self.assertTrue(asig1.Visto)
+
+    # Verificar que se añade una asignatura con programa vacio
+
+    def test_asignatura_programa_vacio(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '2',
+            'Programa': ''
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade una asignatura con programa malo
+
+    def test_asignatura_programa_malo(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '2',
+            'Programa': 'hdashd'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
