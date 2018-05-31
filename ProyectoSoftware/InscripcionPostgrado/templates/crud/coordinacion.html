@@ -263,7 +263,7 @@ $(document).ready(function(){
 						{% if not show_all_tables %}	
 							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar asignatura</span></a>
 							<a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a> 
-							{% if searchBool %}
+							{% if searchBool or orderBool %}
 							<a href="{{backPath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% else %}
 							<a href="/coordinacion" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
@@ -309,7 +309,9 @@ $(document).ready(function(){
 							<td> {{element.Creditos}} </td>		
 							<td> {{element.Fecha}} </td>		
 							<td> {{element.Visto}} </td>		
-							<td> {{element.Programa}} </td>	
+							<td> 
+								<a target="_blank" href="{{element.Programa}}"> Link </a>
+							</td>	
 							<td>		
 							<a href="./edit_{{element.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
 							<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
@@ -322,8 +324,41 @@ $(document).ready(function(){
 	                        </td>
 	                    {% endif %}
                     </tr> {% endfor %}
-                </tbody>
-            </table>
+				</tbody>
+				</table>
+				<div>
+				<table>
+				<tbody>
+					<tr>
+					<td> </td>
+					<td> 
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Nombre
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="{{ request.path }}/orderby_Nombre_asig=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Nombre_asig=desc">Descendente</a></li>
+							</ul> 
+						</div>	
+					</td>
+					<td><span></span></td>	
+					<td> 
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Fecha
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								<li><a href="./orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="./orderby_Fecha=desc">Descendente</a></li>
+							</ul>
+						</div>	
+					</td>		
+					<td> </td>		
+					<td> </td>	
+					<td><span></span></td>
+					</tr>
+				</tbody>
+			</table>
+			</div>
 			<div class="clearfix">
                 <!-- <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
                 <ul class="pagination">

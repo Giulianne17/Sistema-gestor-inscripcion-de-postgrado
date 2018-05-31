@@ -34,6 +34,8 @@ def coordinacion(request):
 		return deleteAsignatura(request)
 	if "edit" in request.path:
 		return editAsignatura(request)
+	if "orderby" in request.path:
+		return orderbyAsignatura(request)
 	if "search" in request.path:
 		return searchAsignatura(request)
 	if request.method=="POST":
@@ -120,13 +122,45 @@ def searchAsignatura(request):
 		else:
 			context['searchAsig'] = True
 			return render(request, 'crud/coordinacion.html', context)
-	[path,searchparam] = request.path.split("/search_")
+	context = __returnContextWithSearchTable__(request.path,context)
+	context['searchBool'] = True
+	context['backPath'] = request.path.split("/search_")[0]
+	return render(request, 'crud/coordinacion.html', context)
+
+# Funcion que retorna la tabla dado un criterio de busqueda
+def __returnContextWithSearchTable__(currentpath,context):
+	[path,searchparam] = currentpath.split("/search_")
+	searchparam = searchparam.split("/")[0]
 	[attrb,givenSearch] = searchparam.split("=")
 	if "Cod_asig" in attrb:
 		context['table'] = context['table'].filter(Cod_asignatura__icontains=givenSearch)
 	elif "Nombre_asig" in attrb:
 		context['table'] = context['table'].filter(Nombre_asig__icontains=givenSearch)
-	context['searchBool'] = True
+	return context
+
+# Vista para ordenar las asignaturas segun corresponda.
+# *Si orderbyInd esta en el path:
+#		Esto indica que se esta interactuando con el modal de orderby.
+#		->Si es POST:
+#			El modal de orderby ha sido rellenado y debe redirigirse a
+# 			la ruta de orderby correspondiente.
+# 		->Si es GET:
+# 			Se quiere abrir el modal. Se renderiza el template con un booleano
+# 			para indicar que debe abrise.		
+# *En otros casos:
+#		Se ha llegado por una ruta como "/orderby_attr". Filtra la tabla completa
+#		de la coordinacion con estos datos y se le pasa al template.
+def orderbyAsignatura(request):
+	CodCoordinacion = __getTableName__(request)
+	context = __buildContextAsignatura__(CodCoordinacion)
+	[path,orderparam] = request.path.split("/orderby_")
+	[attr,style] = orderparam.split("=")
+	if "search_" in request.path:
+		context = __returnContextWithSearchTable__(request.path,context)
+	if "desc" in style:
+		context['table'] = context['table'].order_by("-"+attr)
+	elif "asc" in style:
+		context['table'] = context['table'].order_by(attr)
 	context['backPath'] = path
 	return render(request, 'crud/coordinacion.html', context)
 
