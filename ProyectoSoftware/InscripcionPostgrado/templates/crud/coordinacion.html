@@ -263,10 +263,10 @@ $(document).ready(function(){
 						{% if not show_all_tables %}	
 							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar asignatura</span></a>
 							<a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a> 
-							{% if searchBool or orderBool %}
+							{% if searchBool or orderBool or "orderby" in request.path %}
 							<a href="{{backPath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% else %}
-							<a href="/coordinacion" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
+							<a href="/index" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% endif %}
 						{% endif %}
 					</div>
@@ -303,26 +303,23 @@ $(document).ready(function(){
                 <tbody>
                     {% for element in table %}
                     <tr>
-                    	{% if not show_all_tables %}
-							<td> {{element.Cod_asignatura.Cod_asignatura}} </td>
-							<td> {{element.Cod_asignatura.Creditos}} </td>		
-							<td> {{element.Cod_asignatura.Nombre_asig}} </td>
-							<td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>		
-							<td> 
-								<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
-							</td>	
-							<td> {{element.Horario}} </td>
-							<td>		
-							<a href="./edit_{{element.Cod_asignatura.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
-							<a href="./delete_{{element.Cod_asignatura.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-							</td>
-	                    {% else %}
-	                    	<td> {{element}} </td>
-	                    	<td>
-	                            <a href="/{{element}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
-	                            <a href="/index" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-	                        </td>
-	                    {% endif %}
+						<!-- Algunos elementos a continuacion estan comentados para descomentar
+						E incorporar cuando se de la siguiente epica -->
+						<!-- <td> {{element.Cod_asignatura.Cod_asignatura}} </td>
+						<td> {{element.Cod_asignatura.Creditos}} </td>		
+						<td> {{element.Cod_asignatura.Nombre_asig}} </td> -->
+						<td> {{element.Cod_asignatura}} </td>
+						<td> {{element.Creditos}} </td>		
+						<td> {{element.Nombre_asig}} </td>
+						<!-- <td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>		 -->
+						<td> 
+							<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
+						</td>	
+						<!-- <td> {{element.Horario}} </td> -->
+						<td>		
+						<a href="./edit_{{element.Cod_asignatura.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+						<a href="./delete_{{element.Cod_asignatura.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						</td>
                     </tr> {% endfor %}
 				</tbody>
 				</table>
@@ -336,8 +333,13 @@ $(document).ready(function(){
 							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Nombre
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
+								{% if "orderby" in request.path %}
+								<li><a href="{{ backPath }}/orderby_Nombre_asig=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Nombre_asig=desc">Descendente</a></li>
+								{% else %}
 								<li><a href="{{ request.path }}/orderby_Nombre_asig=asc">Ascendente</a></li>
 								<li><a href="{{ request.path }}/orderby_Nombre_asig=desc">Descendente</a></li>
+								{% endif%}
 							</ul> 
 						</div>	
 					</td>
@@ -347,8 +349,13 @@ $(document).ready(function(){
 							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Fecha
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
-								<li><a href="./orderby_Fecha=asc">Ascendente</a></li>
-								<li><a href="./orderby_Fecha=desc">Descendente</a></li>
+								{% if "orderby" in request.path %}
+								<li><a href="{{ backPath }}/orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Fecha=desc">Descendente</a></li>
+								{% else %}
+								<li><a href="{{ request.path }}/orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Fecha=desc">Descendente</a></li>
+								{% endif%}
 							</ul>
 						</div>	
 					</td>		

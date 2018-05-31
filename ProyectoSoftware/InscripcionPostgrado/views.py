@@ -179,7 +179,7 @@ def __renderViewGET__(request):
 		name="coordinacion"
 		context = __getContext__(request,name,True)
 		context["form"] = __returnForm__(name,request)
-		return render(request, newpath, __getContext__(request,name,True))
+		return render(request, newpath, context)
 
 # Funcion que renderiza un template de un POST request.
 # Toma dos path que se utilizan según el caso
@@ -276,8 +276,8 @@ def __buildContext__(name,ismodel):
 # contexto para el template con solo las asignaturas de dicha
 # coordinacion.
 def __buildContextAsignatura__(CodCoordinacion):
-	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
-	column_list = ["Codigo", "U.C","Denominacion","Profesor","Programa","Horario","Operaciones"]
+	model = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
+	column_list = ["Codigo", "U.C","Denominacion","Programa","Operaciones"]
 	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
 	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
 	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion
