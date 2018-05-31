@@ -74,6 +74,8 @@ class Asignatura(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"],
 				Creditos = parameters["Creditos"]
 			)
+	def __str__(self):
+		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig) + " " + str(self.Cod_coordinacion) + " " + str(self.Creditos)
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8, 

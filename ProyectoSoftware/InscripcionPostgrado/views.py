@@ -62,9 +62,11 @@ def editAsignatura(request):
 	cod = request.path.split('/edit_')[1]
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
 	element = table.objects.get(Cod_asignatura = cod)
+	print(element)
 	if request.method=="POST":
+		copiaCod = element.Cod_asignatura
 		element.delete()
-		return updateAsignatura(request,element)
+		return updateAsignatura(request,element,copiaCod)
 	else:
 		context = __buildContextAsignatura__(name)
 		context['editAsig'] = True
@@ -73,13 +75,14 @@ def editAsignatura(request):
 		return render(request, 'crud/coordinacion.html', context)
 
 
-def updateAsignatura(request,oldElement):
+def updateAsignatura(request,oldElement,copiaCod):
 	[path,codasig] = request.path.split("/edit_")
 	form = AsignaturaForm(request.POST)
 	if form.is_valid():
 		form.save()
 		return HttpResponseRedirect(path)
 	else:
+		oldElement.Cod_asignatura = copiaCod
 		oldElement.save()
 		print("No se pudo modificar la BD")
 		return HttpResponseRedirect(path)
