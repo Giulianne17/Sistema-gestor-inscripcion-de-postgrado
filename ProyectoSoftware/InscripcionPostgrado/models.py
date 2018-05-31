@@ -62,10 +62,12 @@ class Asignatura(models.Model):
 	Nombre_asig = models.CharField(max_length=30, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message="Nombre inválido")])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos.")])
+	Fecha = models.DateField(auto_now_add=True) 
+	Visto = models.BooleanField(default=False)
 	def getallfields(self):
-		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos]
+		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos,self.Visto]
 	def __getallfieldNames__():
-		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos"]
+		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos", "Fecha", "Visto"]
 	def __gettablename__():
 		return "Asignatura"
 	def __createElement__(parameters):
@@ -73,7 +75,9 @@ class Asignatura(models.Model):
 				Cod_asignatura = parameters["Cod_asignatura"],
 				Nombre_asig = parameters["Nombre_asig"],
 				Cod_coordinacion = parameters["Cod_coordinacion"],
-				Creditos = parameters["Creditos"]
+				Creditos = parameters["Creditos"],
+				Fecha = parameters["Fecha"],
+				Visto = parameters["Visto"]
 			)
 
 class Estudiante(models.Model):
