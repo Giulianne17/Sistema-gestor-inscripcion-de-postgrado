@@ -34,6 +34,8 @@ def coordinacion(request):
 		return deleteAsignatura(request)
 	if "edit" in request.path:
 		return editAsignatura(request)
+	if "search" in request.path:
+		return searchAsignatura(request)
 	if request.method=="POST":
 		try:
 			name = __getTableName__(request)
@@ -80,9 +82,31 @@ def updateAsignatura(request,oldElement):
 		form.save()
 		return HttpResponseRedirect(path)
 	else:
+		oldElement.Cod_asignatura = codasig
 		oldElement.save()
 		print("No se pudo modificar la BD")
 		return HttpResponseRedirect(path)
+
+def searchAsignatura(request):
+	CodCoordinacion = __getTableName__(request)
+	context = __buildContextAsignatura__(CodCoordinacion)
+	if "/searchInd" in request.path:
+		if request.method == "POST":
+			attr = request.POST.get("attr")
+			criterio = request.POST.get("criterio")
+			return HttpResponseRedirect("/coordinacion_"+CodCoordinacion+"/search_"+attr+"="+criterio)
+		else:
+			context['searchAsig'] = True
+			return render(request, 'crud/coordinacion.html', context)
+	[path,searchparam] = request.path.split("/search_")
+	[attrb,givenSearch] = searchparam.split("=")
+	if "Cod_asig" in attrb:
+		context['table'] = context['table'].filter(Cod_asignatura__icontains=givenSearch)
+	elif "Nombre_asig" in attrb:
+		context['table'] = context['table'].filter(Nombre_asig__icontains=givenSearch)
+	context['searchBool'] = True
+	context['backPath'] = path
+	return render(request, 'crud/coordinacion.html', context)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
@@ -250,6 +274,3 @@ def __modififyDB__(name, parameters,request):
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)
 		element.save()
-
-
-		

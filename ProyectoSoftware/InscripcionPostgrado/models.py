@@ -79,6 +79,8 @@ class Asignatura(models.Model):
 				Fecha = parameters["Fecha"],
 				Visto = parameters["Visto"]
 			)
+	def __str__(self):
+		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig) + " " + str(self.Cod_coordinacion) + " " + str(self.Creditos)
 
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8, 
