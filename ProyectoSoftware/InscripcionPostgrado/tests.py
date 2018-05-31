@@ -553,16 +553,28 @@ class AsignaturaTestCase(TestCase):
         asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios Generales')
         self.assertTrue(asig1.Visto)
 
-    # Verificar que se añade una asignatura con visto en True
+    # Verificar que se añade una asignatura con programa vacio
 
-    def test_asignatura_visto_letra(self):
+    def test_asignatura_programa_vacio(self):
         form_data = {
             'Cod_asignatura': 'EE1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '2',
-            'Visto': 'aa',
-            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
+            'Programa': ''
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que se añade una asignatura con programa malo
+
+    def test_asignatura_programa_malo(self):
+        form_data = {
+            'Cod_asignatura': 'EE1050',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '2',
+            'Programa': 'hdashd'
         }
         form = AsignaturaForm(data=form_data)
         self.assertFalse(form.is_valid())
