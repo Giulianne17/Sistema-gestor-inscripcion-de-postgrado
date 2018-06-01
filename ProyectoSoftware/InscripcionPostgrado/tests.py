@@ -222,7 +222,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_crear(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -231,7 +231,7 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data = form_data)
         form.save()
         asig = Asignatura.objects.get(Nombre_asig = "Estudios generales")
-        self.assertEqual(asig.Cod_asignatura, 'EE1020')
+        self.assertEqual(asig.Cod_asignatura, 'EE-1020')
 
     # Verificar si no se añade una asignatura cuyo codigo tiene caracteres especiales
 
@@ -250,7 +250,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_crear_cred_letras(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
             'Creditos': 'aa',
@@ -265,7 +265,7 @@ class AsignaturaTestCase(TestCase):
     def test_asignatura_consulta(self):
 
         form_data = {
-            'Cod_asignatura': 'MA1111',
+            'Cod_asignatura': 'MA-1111',
             'Nombre_asig': 'Matematicas I',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -274,13 +274,13 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data = form_data)
         form.save()
         asig = Asignatura.objects.filter(Nombre_asig = "Matematicas I")
-        self.assertEqual(asig[0].Cod_asignatura, 'MA1111')
+        self.assertEqual(asig[0].Cod_asignatura, 'MA-1111')
 
     # Verificar que se elimina una asignatura
 
     def test_asignatura_eliminar(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -297,7 +297,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_maxcredit(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '50',
@@ -310,8 +310,8 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_maxnombre(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
-            'Nombre_asig': 'Estudios GeneralesEstudios Generales',
+            'Cod_asignatura': 'EE-1050',
+            'Nombre_asig': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
             'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
@@ -323,7 +323,33 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_maxcod(self):
         form_data = {
-            'Cod_asignatura': 'EE00555',
+            'Cod_asignatura': 'EE-00555',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que no se añade asignatura sin guion pero con largo maximo en el codigo
+
+    def test_asignatura_singuion_conmax_cod(self):
+        form_data = {
+            'Cod_asignatura': 'EE00055',
+            'Nombre_asig': 'Estudios Generales',
+            'Cod_coordinacion': 'EE',
+            'Creditos': '3',
+            'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
+        }
+        form = AsignaturaForm(data=form_data)
+        self.assertFalse(form.is_valid())
+
+    # Verificar que no se añade asignatura sin guion en el codigo
+
+    def test_asignatura_singuion_cod(self):
+        form_data = {
+            'Cod_asignatura': 'EE0055',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
@@ -336,7 +362,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_mincod(self):
         form_data = {
-            'Cod_asignatura': 'EE005',
+            'Cod_asignatura': 'EE-005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
@@ -350,7 +376,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_una_letra(self):
         form_data = {
-            'Cod_asignatura': 'E00005',
+            'Cod_asignatura': 'E-00005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
@@ -364,7 +390,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_tres_letra(self):
         form_data = {
-            'Cod_asignatura': 'EEE005',
+            'Cod_asignatura': 'EEE-005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
@@ -377,7 +403,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_letra_minuscula(self):
         form_data = {
-            'Cod_asignatura': 'ee0005',
+            'Cod_asignatura': 'ee-0005',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
@@ -390,7 +416,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_nombre_vacio(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': '',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -403,7 +429,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_num_nombre(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': 'Estudios generales33',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -416,7 +442,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_num_principio_nombre(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': '33Estudios generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -429,7 +455,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_num_medio_nombre(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': 'Estudios33 generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -442,7 +468,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_minnombre(self):
         form_data = {
-            'Cod_asignatura': 'EE1020',
+            'Cod_asignatura': 'EE-1020',
             'Nombre_asig': 'Estudios generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '4',
@@ -451,28 +477,28 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data = form_data)
         form.save()
         asig = Asignatura.objects.get(Nombre_asig = "Estudios generales")
-        self.assertEqual(asig.Cod_asignatura, 'EE1020')
+        self.assertEqual(asig.Cod_asignatura, 'EE-1020')
 
     # Verificar que se añade una asignatura con la longitud maxima para el nombre
 
     def test_asignatura_exactnombre(self):
         form_data = {
-            'Cod_asignatura': 'EE0050',
-            'Nombre_asig': 'Estudios GeneralesEstudios Gen',
+            'Cod_asignatura': 'EE-0050',
+            'Nombre_asig': 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
             'Programa': 'https://www.youtube.com/watch?v=C6MOKXm8x50'
         }
         form = AsignaturaForm(data=form_data)
         form.save()
-        asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios GeneralesEstudios Gen')
-        self.assertEqual(asig1.Cod_asignatura, 'EE0050')
+        asig1 = Asignatura.objects.get(Nombre_asig = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        self.assertEqual(asig1.Cod_asignatura, 'EE-0050')
 
     # Verificar que se añade una asignatura con la longitud maxima para el codigo
 
     def test_asignatura_exactcod(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '3',
@@ -481,13 +507,13 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data=form_data)
         form.save()
         asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios Generales')
-        self.assertEqual(asig1.Cod_asignatura, 'EE1050')
+        self.assertEqual(asig1.Cod_asignatura, 'EE-1050')
 
     # Verificar que se añade una asignatura con la cantidad maxima para los creditos
 
     def test_asignatura_exactcred(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '30',
@@ -496,13 +522,13 @@ class AsignaturaTestCase(TestCase):
         form = AsignaturaForm(data=form_data)
         form.save()
         asig1 = Asignatura.objects.get(Nombre_asig = 'Estudios Generales')
-        self.assertEqual(asig1.Cod_asignatura, 'EE1050')
+        self.assertEqual(asig1.Cod_asignatura, 'EE-1050')
 
     # Verificar que se añade una asignatura con la cantidad invalida para los creditos
 
     def test_asignatura_cero_cred(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '0',
@@ -515,7 +541,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_cred_negativos(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '-3',
@@ -528,7 +554,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_cred_letra(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '2e',
@@ -541,7 +567,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_visto_true(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '2',
@@ -557,7 +583,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_programa_vacio(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '2',
@@ -570,7 +596,7 @@ class AsignaturaTestCase(TestCase):
 
     def test_asignatura_programa_malo(self):
         form_data = {
-            'Cod_asignatura': 'EE1050',
+            'Cod_asignatura': 'EE-1050',
             'Nombre_asig': 'Estudios Generales',
             'Cod_coordinacion': 'EE',
             'Creditos': '2',
