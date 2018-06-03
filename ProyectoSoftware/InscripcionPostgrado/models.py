@@ -12,11 +12,11 @@ class Decanato(models.Model):
 						validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
 	def getallfields(self):
 		return [self.Nombre_decanato]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Nombre_decanato"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Decanato"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Decanato(
 				Nombre_decanato = parameters["Nombre_decanato"]
 			)
@@ -30,11 +30,11 @@ class Coordinacion(models.Model):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __str__(self):
 		return "%s" % (self.Nombre_coordinacion)
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Cod_coordinacion","Nombre_coordinacion"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Coordinacion"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Coordinacion(
 				Cod_coordinacion = parameters["Cod_coordinacion"],
 				Nombre_coordinacion = parameters["Nombre_coordinacion"]
@@ -48,11 +48,11 @@ class Pertenece(models.Model):
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nombre_decanato,self.Cod_coordinacion]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Nombre_decanato","Cod_coordinacion"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Pertenece"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Decanato(
 				Nombre_decanato = parameters["Nombre_decanato"],
 				Cod_coordinacion = parameters["Cod_coordinacion"]
@@ -70,11 +70,11 @@ class Asignatura(models.Model):
 	Programa = models.URLField()
 	def getallfields(self):
 		return [self.Cod_asignatura,self.Nombre_asig, self.Cod_coordinacion,self.Creditos,self.Fecha,self.Visto,self.Programa]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Cod_asignatura","Nombre_asig", "Cod_coordinacion", "Creditos", "Fecha", "Visto", "Programa"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Asignatura"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Asignatura(
 				Cod_asignatura = parameters["Cod_asignatura"],
 				Nombre_asig = parameters["Nombre_asig"],
@@ -95,11 +95,11 @@ class Estudiante(models.Model):
 	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
 	def getallfields(self):
 		return [self.Carnet,self.Apellidos,self.Nombres]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Carnet","Apellidos","Nombres"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Estudiante"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Estudiante(
 				Carnet = parameters["Carnet"],
 				Apellidos = parameters["Apellidos"],
@@ -114,11 +114,11 @@ class Profesor(models.Model):
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Id_prof","Apellidos","Nombres","Cod_coordinacion"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Profesor"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Profesor(
 				Id_prof = parameters["Id_prof"],
 				Apellidos = parameters["Apellidos"],
@@ -146,11 +146,11 @@ class Trimestre(models.Model):
 	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	def getallfields(self):
 		return [self.Periodo,self.Anio]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Periodo","Anio"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Trimestre"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Trimestre(
 				Periodo = parameters["Periodo"],
 				Anio = parameters["Anio"]
@@ -166,11 +166,11 @@ class Cursa(models.Model):
 	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_anio', on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Carnet","Cod_asignatura","Periodo","Anio"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Cursa"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Cursa(
 				Carnet = parameters["Carnet"],
 				Cod_asignatura = parameters["Cod_asignatura"],
@@ -200,11 +200,11 @@ class Se_Ofrece(models.Model):
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo,self.Anio, self.Cod_coordinacion]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Id_prof","Cod_asignatura","Horario","Periodo","Anio", "Cod_coordinacion"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Se_Ofrece"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Se_Ofrece(
 				Id_prof = parameters["Id_prof"],
 				Cod_asignatura = parameters["Cod_asignatura"],
@@ -219,11 +219,11 @@ class MedioPago(models.Model):
 	Postiza = models.AutoField(primary_key=True)
 	def getallfields(self):
 		return [self.Postiza]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Postiza"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "MedioPago"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return MedioPago(
 				Postiza=parameters["Postiza"]
 			)
@@ -239,11 +239,11 @@ class Paga_Con(models.Model):
 	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_pago_anio', on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Precio,self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Precio","Carnet","Postiza","Periodo","Anio"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Paga_Con"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Paga_Con(
 				Precio = parameters["Precio"],
 				Carnet = parameters["Carnet"],
@@ -253,10 +253,10 @@ class Paga_Con(models.Model):
 			)
 
 # Funcion que indica los campos permitidos en el tipo de tarjeta de debito.
-def tipo_debito_restr(type):
-	if not (type.lower()=="ahorro" or type.lower()=="corriente"):
+def tipo_debito_restr(tipo):
+	if not (tipo.lower()=="ahorro" or tipo.lower()=="corriente"):
 		raise ValidationError(_('Tipo de cuenta invalido'))
-	return type
+	return tipo
 
 # Tabla de Tarjeta de debito
 class Debito(models.Model):
@@ -267,11 +267,11 @@ class Debito(models.Model):
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nro_Cuenta,self.Nro_Tarjeta,self.Tipo,self.Nombre_Banco,self.Postiza]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Nro_Cuenta","Nro_Tarjeta","Tipo","Nombre_Banco","Postiza"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Debito"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Debito(
 				Nro_Cuenta = parameters["Nro_Cuenta"],
 				Nro_Tarjeta = parameters["Nro_Tarjeta"],
@@ -288,11 +288,11 @@ class Credito(models.Model):
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nro_Tarjeta,self.Fecha_Vence,self.Nombre_Banco,self.Postiza]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Nro_Tarjeta","Fecha_Vence","Nombre_Banco","Postiza"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Credito"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Credito(
 				Nro_Tarjeta = parameters["Nro_Tarjeta"],
 				Fecha_Vence = parameters["Fecha_Vence"],
@@ -306,11 +306,11 @@ class Transferencia(models.Model):
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Nro_Referencia,self.Postiza]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Nro_Referencia","Postiza"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Transferencia"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Debito(
 				Nro_Referencia = parameters["Nro_Referencia"],
 				Postiza = parameters["Postiza"]
@@ -322,11 +322,11 @@ class Deposito(models.Model):
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Referencia,self.Postiza]
-	def __getallfieldNames__():
+	def __getallfieldNames__(self):
 		return ["Referencia","Postiza"]
-	def __gettablename__():
+	def __gettablename__(self):
 		return "Deposito"
-	def __createElement__(parameters):
+	def __createElement__(self,parameters):
 		return Debito(
 				Referencia = parameters["Referencia"],
 				Postiza = parameters["Postiza"]

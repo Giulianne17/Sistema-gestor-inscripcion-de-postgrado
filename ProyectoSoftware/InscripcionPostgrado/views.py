@@ -291,7 +291,7 @@ def __getContext__(request, name, ismodel):
 def __buildContext__(name,ismodel):
 	if ismodel:
 		model = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
-		column_list=model.__getallfieldNames__()
+		column_list=model.__getallfieldNames__(model)
 		table=model.objects.all()
 		show_all_tables=False
 	else:
