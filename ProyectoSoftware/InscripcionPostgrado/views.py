@@ -204,10 +204,8 @@ def __renderViewGET__(request):
 			context["form"] = form
 			return render(request, newpath, context)
 	else:
-		name="coordinacion"
-		context = __getContext__(request,name,True)
-		context['form'] = __returnForm__(name,request)
-		return render(request, newpath, context)
+		name="Inicio"
+		return render(request, 'crud/inicio.html', None)
 
 # Funcion que renderiza un template de un POST request.
 # Toma dos path que se utilizan según el caso
