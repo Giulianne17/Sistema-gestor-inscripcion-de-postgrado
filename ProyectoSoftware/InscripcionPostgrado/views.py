@@ -14,6 +14,8 @@ show_all_tables = True
 def __redirectCenter__(request):
 	if "coordinacion_" in request.path:
 		return coordinacion(request)
+	if "ofertas" in request.path:
+		return ofertas(request)
 	else:
 		return index(request)
 
@@ -191,6 +193,13 @@ def orderbyAsignatura(request):
 	context['backPath'] = path
 	return render(request, 'crud/coordinacion.html', context)
 
+def ofertas(request):
+	if request.method =="POST":
+		pass
+	else:
+		context = __getContext__(request,"",False)
+		return render(request, 'crud/oferta.html', context)
+
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
 	newpath = __decideNewPath__(request.path)
@@ -273,6 +282,8 @@ def __getDBList__():
 def __getContext__(request, name, ismodel):
 	if "coordinacion_" in request.path:
 		return __buildContextAsignatura__(name)
+	elif "ofertas" in request.path:
+		return __buildContextOferta__()
 	else:
 		return __buildContext__(name,ismodel)
 
@@ -311,6 +322,14 @@ def __buildContextAsignatura__(CodCoordinacion):
 	form.fields['Cod_coordinacion'].widget = forms.HiddenInput()
 	form.Cod_coordinacion = CodCoordinacion
 	context = __contextTemplate__("asignaturas de " + nameofcoordinacion,column_list,table,False,form)
+	return context
+
+def __buildContextOferta__():
+	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
+	column_list = ["Codigo", "U.C","Denominacion","Profesor","Programa","Horario"]
+	table=model.objects.all()
+	form = Se_OfreceForm()
+	context = __contextTemplate__("ofertas",column_list,table,False,form)
 	return context
 
 # Funcion que dado los parametros listados rellena la plantilla
