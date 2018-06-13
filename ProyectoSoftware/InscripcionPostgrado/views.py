@@ -194,6 +194,10 @@ def orderbyAsignatura(request):
 	return render(request, 'crud/coordinacion.html', context)
 
 def ofertas(request):
+	if "delete" in request.path:
+		return deleteOferta(request)
+	if "edit" in request.path:
+		return editOferta(request)
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
@@ -207,6 +211,38 @@ def ofertas(request):
 	else:
 		context = __getContext__(request,"",False)
 		return render(request, 'crud/oferta.html', context)
+
+def deleteOferta(request):
+	[path,Id] = request.path.split("/delete_")
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
+	table.objects.filter(id = Id).delete()
+	return  HttpResponseRedirect(path)
+
+def editOferta(request):
+	cod = request.path.split('/edit_')[1]
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
+	element = table.objects.get(id = cod)
+	if request.method=="POST":
+		element.delete()
+		return updateOferta(request,element)
+	else:
+		context = __buildContextOferta__(request)
+		context['editOferta'] = True
+		form = Se_OfreceForm(instance = element)
+		context['form'] = form
+		return render(request, 'crud/oferta.html', context)
+
+def updateOferta(request,oldElement):
+	[path,ID] = request.path.split("/edit_")
+	form = __returnForm__("",request)
+	if form.is_valid():
+		form.save()
+		return HttpResponseRedirect(path)
+	else:
+		oldElement.id = ID
+		oldElement.save()
+		print("No se pudo modificar la BD")
+		return HttpResponseRedirect(path)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):

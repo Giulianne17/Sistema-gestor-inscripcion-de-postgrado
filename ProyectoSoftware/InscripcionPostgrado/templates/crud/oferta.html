@@ -279,7 +279,7 @@ $(document).ready(function(){
 					});
 				</script>
 			{% endif %}
-			{% if editAsig %}
+			{% if editOferta %}
 				<script type="text/javascript">
 					$(document).ready(function(){
 						$("#editEmployeeModal").modal('show');
@@ -311,10 +311,10 @@ $(document).ready(function(){
 							<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
 						</td>	
 						<td> {{element.Horario}} </td>
-						<!-- <td>		
-						<a href="./edit_{{element.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
-						<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-						</td> -->
+						<td>		
+						<a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+						<a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						</td>
                     </tr> {% endfor %}
 				</tbody>
 				</table>

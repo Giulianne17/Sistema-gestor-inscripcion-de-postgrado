@@ -85,7 +85,7 @@ class Asignatura(models.Model):
 				Programa = parameters["Programa"]
 			)
 	def __str__(self):
-		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig) + " " + str(self.Cod_coordinacion) + " " + str(self.Creditos)
+		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig)
 
 # Tabla de estudiantes, tiene carnet, apellidos y nombres.
 class Estudiante(models.Model):
@@ -125,6 +125,8 @@ class Profesor(models.Model):
 				Nombres = parameters["Nombres"],
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
+	def __str__(self):
+		return "Prof. "  +  str(self.Nombres) + " " + str(self.Apellidos) + " C.I." + str(self.Id_prof)
 
 # Funcion que indica los campos permitidos en el nombre del periodo.
 def periodo_trimestre_restr(periode):
@@ -192,7 +194,7 @@ def hora_se_ofrece_restr(hora):
 class Se_Ofrece(models.Model):
 	class Meta:
 		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio','Cod_coordinacion'))
-	Id_prof = models.ForeignKey(Profesor, primary_key=True, on_delete=models.CASCADE)
+	Id_prof = models.ForeignKey(Profesor, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
 	Horario = models.CharField(max_length=5, validators=[hora_se_ofrece_restr])
 	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
