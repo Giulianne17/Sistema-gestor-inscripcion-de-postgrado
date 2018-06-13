@@ -1,4 +1,5 @@
 import datetime
+import re
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
@@ -25,7 +26,7 @@ class Decanato(models.Model):
 class Coordinacion(models.Model):
 	Cod_coordinacion = models.CharField(primary_key=True, max_length=2,
 										validators=[RegexValidator(regex='[A-Z]{2}', message='Codigo incorrecto')])
-	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message='Nombre incorrecto')])
+	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre incorrecto'), 'invalid')])
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __str__(self):
@@ -62,7 +63,8 @@ class Pertenece(models.Model):
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=7,
 					validators=[RegexValidator(regex='[A-Z]{2}-[0-9]{4}', message="Código inválido")])
-	Nombre_asig = models.CharField(max_length=250, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message="Nombre inválido")])
+	Nombre_asig = models.CharField(max_length=250, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre inválido'), 'invalid')])
+		#validators=[RegexValidator(regex='^\w+$', message="Nombre inválido")])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos."),MinValueValidator(1,message="Número de creditos inválidos.")])
 	Fecha = models.DateField(auto_now_add=True) 
@@ -91,8 +93,8 @@ class Asignatura(models.Model):
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8, 
 			validators=[RegexValidator(regex='[0-9]{2}\-[0-9]{5}', message='Carnet incorrecto')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Apellido incorrecto')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Apellido incorrecto'), 'invalid')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre incorrecto'), 'invalid')])
 	def getallfields(self):
 		return [self.Carnet,self.Apellidos,self.Nombres]
 	def __getallfieldNames__(self):
@@ -109,8 +111,8 @@ class Estudiante(models.Model):
 # Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
 	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Apellido incorrecto')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
@@ -128,44 +130,43 @@ class Profesor(models.Model):
 	def __str__(self):
 		return "Prof. "  +  str(self.Nombres) + " " + str(self.Apellidos) + " C.I." + str(self.Id_prof)
 
-# Funcion que indica los campos permitidos en el nombre del periodo.
-def periodo_trimestre_restr(periode):
-	if not (periode.lower()=='ene-mar' or periode.lower()=='abr-jul' or periode.lower()=='sep-dic'):
-		raise ValidationError(_('Trimestre invalido'))
-	return periode
-
 # Funcion que indica los campos permitidos en el año del periodo.
 def anio_trimestre_restr(year):
 	if not (1970 <= year <= (datetime.date.today().year)+1):
 		raise ValidationError(_('Trimestre invalido'))
 	return year
 
-# Tabla de los trimestre, cuya clave es (periodo, anio)
-class Trimestre(models.Model):
-	class Meta:
-		unique_together = (('Periodo', 'Anio'))
-	Periodo = models.CharField(max_length=20, validators=[periodo_trimestre_restr])
-	Anio = models.IntegerField(validators=[anio_trimestre_restr])
-	def getallfields(self):
-		return [self.Periodo,self.Anio]
-	def __getallfieldNames__(self):
-		return ["Periodo","Anio"]
-	def __gettablename__(self):
-		return "Trimestre"
-	def __createElement__(self,parameters):
-		return Trimestre(
-				Periodo = parameters["Periodo"],
-				Anio = parameters["Anio"]
-			)
+def horario_formato(hora):
+	hora = hora.split('-')
+	formato1 = (hora[0]+6.30)%12 
+	formato2 = (hora[1]+6.30)%12
+	
+	if hora[0]<6:
+		str1 = str(formato1)+' am'
+	else:
+		str1 = str(formato1)+' pm'
+	
+	if hora[1]<6:
+		str2 = str(formato2)+' am'
+	else:
+		str2 = str(formato2)+' pm'
+
+	return str1+'-'+str2
 
 # Tabla de relacion de cursa, Estudiante cursa asignatura en trimestre.
 class Cursa(models.Model):
+	TRIMESTRE_CHOICES = (
+        ('EM', 'ENE-MAR'),
+        ('AJ', 'ABR-JUL'),
+        ('V', 'VERANO'),
+        ('SD', 'SEP-DIC')
+    )
 	class Meta:
 		unique_together=(('Carnet', 'Cod_asignatura', 'Periodo', 'Anio'))
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_periodo', on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_anio', on_delete=models.CASCADE)
+	Periodo = models.CharField(max_length = 7,choices=TRIMESTRE_CHOICES)
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	def getallfields(self):
 		return [self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
 	def __getallfieldNames__(self):
@@ -192,13 +193,28 @@ def hora_se_ofrece_restr(hora):
 
 # Tabla de relacion se_ofrece, Coordinacion ofrece asignatura en trimestre con profesor.  
 class Se_Ofrece(models.Model):
+	DAY_CHOICES = (
+        ('LUNES', 'Lunes'),
+        ('MARTES', 'Martes'),
+        ('MIERCOLES', 'Miércoles'),
+        ('JUEVES', 'Jueves'),
+		('VIERNES', 'Viernes'),
+		('SABADO', 'Sábado')
+    )
+	TRIMESTRE_CHOICES = (
+        ('EM', 'ENE-MAR'),
+        ('AJ', 'ABR-JUL'),
+        ('V', 'VERANO'),
+        ('SD', 'SEP-DIC')
+    )
 	class Meta:
 		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio','Cod_coordinacion'))
 	Id_prof = models.ForeignKey(Profesor, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
 	Horario = models.CharField(max_length=5, validators=[hora_se_ofrece_restr])
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', on_delete=models.CASCADE)
+	Dia = models.CharField(max_length = 9,choices=DAY_CHOICES)
+	Periodo = models.CharField(max_length = 7,choices=TRIMESTRE_CHOICES)
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo,self.Anio, self.Cod_coordinacion]
@@ -211,6 +227,7 @@ class Se_Ofrece(models.Model):
 				Id_prof = parameters["Id_prof"],
 				Cod_asignatura = parameters["Cod_asignatura"],
 				Horario = parameters["Horario"],
+				Dia = parameters["Dia"],
 				Periodo = parameters["Periodo"],
 				Anio = parameters["Anio"],
 				Cod_coordinacion = parameters["Cod_coordinacion"]
@@ -232,13 +249,19 @@ class MedioPago(models.Model):
 
 # Tabla relacion de Paga_con, Estudiante paga con medio de pago la inscripcion del trimestre
 class Paga_Con(models.Model):
+	TRIMESTRE_CHOICES = (
+        ('EM', 'ENE-MAR'),
+        ('AJ', 'ABR-JUL'),
+        ('V', 'VERANO'),
+        ('SD', 'SEP-DIC')
+    )
 	class Meta:
 		unique_together = (('Carnet', 'Postiza', 'Periodo', 'Anio'))
 	Precio = models.DecimalField(max_digits=19, decimal_places=4)
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_pago_periodo', on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_pago_anio', on_delete=models.CASCADE)
+	Periodo = models.CharField(max_length=7, choices=TRIMESTRE_CHOICES)
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	def getallfields(self):
 		return [self.Precio,self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
 	def __getallfieldNames__(self):

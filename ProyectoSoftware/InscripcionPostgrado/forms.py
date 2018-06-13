@@ -43,12 +43,6 @@ class EstudianteForm(ModelForm):
         model = Estudiante
         fields = ["Carnet","Apellidos","Nombres"]
 
-# Form para añadir un trimestre
-class TrimestreForm(ModelForm):
-    class Meta:
-        model = Trimestre
-        fields = ["Periodo","Anio"]
-
 # Form para añadir un cursa
 class CursaForm(ModelForm):
     class Meta:
@@ -59,7 +53,7 @@ class CursaForm(ModelForm):
 class Se_OfreceForm(ModelForm):
     class Meta:
         model = Se_Ofrece
-        fields = ["Id_prof","Cod_asignatura","Horario","Periodo","Anio", "Cod_coordinacion"]
+        fields = ["Id_prof","Cod_asignatura","Horario","Dia","Periodo","Anio", "Cod_coordinacion"]
 
 # Form para añadir un MedioPago
 class MedioPagoForm(ModelForm):
