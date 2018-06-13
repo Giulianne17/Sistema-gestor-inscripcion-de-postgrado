@@ -111,8 +111,8 @@ class Estudiante(models.Model):
 # Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
 	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
@@ -127,7 +127,8 @@ class Profesor(models.Model):
 				Nombres = parameters["Nombres"],
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
-
+	def __str__(self):
+		return str(self.Apellidos) + " "  +  str(self.Nombres) + " (" + str(self.Id_prof) + ") "
 
 # Funcion que indica los campos permitidos en el año del periodo.
 def anio_trimestre_restr(year):
