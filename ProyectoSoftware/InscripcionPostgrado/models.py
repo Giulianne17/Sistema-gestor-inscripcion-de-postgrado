@@ -111,8 +111,8 @@ class Estudiante(models.Model):
 # Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
 	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+\s$'), _('Apellido incorrecto'), 'invalid')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+\s$'), _('Nombre incorrecto'), 'invalid')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
@@ -128,11 +128,6 @@ class Profesor(models.Model):
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
 
-# Funcion que indica los campos permitidos en el nombre del periodo.
-def periodo_trimestre_restr(periode):
-	if not (periode.lower()=='ene-mar' or periode.lower()=='abr-jul' or periode.lower()=='sep-dic'):
-		raise ValidationError(_('Trimestre invalido'))
-	return periode
 
 # Funcion que indica los campos permitidos en el año del periodo.
 def anio_trimestre_restr(year):
@@ -140,32 +135,21 @@ def anio_trimestre_restr(year):
 		raise ValidationError(_('Trimestre invalido'))
 	return year
 
-# Tabla de los trimestre, cuya clave es (periodo, anio)
-class Trimestre(models.Model):
-	class Meta:
-		unique_together = (('Periodo', 'Anio'))
-	Periodo = models.CharField(max_length=20, validators=[periodo_trimestre_restr])
-	Anio = models.IntegerField(validators=[anio_trimestre_restr])
-	def getallfields(self):
-		return [self.Periodo,self.Anio]
-	def __getallfieldNames__(self):
-		return ["Periodo","Anio"]
-	def __gettablename__(self):
-		return "Trimestre"
-	def __createElement__(self,parameters):
-		return Trimestre(
-				Periodo = parameters["Periodo"],
-				Anio = parameters["Anio"]
-			)
 
 # Tabla de relacion de cursa, Estudiante cursa asignatura en trimestre.
 class Cursa(models.Model):
+	TRIMESTRE_CHOICES = (
+        ('EM', 'ENE-MAR'),
+        ('AJ', 'ABR-JUL'),
+        ('V', 'VERANO'),
+        ('SD', 'SEP-DIC')
+    )
 	class Meta:
 		unique_together=(('Carnet', 'Cod_asignatura', 'Periodo', 'Anio'))
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_periodo', on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_cursa_anio', on_delete=models.CASCADE)
+	Periodo = models.CharField(max_length = 7,choices=TRIMESTRE_CHOICES)
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	def getallfields(self):
 		return [self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
 	def __getallfieldNames__(self):
@@ -192,13 +176,28 @@ def hora_se_ofrece_restr(hora):
 
 # Tabla de relacion se_ofrece, Coordinacion ofrece asignatura en trimestre con profesor.  
 class Se_Ofrece(models.Model):
+	DAY_CHOICES = (
+        ('LUNES', 'Lunes'),
+        ('MARTES', 'Martes'),
+        ('MIERCOLES', 'Miércoles'),
+        ('JUEVES', 'Jueves'),
+		('VIERNES', 'Viernes'),
+		('SABADO', 'Sábado')
+    )
+	TRIMESTRE_CHOICES = (
+        ('EM', 'ENE-MAR'),
+        ('AJ', 'ABR-JUL'),
+        ('V', 'VERANO'),
+        ('SD', 'SEP-DIC')
+    )
 	class Meta:
 		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio','Cod_coordinacion'))
-	Id_prof = models.ForeignKey(Profesor, primary_key=True, on_delete=models.CASCADE)
+	Id_prof = models.ForeignKey(Profesor, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
 	Horario = models.CharField(max_length=5, validators=[hora_se_ofrece_restr])
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_anio', on_delete=models.CASCADE)
+	Dia = models.CharField(max_length = 9,choices=DAY_CHOICES)
+	Periodo = models.CharField(max_length = 7,choices=TRIMESTRE_CHOICES)
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo,self.Anio, self.Cod_coordinacion]
@@ -211,6 +210,7 @@ class Se_Ofrece(models.Model):
 				Id_prof = parameters["Id_prof"],
 				Cod_asignatura = parameters["Cod_asignatura"],
 				Horario = parameters["Horario"],
+				Dia = parameters["Dia"],
 				Periodo = parameters["Periodo"],
 				Anio = parameters["Anio"],
 				Cod_coordinacion = parameters["Cod_coordinacion"]
@@ -232,13 +232,19 @@ class MedioPago(models.Model):
 
 # Tabla relacion de Paga_con, Estudiante paga con medio de pago la inscripcion del trimestre
 class Paga_Con(models.Model):
+	TRIMESTRE_CHOICES = (
+        ('EM', 'ENE-MAR'),
+        ('AJ', 'ABR-JUL'),
+        ('V', 'VERANO'),
+        ('SD', 'SEP-DIC')
+    )
 	class Meta:
 		unique_together = (('Carnet', 'Postiza', 'Periodo', 'Anio'))
 	Precio = models.DecimalField(max_digits=19, decimal_places=4)
 	Carnet = models.ForeignKey(Estudiante, primary_key=True, on_delete=models.CASCADE)
 	Postiza = models.ForeignKey(MedioPago, on_delete=models.CASCADE)
-	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_pago_periodo', on_delete=models.CASCADE)
-	Anio = models.ForeignKey(Trimestre, related_name='Trimestre_pago_anio', on_delete=models.CASCADE)
+	Periodo = models.CharField(max_length=7, choices=TRIMESTRE_CHOICES)
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	def getallfields(self):
 		return [self.Precio,self.Carnet,self.Cod_asignatura,self.Periodo,self.Anio]
 	def __getallfieldNames__(self):
