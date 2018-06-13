@@ -236,6 +236,15 @@ class Se_Ofrece(models.Model):
 		return horario_formato(self.Horario)
 	def returnDiaMinus(self):
 		return self.Dia.title()
+	def returnTrimestre(self):
+		if "EM" in self.Periodo:
+			return "ENE-MAR"
+		elif "AJ" in self.Periodo:
+			return "ABR-JUL"
+		elif "V" in self.Periodo:
+			return "VERANO"
+		else:
+			return "SEPT-DIC"
 
 # Tabla de Medio Pago
 class MedioPago(models.Model):

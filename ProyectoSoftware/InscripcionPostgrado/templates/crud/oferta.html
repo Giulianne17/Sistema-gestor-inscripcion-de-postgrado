@@ -286,7 +286,7 @@ $(document).ready(function(){
 					});
 				</script>
 			{% endif %}
-			{% if searchAsig %}
+			{% if searchOferta %}
 				<script type="text/javascript">
 					$(document).ready(function(){
 						$("#searchModal").modal('show');
@@ -314,6 +314,7 @@ $(document).ready(function(){
 							<p>{{element.returnDiaMinus}} {{element.Horario}}</p>
 							<p>({{element.returnTime}})</p>
 						</td>
+						<td> {{element.returnTrimestre}} {{element.Anio}} </td>
 						<td>		
 						<a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
 						<a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
@@ -328,7 +329,22 @@ $(document).ready(function(){
 					<td> </td>
 					<td> 
 						<div class="dropdown">
-							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Nombre
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Código
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								{% if "orderby" in request.path %}
+								<li><a href="{{ backPath }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Cod_asignatura=desc">Descendente</a></li>
+								{% else %}
+								<li><a href="{{ request.path }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Cod_asignatura=desc">Descendente</a></li>
+								{% endif%}
+							</ul> 
+						</div>	
+					</td>
+					<td> 
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Denominación
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
@@ -344,7 +360,7 @@ $(document).ready(function(){
 					<td><span></span></td>	
 					<td> 
 						<div class="dropdown">
-							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Fecha
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Periodo
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
@@ -435,8 +451,11 @@ $(document).ready(function(){
 					<div class="modal-body">					
 						<p>Seleccione un atributo para la busqueda:</p>
 						<tr>
-						<td><input checked="checked" name="attr" type="radio" value="Nombre_asig" /> Nombre</td>
-						<td><input name="attr" type="radio" value="Cod_asig" /> Codigo</td>
+						<p><input checked="checked" name="attr" type="radio" value="Nombre_asig" /> Nombre de asignatura</p>
+						<p><input name="attr" type="radio" value="Cod_asig" /> Codigo de Asignatura</p>
+						<p><input name="attr" type="radio" value="Prof" /> Profesor</p>
+						<!-- <p><input name="attr" type="radio" value="Horario" /> Horario</p>
+						<p><input name="attr" type="radio" value="Periodo" /> Periodo</p> -->
 						</tr>	
 						<p> </p>
 						<p>Criterio de Busqueda: <input type="text" class="form-control" name="criterio" required></p>

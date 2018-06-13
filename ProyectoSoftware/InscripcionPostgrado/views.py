@@ -198,6 +198,11 @@ def ofertas(request):
 		return deleteOferta(request)
 	if "edit" in request.path:
 		return editOferta(request)
+	if "orderby" in request.path:
+		return orderbyOferta(request)
+	if "search" in request.path:
+		pass
+		#return searchOferta(request)
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
@@ -205,8 +210,6 @@ def ofertas(request):
 		except:
 			print("No se pudo modificar la BD")
 			context = __getContext__(request,"",False)
-			print(context['form'])
-			print(context['form'].errors)
 			return render(request, 'crud/oferta.html', context)
 	else:
 		context = __getContext__(request,"",False)
@@ -243,6 +246,80 @@ def updateOferta(request,oldElement):
 		oldElement.save()
 		print("No se pudo modificar la BD")
 		return HttpResponseRedirect(path)
+
+def searchOferta(request):
+	context = __buildContextOferta__(request)
+	if "/searchInd" in request.path:
+		if request.method == "POST":
+			attr = request.POST.get("attr")
+			criterio = request.POST.get("criterio")
+			return HttpResponseRedirect("/ofertas/search_"+attr+"="+criterio)
+		else:
+			context['searchOferta'] = True
+			return render(request, 'crud/oferta.html', context)
+	if request.method == "POST":
+		try:
+			__modififyDB__("", None,request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			context = __getContext__(request,"",False)
+			return render(request, 'crud/oferta.html', context)
+	context = __returnContextOfertaWithSearchTable__(request.path,context)
+	context['searchBool'] = True
+	context['backPath'] = request.path.split("/search_")[0]
+	return render(request, 'crud/oferta.html', context)
+
+def __returnContextOfertaWithSearchTable__(currentpath,context):
+	[path,searchparam] = currentpath.split("/search_")
+	searchparam = searchparam.split("/")[0]
+	[attrb,givenSearch] = searchparam.split("=")
+	if "Cod_asig" in attrb:
+		context['table'] = context['table'].filter(Cod_asignatura__icontains=givenSearch)
+	elif "Nombre_asig" in attrb:
+		tablaAsignaturas = apps.get_model(app_label='InscripcionPostgrado', model_name='Asignatura').objects.all().filter(Nombre_asig__icontains=givenSearch)
+		listofCod = []
+		for i in tablaAsignaturas:
+			listofCod += i.Cod_asignatura
+		print(listofCod)
+		context['table'] = context['table'].filter(Cod_asignatura__in=listofCod)
+	elif "Prof" in attrb:
+		tablaProf = apps.get_model(app_label='InscripcionPostgrado', model_name='Profesor').objects.all().filter(Nombre_asig__icontains=givenSearch)
+		listofCod = []
+		for i in tablaProf:
+			listofCod += i.Id_prof
+		context['table'] = context['table'].filter(Id_prof__in=listofCod)
+	return context
+
+def orderbyOferta(request):
+	if request.method == "POST":
+		try:
+			__modififyDB__("", None,request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			context = __getContext__(request,"",False)
+			return render(request, 'crud/oferta.html', context)
+	context = __buildContextOferta__(request)
+	[path,orderparam] = request.path.split("/orderby_")
+	[attr,style] = orderparam.split("=")
+	if "search_" in request.path:
+		pass
+		#context = __returnContextWithSearchTable__(request.path,context)
+	if "Nombre_asig" in attr:
+		attr = "Cod_asignatura__" + attr
+	if "Fecha" not in attr:
+		if "desc" in style:
+			context['table'] = context['table'].order_by("-"+attr)
+		elif "asc" in style:
+			context['table'] = context['table'].order_by(attr)
+	else:
+		if "desc" in style:
+			context['table'] = context['table'].order_by("-Anio","Periodo")
+		elif "asc" in style:
+			context['table'] = context['table'].order_by("Anio","-Periodo")
+	context['backPath'] = path
+	return render(request, 'crud/oferta.html', context)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
@@ -370,7 +447,7 @@ def __buildContextAsignatura__(CodCoordinacion):
 
 def __buildContextOferta__(request):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
-	column_list = ["Codigo", "U.C","Denominacion","Profesor","Programa","Horario"]
+	column_list = ["Codigo", "U.C","Denominacion","Profesor","Programa","Horario","Operaciones"]
 	table=model.objects.all()
 	form = __returnForm__("",request)
 	context = __contextTemplate__("ofertas",column_list,table,False,form)
