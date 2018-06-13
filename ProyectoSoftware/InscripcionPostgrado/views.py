@@ -195,7 +195,15 @@ def orderbyAsignatura(request):
 
 def ofertas(request):
 	if request.method =="POST":
-		pass
+		try:
+			__modififyDB__("", None,request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			context = __getContext__(request,"",False)
+			print(context['form'])
+			print(context['form'].errors)
+			return render(request, 'crud/oferta.html', context)
 	else:
 		context = __getContext__(request,"",False)
 		return render(request, 'crud/oferta.html', context)
@@ -283,7 +291,7 @@ def __getContext__(request, name, ismodel):
 	if "coordinacion_" in request.path:
 		return __buildContextAsignatura__(name)
 	elif "ofertas" in request.path:
-		return __buildContextOferta__()
+		return __buildContextOferta__(request)
 	else:
 		return __buildContext__(name,ismodel)
 
@@ -324,11 +332,11 @@ def __buildContextAsignatura__(CodCoordinacion):
 	context = __contextTemplate__("asignaturas de " + nameofcoordinacion,column_list,table,False,form)
 	return context
 
-def __buildContextOferta__():
+def __buildContextOferta__(request):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
 	column_list = ["Codigo", "U.C","Denominacion","Profesor","Programa","Horario"]
 	table=model.objects.all()
-	form = Se_OfreceForm()
+	form = __returnForm__("",request)
 	context = __contextTemplate__("ofertas",column_list,table,False,form)
 	return context
 
@@ -368,6 +376,8 @@ def __modififyDB__(name, parameters,request):
 		else:
 			raise
 	else:
+		if parameters == None:
+			raise
 		table = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		element=table.__createElement__(parameters)
 		element.save()
@@ -398,7 +408,7 @@ def __returnForm__(name,request):
 			return form
 		form = AsignaturaForm(request.POST)
 		return form
-	elif "se_ofrece" in request.path:
+	elif "se_ofrece" in request.path or "ofertas" in request.path:
 		if not request.POST:
 			return Se_OfreceForm()
 		return Se_OfreceForm(request.POST)
