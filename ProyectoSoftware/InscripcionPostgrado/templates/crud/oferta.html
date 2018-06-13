@@ -310,7 +310,10 @@ $(document).ready(function(){
 						<td> 
 							<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
 						</td>	
-						<td> {{element.Horario}} </td>
+						<td>
+							<p>{{element.returnDiaMinus}} {{element.Horario}}</p>
+							<p>({{element.returnTime}})</p>
+						</td>
 						<td>		
 						<a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
 						<a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>

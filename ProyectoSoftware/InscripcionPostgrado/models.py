@@ -138,15 +138,15 @@ def anio_trimestre_restr(year):
 
 def horario_formato(hora):
 	hora = hora.split('-')
-	formato1 = (hora[0]+6.30)%12 
-	formato2 = (hora[1]+6.30)%12
+	formato1 = (int(hora[0])+6.30)%12 
+	formato2 = (int(hora[1])+6.30)%12
 	
-	if hora[0]<6:
+	if int(hora[0])<6:
 		str1 = str(formato1)+' am'
 	else:
 		str1 = str(formato1)+' pm'
 	
-	if hora[1]<6:
+	if int(hora[1])<6:
 		str2 = str(formato2)+' am'
 	else:
 		str2 = str(formato2)+' pm'
@@ -232,6 +232,10 @@ class Se_Ofrece(models.Model):
 				Anio = parameters["Anio"],
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
+	def returnTime(self):
+		return horario_formato(self.Horario)
+	def returnDiaMinus(self):
+		return self.Dia.title()
 
 # Tabla de Medio Pago
 class MedioPago(models.Model):
