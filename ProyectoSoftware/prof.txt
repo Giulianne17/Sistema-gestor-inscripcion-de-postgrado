@@ -1,0 +1,13 @@
+21425521,Castro,Aurivan,CI
+19955544,Rodriguez,Manuel,CI
+27455577,Quero,Elvin,CI
+18884554,Goldberg,Ian Alan,CI
+19559447,Acosta,Angelica,CI
+26514448,Vera,Sandra,CI
+21455458,Tavano,Giulianne,CI
+2545855,Rodriguez,Carlos,CO
+6575554,Perez,Marcos,CO
+4475524,Rodriguez,Carlos Perez,MA
+5584447,Perez De Las Rosas,Maria Alejandra,EC
+6658885,Sanchez,Marla,PS
+7745558,Campaña de Lima,Miguel Jose,TG

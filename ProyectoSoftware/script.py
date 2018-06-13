@@ -11,6 +11,10 @@ def dataTemplate(Codasig,NombreAsig,CodCoord,Cred,Prog):
     return form_data
 
 def addtoDB():
+    addtoDBCoordAsig()
+    addtoDBprof()
+
+def addtoDBCoordAsig():
     f = open('coordinaciones.txt','r')
     for line in f:
         temp = line.split(',')
@@ -34,6 +38,25 @@ def addtoDB():
         CodCoord = Cod[0:2]
         dataG = dataTemplate(Cod,Nombre,CodCoord,Cred,Programa)
         Form = AsignaturaForm(data=dataG)
+        if Form.is_valid():
+            Form.save()
+        else:
+            print("form no valido")
+            print(Form.errors)
+    f.close()
+
+def addtoDBprof():
+    f = open('prof.txt','r')
+    for line in f:
+        [CI,Apellidos,Nombres,CodCoord] = line.split(',')
+        CodCoord=CodCoord.split("\n")[0]
+        dataG = {
+            'Id_prof': CI,
+            'Apellidos': Apellidos,
+            'Nombres': Nombres,
+            'Cod_coordinacion': CodCoord
+        }
+        Form = ProfesorForm(data=dataG)
         if Form.is_valid():
             Form.save()
         else:
