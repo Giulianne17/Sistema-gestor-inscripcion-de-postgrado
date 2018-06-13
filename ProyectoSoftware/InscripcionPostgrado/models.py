@@ -135,6 +135,22 @@ def anio_trimestre_restr(year):
 		raise ValidationError(_('Trimestre invalido'))
 	return year
 
+def horario_formato(hora):
+	hora = hora.split('-')
+	formato1 = (hora[0]+6.30)%12 
+	formato2 = (hora[1]+6.30)%12
+	
+	if hora[0]<6:
+		str1 = str(formato1)+' am'
+	else:
+		str1 = str(formato1)+' pm'
+	
+	if hora[1]<6:
+		str2 = str(formato2)+' am'
+	else:
+		str2 = str(formato2)+' pm'
+
+	return str1+'-'+str2
 
 # Tabla de relacion de cursa, Estudiante cursa asignatura en trimestre.
 class Cursa(models.Model):
