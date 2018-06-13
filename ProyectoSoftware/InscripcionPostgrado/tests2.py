@@ -43,3 +43,58 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
+	def test_profesorNombreFrontera1(self):
+		form_data = {
+			'Id_prof' : '2561829',
+			'Apellidos' : 'Aular Lopez',
+			'Nombres' : 'ALAN',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		form.save()
+		self.assertTrue(form.is_valid())
+
+	def test_profesorNombreFrontera2(self):
+		form_data = {
+			'Id_prof' : '2561829',
+			'Apellidos' : 'Aular Lopez',
+			'Nombres' : 'ZORO',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		form.save()
+		self.assertTrue(form.is_valid())
+
+	def test_profesorNombreFrontera3(self):
+		form_data = {
+			'Id_prof' : '2561829',
+			'Apellidos' : 'Aular Lopez',
+			'Nombres' : 'alan',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		form.save()
+		self.assertTrue(form.is_valid())
+
+	def test_profesorNombreFrontera4(self):
+		form_data = {
+			'Id_prof' : '2561829',
+			'Apellidos' : 'Aular Lopez',
+			'Nombres' : 'zoro',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		form.save()
+		self.assertTrue(form.is_valid())
+
+	def test_profesorNombreFrontera5(self):
+		form_data = {
+			'Id_prof' : '2561829',
+			'Apellidos' : 'Aular Lopez',
+			'Nombres' : 'Laura Lorena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		form.save()
+		self.assertTrue(form.is_valid())
