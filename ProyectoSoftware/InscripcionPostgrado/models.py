@@ -1,4 +1,5 @@
 import datetime
+import re
 from django.db import models
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
@@ -25,7 +26,7 @@ class Decanato(models.Model):
 class Coordinacion(models.Model):
 	Cod_coordinacion = models.CharField(primary_key=True, max_length=2,
 										validators=[RegexValidator(regex='[A-Z]{2}', message='Codigo incorrecto')])
-	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message='Nombre incorrecto')])
+	Nombre_coordinacion = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre incorrecto'), 'invalid')])
 	def getallfields(self):
 		return [self.Cod_coordinacion,self.Nombre_coordinacion]
 	def __str__(self):
@@ -62,7 +63,8 @@ class Pertenece(models.Model):
 class Asignatura(models.Model):
 	Cod_asignatura = models.CharField(primary_key=True, max_length=7,
 					validators=[RegexValidator(regex='[A-Z]{2}-[0-9]{4}', message="Código inválido")])
-	Nombre_asig = models.CharField(max_length=250, validators=[RegexValidator(regex='^([a-zA-Z ])+$', message="Nombre inválido")])
+	Nombre_asig = models.CharField(max_length=250, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre inválido'), 'invalid')])
+		#validators=[RegexValidator(regex='^\w+$', message="Nombre inválido")])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos."),MinValueValidator(1,message="Número de creditos inválidos.")])
 	Fecha = models.DateField(auto_now_add=True) 
@@ -91,8 +93,8 @@ class Asignatura(models.Model):
 class Estudiante(models.Model):
 	Carnet = models.CharField(primary_key=True, max_length=8, 
 			validators=[RegexValidator(regex='[0-9]{2}\-[0-9]{5}', message='Carnet incorrecto')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Apellido incorrecto')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Apellido incorrecto'), 'invalid')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre incorrecto'), 'invalid')])
 	def getallfields(self):
 		return [self.Carnet,self.Apellidos,self.Nombres]
 	def __getallfieldNames__(self):
@@ -109,8 +111,8 @@ class Estudiante(models.Model):
 # Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
 	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Apellido incorrecto')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(regex='[a-zA-Z]', message='Nombre incorrecto')])
+	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+\s$'), _('Apellido incorrecto'), 'invalid')])
+	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[^\W\d_]+\s$'), _('Nombre incorrecto'), 'invalid')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
