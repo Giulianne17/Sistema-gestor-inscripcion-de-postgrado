@@ -6,6 +6,7 @@ from .models import *
 from .forms import *
 from itertools import chain
 from .render import *
+import os
 
 # Atributo auxiliar que indica al template si se van a
 # mostrar todas las tablas existentes.
@@ -205,7 +206,8 @@ def ofertas(request):
 	if "search" in request.path:
 		return searchOferta(request)
 	if "printPdf" in request.path:
-		return printPdf(request)
+		context = __buildContextOferta__(request)
+		return printPdf(request,"TODAS LAS OFERTAS",context)
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
@@ -269,6 +271,15 @@ def searchOferta(request):
 			context = __getContext__(request,"",False)
 			return render(request, 'crud/oferta.html', context)
 	context = __returnContextOfertaWithSearchTable__(request.path,context)
+	if "printPdf" in request.path:
+		[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
+		if "Cod_asig" in attrb:
+			attr = "Codigo de asignatura"
+		elif "Nombre_asig" in attrb:
+			attr = "Nombre de asignatura"
+		elif "Prof" in attrb:
+			attr = "Profesor"
+		return printPdf(request,"Resultados de la busqueda: "+attrb+" = "+givenSearch,context)
 	context['searchBool'] = True
 	context['backPath'] = request.path.split("/search_")[0]
 	return render(request, 'crud/oferta.html', context)
@@ -292,7 +303,7 @@ def __returnContextOfertaWithSearchTable__(currentpath,context):
 	elif "Periodo" in attrb:
 		table1 = None
 		for i in ['ENE-MAR', 'ABR-JUL','VERANO','SEPT-DIC']:
-			if givenSearch in i.lower():
+			if givenSearch.lower() in i.lower():
 				if i=='ENE-MAR':
 					periodo="EM"
 				elif i=='ABR-JUL':
@@ -321,16 +332,24 @@ def orderbyOferta(request):
 	context = __buildContextOferta__(request)
 	[path,orderparam] = request.path.split("/orderby_")
 	[attr,style] = orderparam.split("=")
+	if "asc" in style:
+		styleaux = "ascendente"
+	else:
+		styleaux = "descendente"
 	if "search_" in request.path:
-		context = __returnContextWithSearchTable__(request.path,context)
+		context = __returnContextOfertaWithSearchTable__(request.path,context)
 	if "Nombre_asig" in attr:
 		attr = "Cod_asignatura__" + attr
+		aux = "Nombre de asignatura"
 	if "Fecha" not in attr:
+		if "Nombre_asig" not in attr:
+			aux = "Codigo de asignatura"
 		if "desc" in style:
 			context['table'] = context['table'].order_by("-"+attr)
 		elif "asc" in style:
 			context['table'] = context['table'].order_by(attr)
 	else:
+		aux = "Periodo"
 		table = None
 		if "desc" in style:
 			values = context['table'].values_list('Anio',flat=True).order_by('-Anio').distinct()
@@ -342,6 +361,18 @@ def orderbyOferta(request):
 				table=__appendAnioOrderedByPeriodo__(style,i,context['table'],table)
 		context['table'] = table
 	context['backPath'] = path
+	if "printPdf" in request.path:
+		if "search_" in request.path:
+			[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
+			if "Cod_asig" in attrb:
+				attr = "Codigo de asignatura"
+			elif "Nombre_asig" in attrb:
+				attr = "Nombre de asignatura"
+			elif "Prof" in attrb:
+				attr = "Profesor"
+			return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
+		else:
+			return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
 	return render(request, 'crud/oferta.html', context)
 
 def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
@@ -359,8 +390,9 @@ def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
 	else:
 		return chain(outputTable,result)
 
-def printPdf(request):
-	context = __buildContextOferta__(request)
+def printPdf(request,givenFilter,context):
+	context['givenFilter'] = givenFilter
+	context['os'] = os
 	return render_to_pdf('crud/pdfTemplate.html',context)
 
 # Funcion que renderiza un template de un GET request

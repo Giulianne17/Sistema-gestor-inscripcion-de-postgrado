@@ -268,6 +268,7 @@ $(document).ready(function(){
 							{% else %}
 							<a href="/index" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% endif %}
+							<a href="{{request.path}}/printPdf" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Exportar</span></a>
 						{% endif %}
 					</div>
                 </div>
@@ -333,11 +334,11 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}orderby_Cod_asignatura=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}orderby_Cod_asignatura=desc">Descendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Cod_asignatura=desc">Descendente</a></li>
 								{% else %}
-								<li><a href="{{ request.path }}orderby_Cod_asignatura=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}orderby_Cod_asignatura=desc">Descendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Cod_asignatura=desc">Descendente</a></li>
 								{% endif%}
 							</ul> 
 						</div>	
@@ -348,11 +349,11 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}orderby_Nombre_asig=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}orderby_Nombre_asig=desc">Descendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Nombre_asig=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Nombre_asig=desc">Descendente</a></li>
 								{% else %}
-								<li><a href="{{ request.path }}orderby_Nombre_asig=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}orderby_Nombre_asig=desc">Descendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Nombre_asig=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Nombre_asig=desc">Descendente</a></li>
 								{% endif%}
 							</ul> 
 						</div>	
@@ -364,11 +365,11 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}orderby_Fecha=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}orderby_Fecha=desc">Descendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Fecha=desc">Descendente</a></li>
 								{% else %}
-								<li><a href="{{ request.path }}orderby_Fecha=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}orderby_Fecha=desc">Descendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Fecha=desc">Descendente</a></li>
 								{% endif%}
 							</ul>
 						</div>	
