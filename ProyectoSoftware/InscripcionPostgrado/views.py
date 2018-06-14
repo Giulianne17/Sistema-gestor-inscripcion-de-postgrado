@@ -360,19 +360,8 @@ def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
 		return chain(outputTable,result)
 
 def printPdf(request):
-	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
-	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Período"]
-	table=model.objects.all()
-	form = __returnForm__("",request)
-	context = __contextTemplate__("ofertas",column_list,table,False,form)
-	context = {
-			'table_name' : "ofertas",
-			'table_column_list' : column_list,
-			'table' : table,
-			'show_all_tables' : False,
-			'form' : form
-		}
-	return render_to_pdf('crud/oferta.html',context)
+	context = __buildContextOferta__(request)
+	return render_to_pdf('crud/pdfTemplate.html',context)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
