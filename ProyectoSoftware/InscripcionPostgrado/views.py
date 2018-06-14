@@ -202,8 +202,7 @@ def ofertas(request):
 	if "orderby" in request.path:
 		return orderbyOferta(request)
 	if "search" in request.path:
-		pass
-		#return searchOferta(request)
+		return searchOferta(request)
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
@@ -276,20 +275,17 @@ def __returnContextOfertaWithSearchTable__(currentpath,context):
 	searchparam = searchparam.split("/")[0]
 	[attrb,givenSearch] = searchparam.split("=")
 	if "Cod_asig" in attrb:
-		context['table'] = context['table'].filter(Cod_asignatura__icontains=givenSearch)
+		context['table'] = context['table'].filter(Cod_asignatura__Cod_asignatura__icontains=givenSearch)
 	elif "Nombre_asig" in attrb:
-		tablaAsignaturas = apps.get_model(app_label='InscripcionPostgrado', model_name='Asignatura').objects.all().filter(Nombre_asig__icontains=givenSearch)
-		listofCod = []
-		for i in tablaAsignaturas:
-			listofCod += i.Cod_asignatura
-		print(listofCod)
-		context['table'] = context['table'].filter(Cod_asignatura__in=listofCod)
+		context['table'] = context['table'].filter(Cod_asignatura__Nombre_asig__icontains=givenSearch)
 	elif "Prof" in attrb:
-		tablaProf = apps.get_model(app_label='InscripcionPostgrado', model_name='Profesor').objects.all().filter(Nombre_asig__icontains=givenSearch)
-		listofCod = []
-		for i in tablaProf:
-			listofCod += i.Id_prof
-		context['table'] = context['table'].filter(Id_prof__in=listofCod)
+		table1 = context['table'].filter(Id_prof__Nombres__icontains=givenSearch)
+		table2 = context['table'].filter(Id_prof__Apellidos__icontains=givenSearch)
+		context['table'] = chain(table1,table2)
+	elif "Horario" in attrb:
+		table1 = context['table'].filter(Id_prof__Nombres__icontains=givenSearch)
+		table2 = context['table'].filter(Id_prof__Apellidos__icontains=givenSearch)
+		context['table'] = chain(table1,table2)
 	return context
 
 def orderbyOferta(request):
@@ -305,8 +301,7 @@ def orderbyOferta(request):
 	[path,orderparam] = request.path.split("/orderby_")
 	[attr,style] = orderparam.split("=")
 	if "search_" in request.path:
-		pass
-		#context = __returnContextWithSearchTable__(request.path,context)
+		context = __returnContextWithSearchTable__(request.path,context)
 	if "Nombre_asig" in attr:
 		attr = "Cod_asignatura__" + attr
 	if "Fecha" not in attr:
