@@ -283,8 +283,26 @@ def __returnContextOfertaWithSearchTable__(currentpath,context):
 		table2 = context['table'].filter(Id_prof__Apellidos__icontains=givenSearch)
 		context['table'] = chain(table1,table2)
 	elif "Horario" in attrb:
-		table1 = context['table'].filter(Id_prof__Nombres__icontains=givenSearch)
-		table2 = context['table'].filter(Id_prof__Apellidos__icontains=givenSearch)
+		table1 = context['table'].filter(Horario__icontains=givenSearch)
+		table2 = context['table'].filter(Dia__icontains=givenSearch)
+		context['table'] = chain(table1,table2)
+	elif "Periodo" in attrb:
+		table1 = None
+		for i in ['ENE-MAR', 'ABR-JUL','VERANO','SEPT-DIC']:
+			if givenSearch in i.lower():
+				if i=='ENE-MAR':
+					periodo="EM"
+				elif i=='ABR-JUL':
+					periodo="AJ"
+				elif i=='VERANO':
+					periodo="V"
+				elif i=='SEPT-DIC':
+					periodo="SD"
+				if table1==None:
+					table1=context['table'].filter(Periodo__icontains=periodo)
+				else:
+					table1=chain(table1,context['table'].filter(Periodo__icontains=periodo))
+		table2 = context['table'].filter(Anio__icontains=givenSearch)
 		context['table'] = chain(table1,table2)
 	return context
 
