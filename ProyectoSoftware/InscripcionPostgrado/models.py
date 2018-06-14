@@ -108,12 +108,23 @@ class Estudiante(models.Model):
 				Nombres = parameters["Nombres"]
 			)
 
+# Funcion que indica los campos permitidos en el tipo de tarjeta de debito.
+def nombre_profesor_restr(nombres):
+	if (len(nombres)<1):
+		raise ValidationError(_('Nombre invalido'))
+	return nombres
+
+def apellido_profesor_restr(apellidos):
+	if (len(apellidos)<1):
+		raise ValidationError(_('Apellido invalido'))
+	return apellidos
+
 # Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
 	min_length=1
 	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
 	Apellidos = models.CharField(max_length=30,  validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
-	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
+	Nombres = models.CharField(max_length=30, validators=[nombre_profesor_restr,RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		return [self.Id_prof,self.Apellidos,self.Nombres,self.Cod_coordinacion]
@@ -139,17 +150,17 @@ def anio_trimestre_restr(year):
 
 def horario_formato(hora):
 	hora = hora.split('-')
-	formato1 = (hora[0]+6.30)%12 
-	formato2 = (hora[1]+6.30)%12
-	for1=int(formato1)
+	formato1 = (int(hora[0])+6)%12 
+	formato2 = (int(hora[1])+6)%12
+	
 	if int(hora[0])<6:
-		str1 = str(int(formato1))+':30 am'
+		str1 = str(formato1)+':30 am'
 	else:
-		str1 = str(int(formato1))+':30 pm'
+		str1 = str(formato1)+':30 pm'
 	if int(hora[1])<6:
-		str2 = str(int(formato2))+':30 am'
+		str2 = str(formato2)+':30 am'
 	else:
-		str2 = str(int(formato2))+':30 pm'
+		str2 = str(formato2)+':30 pm'
 
 	return str1+'-'+str2
 
