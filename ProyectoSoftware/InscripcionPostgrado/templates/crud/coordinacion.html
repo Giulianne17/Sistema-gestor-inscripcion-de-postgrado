@@ -301,26 +301,37 @@ $(document).ready(function(){
                     </tr>
                 </thead>
                 <tbody>
-                    {% for element in table %}
-                    <tr>
-						<!-- Algunos elementos a continuacion estan comentados para descomentar
-						E incorporar cuando se de la siguiente epica -->
-						<!-- <td> {{element.Cod_asignatura.Cod_asignatura}} </td>
-						<td> {{element.Cod_asignatura.Creditos}} </td>		
-						<td> {{element.Cod_asignatura.Nombre_asig}} </td> -->
-						<td> {{element.Cod_asignatura}} </td>
-						<td> {{element.Creditos}} </td>		
-						<td> {{element.Nombre_asig}} </td>
-						<!-- <td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>		 -->
-						<td> 
-							<a target="_blank" href="{{element.Programa}}"> Link </a>
-						</td>	
-						<!-- <td> {{element.Horario}} </td> -->
-						<td>		
-						<a href="./edit_{{element.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
-						<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+					{% if table.count != 0 %}
+						{% for element in table %}
+						<tr>
+							<!-- Algunos elementos a continuacion estan comentados para descomentar
+							E incorporar cuando se de la siguiente epica -->
+							<!-- <td> {{element.Cod_asignatura.Cod_asignatura}} </td>
+							<td> {{element.Cod_asignatura.Creditos}} </td>		
+							<td> {{element.Cod_asignatura.Nombre_asig}} </td> -->
+							<td> {{element.Cod_asignatura}} </td>
+							<td> {{element.Creditos}} </td>		
+							<td> {{element.Nombre_asig}} </td>
+							<!-- <td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>		 -->
+							<td> 
+								<a target="_blank" href="{{element.Programa}}"> Link </a>
+							</td>
+							<td>
+								{% if element.Visto %}
+									{% load static %}
+									<img src="{% static "InscripcionPostgrado/images/check.png" %}" alt="check"/>							
+								{% endif %}
+							</td>
+							<td>		
+							<a href="./edit_{{element.Cod_asignatura}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
+							<a href="./delete_{{element.Cod_asignatura}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+							</td>
+						</tr> {% endfor %}
+					{% else %}
+						<td colspan="{{table_column_list | length }}">
+							No se encontraron elementos.
 						</td>
-                    </tr> {% endfor %}
+					{% endif %}
 				</tbody>
 				</table>
 				<div>
