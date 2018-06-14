@@ -5,6 +5,7 @@ from django.apps import apps
 from .models import *
 from .forms import *
 from itertools import chain
+from .render import *
 
 # Atributo auxiliar que indica al template si se van a
 # mostrar todas las tablas existentes.
@@ -203,6 +204,8 @@ def ofertas(request):
 		return orderbyOferta(request)
 	if "search" in request.path:
 		return searchOferta(request)
+	if "printPdf" in request.path:
+		return printPdf(request)
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
@@ -356,6 +359,21 @@ def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
 	else:
 		return chain(outputTable,result)
 
+def printPdf(request):
+	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
+	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Período"]
+	table=model.objects.all()
+	form = __returnForm__("",request)
+	context = __contextTemplate__("ofertas",column_list,table,False,form)
+	context = {
+			'table_name' : "ofertas",
+			'table_column_list' : column_list,
+			'table' : table,
+			'show_all_tables' : False,
+			'form' : form
+		}
+	return render_to_pdf('crud/oferta.html',context)
+
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
 	newpath = __decideNewPath__(request.path)
@@ -470,7 +488,7 @@ def __buildContext__(name,ismodel):
 # coordinacion.
 def __buildContextAsignatura__(CodCoordinacion):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
-	column_list = ["Codigo", "U.C","Denominacion","Programa","Operaciones"]
+	column_list = ["Codigo", "U.C","Denominacion","Programa","Visto","Operaciones"]
 	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
 	temp = apps.get_model(app_label='InscripcionPostgrado', model_name='coordinacion')
 	nameofcoordinacion = temp.objects.get(Cod_coordinacion = CodCoordinacion).Nombre_coordinacion
