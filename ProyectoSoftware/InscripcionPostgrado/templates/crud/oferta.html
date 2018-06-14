@@ -316,8 +316,8 @@ $(document).ready(function(){
 						</td>
 						<td> {{element.returnTrimestre}} {{element.Anio}} </td>
 						<td>		
-						<a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a>
-						<a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						<p><a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
+						<p><a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a></p>
 						</td>
                     </tr> {% endfor %}
 				</tbody>
@@ -333,11 +333,11 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Cod_asignatura=desc">Descendente</a></li>
+								<li><a href="{{ backPath }}orderby_Cod_asignatura=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}orderby_Cod_asignatura=desc">Descendente</a></li>
 								{% else %}
-								<li><a href="{{ request.path }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}/orderby_Cod_asignatura=desc">Descendente</a></li>
+								<li><a href="{{ request.path }}orderby_Cod_asignatura=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}orderby_Cod_asignatura=desc">Descendente</a></li>
 								{% endif%}
 							</ul> 
 						</div>	
@@ -348,11 +348,11 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Nombre_asig=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Nombre_asig=desc">Descendente</a></li>
+								<li><a href="{{ backPath }}orderby_Nombre_asig=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}orderby_Nombre_asig=desc">Descendente</a></li>
 								{% else %}
-								<li><a href="{{ request.path }}/orderby_Nombre_asig=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}/orderby_Nombre_asig=desc">Descendente</a></li>
+								<li><a href="{{ request.path }}orderby_Nombre_asig=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}orderby_Nombre_asig=desc">Descendente</a></li>
 								{% endif%}
 							</ul> 
 						</div>	
@@ -364,11 +364,11 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Fecha=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Fecha=desc">Descendente</a></li>
+								<li><a href="{{ backPath }}orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}orderby_Fecha=desc">Descendente</a></li>
 								{% else %}
-								<li><a href="{{ request.path }}/orderby_Fecha=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}/orderby_Fecha=desc">Descendente</a></li>
+								<li><a href="{{ request.path }}orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}orderby_Fecha=desc">Descendente</a></li>
 								{% endif%}
 							</ul>
 						</div>	

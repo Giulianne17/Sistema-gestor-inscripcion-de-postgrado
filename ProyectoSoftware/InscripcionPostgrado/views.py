@@ -4,6 +4,7 @@ from django.db import connection
 from django.apps import apps
 from .models import *
 from .forms import *
+from itertools import chain
 
 # Atributo auxiliar que indica al template si se van a
 # mostrar todas las tablas existentes.
@@ -314,12 +315,33 @@ def orderbyOferta(request):
 		elif "asc" in style:
 			context['table'] = context['table'].order_by(attr)
 	else:
+		table = None
 		if "desc" in style:
-			context['table'] = context['table'].order_by("-Anio","Periodo")
+			values = context['table'].values_list('Anio',flat=True).order_by('-Anio').distinct()
+			for i in values:
+				table=__appendAnioOrderedByPeriodo__(style,i,context['table'],table)
 		elif "asc" in style:
-			context['table'] = context['table'].order_by("Anio","-Periodo")
+			values = context['table'].values_list('Anio',flat=True).order_by('Anio').distinct()
+			for i in values:
+				table=__appendAnioOrderedByPeriodo__(style,i,context['table'],table)
+		context['table'] = table
 	context['backPath'] = path
 	return render(request, 'crud/oferta.html', context)
+
+def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
+	tableAnio = majorTable.filter(Anio=year)
+	tableEM = tableAnio.filter(Periodo="EM")
+	tableAJ = tableAnio.filter(Periodo="AJ")
+	tableV = tableAnio.filter(Periodo="V")
+	tableSD = tableAnio.filter(Periodo="SD")
+	if "asc" in style:
+		result = chain(tableEM,tableAJ,tableV,tableSD)
+	else:
+		result = chain(tableSD,tableV,tableAJ,tableEM)
+	if outputTable==None:
+		return result
+	else:
+		return chain(outputTable,result)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
@@ -447,7 +469,7 @@ def __buildContextAsignatura__(CodCoordinacion):
 
 def __buildContextOferta__(request):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
-	column_list = ["Codigo", "U.C","Denominacion","Profesor","Programa","Horario","Operaciones"]
+	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Período"]
 	table=model.objects.all()
 	form = __returnForm__("",request)
 	context = __contextTemplate__("ofertas",column_list,table,False,form)
