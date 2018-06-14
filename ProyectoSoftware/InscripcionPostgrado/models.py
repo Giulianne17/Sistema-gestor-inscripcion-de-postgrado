@@ -87,7 +87,7 @@ class Asignatura(models.Model):
 				Programa = parameters["Programa"]
 			)
 	def __str__(self):
-		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig)
+		return str(self.Cod_asignatura) + " "  +  str(self.Nombre_asig)[0:35] + "..."
 
 # Tabla de estudiantes, tiene carnet, apellidos y nombres.
 class Estudiante(models.Model):
