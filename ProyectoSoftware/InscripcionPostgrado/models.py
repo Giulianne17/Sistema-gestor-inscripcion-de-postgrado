@@ -110,8 +110,9 @@ class Estudiante(models.Model):
 
 # Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
+	min_length=1
 	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
-	Apellidos = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
+	Apellidos = models.CharField(max_length=30,  validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
 	Nombres = models.CharField(max_length=30, validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
@@ -140,16 +141,15 @@ def horario_formato(hora):
 	hora = hora.split('-')
 	formato1 = (hora[0]+6.30)%12 
 	formato2 = (hora[1]+6.30)%12
-	
-	if hora[0]<6:
-		str1 = str(formato1)+' am'
+	for1=int(formato1)
+	if int(hora[0])<6:
+		str1 = str(int(formato1))+':30 am'
 	else:
-		str1 = str(formato1)+' pm'
-	
-	if hora[1]<6:
-		str2 = str(formato2)+' am'
+		str1 = str(int(formato1))+':30 pm'
+	if int(hora[1])<6:
+		str2 = str(int(formato2))+':30 am'
 	else:
-		str2 = str(formato2)+' pm'
+		str2 = str(int(formato2))+':30 pm'
 
 	return str1+'-'+str2
 
