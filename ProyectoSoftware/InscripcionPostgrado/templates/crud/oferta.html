@@ -302,25 +302,31 @@ $(document).ready(function(){
                     </tr>
                 </thead>
                 <tbody>
-                    {% for element in table %}
-                    <tr>
-						<td> {{element.Cod_asignatura.Cod_asignatura}} </td>
-						<td> {{element.Cod_asignatura.Creditos}} </td>		
-						<td> {{element.Cod_asignatura.Nombre_asig}} </td>
-						<td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>
-						<td> 
-							<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
-						</td>	
-						<td>
-							<p>{{element.returnDiaMinus}} {{element.Horario}}</p>
-							<p>({{element.returnTime}})</p>
+					{% if table.count != 0 and table != None %}
+						{% for element in table %}
+						<tr>
+							<td> {{element.Cod_asignatura.Cod_asignatura}} </td>
+							<td> {{element.Cod_asignatura.Creditos}} </td>		
+							<td> {{element.Cod_asignatura.Nombre_asig}} </td>
+							<td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>
+							<td> 
+								<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
+							</td>	
+							<td>
+								<p>{{element.returnDiaMinus}} {{element.Horario}}</p>
+								<p>({{element.returnTime}})</p>
+							</td>
+							<td> {{element.returnTrimestre}} {{element.Anio}} </td>
+							<td>		
+							<p><a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
+							<p><a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a></p>
+							</td>
+						</tr> {% endfor %}
+					{% else %}
+						<td colspan="{{ table_column_list | length }}">
+							No se encontraron elementos.
 						</td>
-						<td> {{element.returnTrimestre}} {{element.Anio}} </td>
-						<td>		
-						<p><a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
-						<p><a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a></p>
-						</td>
-                    </tr> {% endfor %}
+					{% endif %}
 				</tbody>
 				</table>
 				<div>
