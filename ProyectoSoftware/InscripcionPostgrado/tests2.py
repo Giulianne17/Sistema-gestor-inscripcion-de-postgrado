@@ -242,6 +242,96 @@ class ProfesorTestCase(TestCase):
 		form = ProfesorForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
+	
+	# Casos de prueba malicia para la cedula del profesor.
+	
+	#Caso donde la cedula contiene el caracter "/".
+	def test_profesorCedulaMalicia(self):
+		form_data = {
+			'Id_prof' : '256/829',
+			'Apellidos' : 'Rangel Pino',
+			'Nombres' : 'Laura Lorena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
+	
+	# Caso donde la cedula contiene el caracter ":".
+	def test_profesorCedulaMalicia1(self):
+		form_data = {
+			'Id_prof' : '25:6829',
+			'Apellidos' : 'Rangel Pino',
+			'Nombres' : 'Laura Lorena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
+	
+	# Caso donde el nombre contiene un "@"
+	def test_profesorNombreMalicia(self):
+		form_data = {
+			'Id_prof' : '256829',
+			'Apellidos' : 'Rangel Pino',
+			'Nombres' : 'Laura@Lorena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
+
+	#Caso donde el nombre contiene "["	
+	def test_profesorNombreMalicia1(self):
+		form_data = {
+			'Id_prof' : '256829',
+			'Apellidos' : 'Rangel Pino',
+			'Nombres' : 'L[auraLorena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
+	
+	#Caso donde el nombre contiene "{"	
+	def test_profesorNombreMalicia2(self):
+		form_data = {
+			'Id_prof' : '256829',
+			'Apellidos' : 'Rangel Pino',
+			'Nombres' : 'Laura Lor{ena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
+	
+		# Caso donde el apellido contiene un "@"
+	def test_profesorApellidoMalicia(self):
+		form_data = {
+			'Id_prof' : '256829',
+			'Apellidos' : 'Ra@ngel Pino',
+			'Nombres' : 'Laura Lorena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
+
+	#Caso donde el apellido contiene "["	
+	def test_profesorApellidoMalicia1(self):
+		form_data = {
+			'Id_prof' : '256829',
+			'Apellidos' : 'R[ngel Pino',
+			'Nombres' : 'LauraLorena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
+	
+	#Caso donde el apellido contiene "{"	
+	def test_profesorApellidoMalicia2(self):
+		form_data = {
+			'Id_prof' : '256829',
+			'Apellidos' : 'Rangel Pi{no',
+			'Nombres' : 'Laura Lor{ena',
+			'Cod_coordinacion': 'EE'
+		}
+		form = ProfesorForm(data = form_data)
+		self.assertFalse(form.is_valid())
 
 
 # Pruebas de la tabla Ofrece
@@ -493,3 +583,33 @@ class OfreceTestCase(TestCase):
 		form = Se_OfreceForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
+	
+	# Casos de Malicia
+
+	#Caso en el que año es 1969
+	def test_ofrece_anioMalicia(self):
+		form_data = {
+			'Id_prof' : '24553623',
+			'Cod_asignatura' : 'EE-1020',
+			'Horario' : '5-6',
+			'Dia' : 'LUNES',
+			'Periodo' : 'V',
+			'Anio': 1969,
+			'Cod_coordinacion': 'EE'
+		}
+		form = Se_OfreceForm(data = form_data)
+		self.assertFalse(form.is_valid())
+	
+	#Caso en el que año es 2020
+	def test_ofrece_anioMalicia1(self):
+		form_data = {
+			'Id_prof' : '24553623',
+			'Cod_asignatura' : 'EE-1020',
+			'Horario' : '5-6',
+			'Dia' : 'LUNES',
+			'Periodo' : 'V',
+			'Anio': 2020,
+			'Cod_coordinacion': 'EE'
+		}
+		form = Se_OfreceForm(data = form_data)
+		self.assertFalse(form.is_valid())
