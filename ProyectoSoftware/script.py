@@ -16,7 +16,7 @@ def addtoDB():
     addtoDBoferta()
 
 def addtoDBCoordAsig():
-    f = open('coordinaciones.txt','r')
+    f = open('BDdatatxt/coordinaciones.txt','r')
     for line in f:
         temp = line.split(',')
         Cod,Nombre=temp[0],temp[1]
@@ -31,7 +31,7 @@ def addtoDBCoordAsig():
             print("form no valido")
             print(Form.errors)
     f.close()
-    f = open('materias.txt','r')
+    f = open('BDdatatxt/materias.txt','r')
     Programa = "http://gecousb.com.ve/guias/GECO/Programas%20Acad%C3%A9micos%20Ing.Computaci%C3%B3n/3er%20A%C3%B1o/Ingenier%C3%ADa%20de%20Software%20(CI-3715).pdf"
     for line in f:
         temp = line.split(',')
@@ -47,7 +47,7 @@ def addtoDBCoordAsig():
     f.close()
 
 def addtoDBprof():
-    f = open('prof.txt','r')
+    f = open('BDdatatxt/prof.txt','r')
     for line in f:
         [CI,Apellidos,Nombres,CodCoord] = line.split(',')
         CodCoord=CodCoord.split("\n")[0]
@@ -66,7 +66,7 @@ def addtoDBprof():
     f.close()
 
 def addtoDBoferta():
-    f = open('oferta.txt','r')
+    f = open('BDdatatxt/oferta.txt','r')
     for line in f:
         [Id_prof,Cod_asignatura,Horario,Dia,Periodo,Anio,CodCoord] = line.split(',')
         CodCoord=CodCoord.split("\n")[0]
