@@ -295,11 +295,11 @@ def __returnContextOfertaWithSearchTable__(currentpath,context):
 	elif "Prof" in attrb:
 		table1 = context['table'].filter(Id_prof__Nombres__icontains=givenSearch)
 		table2 = context['table'].filter(Id_prof__Apellidos__icontains=givenSearch)
-		context['table'] = chain(table1,table2)
+		context['table'] = table1 | table2
 	elif "Horario" in attrb:
 		table1 = context['table'].filter(Horario__icontains=givenSearch)
 		table2 = context['table'].filter(Dia__icontains=givenSearch)
-		context['table'] = chain(table1,table2)
+		context['table'] = table1 | table2
 	elif "Periodo" in attrb:
 		table1 = None
 		for i in ['ENE-MAR', 'ABR-JUL','VERANO','SEPT-DIC']:
@@ -315,9 +315,12 @@ def __returnContextOfertaWithSearchTable__(currentpath,context):
 				if table1==None:
 					table1=context['table'].filter(Periodo__icontains=periodo)
 				else:
-					table1=chain(table1,context['table'].filter(Periodo__icontains=periodo))
+					table1=table1 | context['table'].filter(Periodo__icontains=periodo)
 		table2 = context['table'].filter(Anio__icontains=givenSearch)
-		context['table'] = chain(table1,table2)
+		if table1==None:
+			context['table'] = table2
+		else:
+			context['table'] = table1 | table2
 	return context
 
 def orderbyOferta(request):
