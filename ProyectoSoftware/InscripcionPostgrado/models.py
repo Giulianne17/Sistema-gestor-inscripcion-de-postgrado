@@ -122,7 +122,7 @@ def apellido_profesor_restr(apellidos):
 # Tabla de profesores, tiene todos los datos de los profesores.
 class Profesor(models.Model):
 	min_length=1
-	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='[0-9]', message='Id incorrecto')])
+	Id_prof = models.CharField(primary_key=True, max_length=8, validators=[RegexValidator(regex='^[0-9]+$', message='Id incorrecto')])
 	Apellidos = models.CharField(max_length=30,  validators=[RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Apellido incorrecto'), 'invalid')])
 	Nombres = models.CharField(max_length=30, validators=[nombre_profesor_restr,RegexValidator(re.compile('^[\w+\s]+[^\W\d_]+$'), _('Nombre incorrecto'), 'invalid')])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
