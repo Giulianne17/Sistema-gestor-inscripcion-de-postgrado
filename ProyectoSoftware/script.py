@@ -13,6 +13,7 @@ def dataTemplate(Codasig,NombreAsig,CodCoord,Cred,Prog):
 def addtoDB():
     addtoDBCoordAsig()
     addtoDBprof()
+    addtoDBoferta()
 
 def addtoDBCoordAsig():
     f = open('coordinaciones.txt','r')
@@ -31,7 +32,7 @@ def addtoDBCoordAsig():
             print(Form.errors)
     f.close()
     f = open('materias.txt','r')
-    Programa = "https://pythex.org/"
+    Programa = "http://gecousb.com.ve/guias/GECO/Programas%20Acad%C3%A9micos%20Ing.Computaci%C3%B3n/3er%20A%C3%B1o/Ingenier%C3%ADa%20de%20Software%20(CI-3715).pdf"
     for line in f:
         temp = line.split(',')
         Cod,Nombre,Cred=temp[0],temp[1],temp[2].split("\n")[0]
@@ -57,6 +58,28 @@ def addtoDBprof():
             'Cod_coordinacion': CodCoord
         }
         Form = ProfesorForm(data=dataG)
+        if Form.is_valid():
+            Form.save()
+        else:
+            print("form no valido")
+            print(Form.errors)
+    f.close()
+
+def addtoDBoferta():
+    f = open('oferta.txt','r')
+    for line in f:
+        [Id_prof,Cod_asignatura,Horario,Dia,Periodo,Anio,CodCoord] = line.split(',')
+        CodCoord=CodCoord.split("\n")[0]
+        dataG = {
+            'Id_prof': Id_prof,
+            'Cod_asignatura': Cod_asignatura,
+            'Horario': Horario,
+            'Dia': Dia,
+            'Periodo': Periodo,
+            'Anio': Anio,
+            'Cod_coordinacion': CodCoord
+        }
+        Form = Se_OfreceForm(data=dataG)
         if Form.is_valid():
             Form.save()
         else:

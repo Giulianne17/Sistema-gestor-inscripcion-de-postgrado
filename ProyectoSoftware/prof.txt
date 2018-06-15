@@ -6,8 +6,8 @@
 26514448,Vera,Sandra,CI
 21455458,Tavano,Giulianne,CI
 2545855,Rodriguez,Carlos,CO
-6575554,Perez,Marcos,CO
+6575554,Pérez,Marcos,CO
 4475524,Rodriguez,Carlos Perez,MA
-5584447,Perez De Las Rosas,Maria Alejandra,EC
-6658885,Sanchez,Marla,PS
+5584447,Pérez De Las Rosas,Maria Alejandra,EC
+6658885,Sánchez,Marla,PS
 7745558,Campaña de Lima,Miguel Jose,TG
