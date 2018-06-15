@@ -3,14 +3,39 @@ from django.forms import ModelForm
 from InscripcionPostgrado.models import *
 from InscripcionPostgrado.forms import *
 
-# Create your tests here.
+'''
+*************************************************
+	CASOS DE PRUEBA PARA LA TABLA DE PROFESOR
+*************************************************
+'''
 
-# Pruebas de la tabla Profesor
 class ProfesorTestCase(TestCase):
+	
 	def setUp(self):
+		'''La funcion setUp se encarga de crear una instancia en la tabla de coordinacion 
+		   para ser utilizada en todos los casos de prueba que se presentan a continuacion
+		   
+		   Parametro:
+		       self (ProfesorTestCase): instancia sobre la que se evaluan los casos
+			   
+		   Atributo:
+		       coord (Coordinacion): instancia de coordinacion creada'''
+		
 		coord = Coordinacion.objects.create(Cod_coordinacion = "EE", Nombre_coordinacion = "Arquitectura")
 
+
 	def test_profesorCedulaEsquina1(self):
+		'''Esta prueba es de esquina para el atributo cedula
+		   Corresponde a la esquina donde todos los caracteres son "0"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '00000000',
 			'Apellidos' : 'Aular Lopez',
@@ -21,7 +46,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorCedulaEsquina2(self):
+		'''Esta prueba es de esquina para el atributo cedula
+		   Corresponde a la esquina donde todos los caracteres son "9"
+		   Se espera que la instancia sea creada correctamente
+		    
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '99999999',
 			'Apellidos' : 'Aular Lopez',
@@ -32,7 +69,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorCedulaFrontera1(self):
+		'''Esta prueba es de frontera para el atributo cedula
+		   Corresponde a la combinacion de caracteres entre "0" y "9"
+		   Se espera que la instancia sea creada correctamente
+		    
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -43,7 +92,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorNombreEsquina1(self):
+		'''Esta prueba es de esquina para el atributo nombre
+		   Corresponde a la esquina donde todos los caracteres son "A"
+		   Se espera que la instancia sea creada correctamente
+		    
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -56,6 +117,17 @@ class ProfesorTestCase(TestCase):
 
 
 	def test_profesorNombreEsquina2(self):
+		'''Esta prueba es de esquina para el atributo nombre
+		   Corresponde a la esquina donde todos los caracteres son "Z"
+		   Se espera que la instancia sea creada correctamente
+		    
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -66,7 +138,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorNombreEsquina3(self):
+		'''Esta prueba es de esquina para el atributo nombre
+		   Corresponde a la esquina donde todos los caracteres son "a"
+		   Se espera que la instancia sea creada correctamente
+
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -77,7 +161,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorNombreEsquina4(self):
+		'''Esta prueba es de esquina para el atributo nombre
+		   Corresponde a la esquina donde todos los caracteres son "z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -90,6 +186,17 @@ class ProfesorTestCase(TestCase):
 
 
 	def test_profesorNombreFrontera1(self):
+		'''Esta prueba es de frontera para el atributo nombre
+		   Corresponde a la combinacion de caracteres entre "A" y "Z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -100,7 +207,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorNombreFrontera2(self):
+		'''Esta prueba es de frontera para el atributo nombre
+		   Corresponde a la combinacion de caracteres entre "A" y "Z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -111,7 +230,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorNombreFrontera3(self):
+		'''Esta prueba es de frontera para el atributo nombre
+		   Corresponde a la combinacion de caracteres entre "a" y "z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -122,7 +253,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorNombreFrontera4(self):
+		'''Esta prueba es de frontera para el atributo nombre
+		   Corresponde a la combinacion de caracteres entre "a" y "z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -133,7 +276,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorNombreFrontera5(self):
+		'''Esta prueba es de frontera para el atributo nombre
+		   Corresponde a la combinacion de caracteres en mayuscula y minuscula
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Aular Lopez',
@@ -144,7 +299,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosEsquina1(self):
+		'''Esta prueba es de esquina para el atributo apellido
+		   Corresponde a la esquina donde todos los caracteres son "A"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'AA',
@@ -155,7 +322,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosEsquina2(self):
+		'''Esta prueba es de esquina para el atributo apellido
+		   Corresponde a la esquina donde todos los caracteres son "Z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		   
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'ZZ',
@@ -166,7 +345,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosEsquina3(self):
+		'''Esta prueba es de esquina para el atributo apellido
+		   Corresponde a la esquina donde todos los caracteres son "a"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		   
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'aa',
@@ -177,7 +368,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosEsquina4(self):
+		'''Esta prueba es de esquina para el atributo apellido
+		   Corresponde a la esquina donde todos los caracteres son "z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el casos
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+		   
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'zz',
@@ -188,7 +391,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosFrontera1(self):
+		'''Esta prueba es de frontera para el atributo apellido
+		   Corresponde a la combinacion de caracteres entre "A" y "Z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'AULAR',
@@ -199,7 +414,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosFrontera2(self):
+		'''Esta prueba es de frontera para el atributo apellido
+		   Corresponde a la combinacion de caracteres entre "A" y "Z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'ZAPATA',
@@ -210,7 +437,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosFrontera3(self):
+		'''Esta prueba es de frontera para el atributo apellido
+		   Corresponde a la combinacion de caracteres entre "a" y "z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'aular',
@@ -221,7 +460,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosFrontera4(self):
+		'''Esta prueba es de frontera para el atributo apellido
+		   Corresponde a la combinacion de caracteres entre "a" y "z"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'zapata',
@@ -232,7 +483,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_profesorApellidosFrontera5(self):
+		'''Esta prueba es de frontera para el atributo apellido
+		   Corresponde a la combinacion de caracteres en mayuscula y minuscula
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '2561829',
 			'Apellidos' : 'Rangel Pino',
@@ -243,10 +506,19 @@ class ProfesorTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 	
-	# Casos de prueba malicia para la cedula del profesor.
-	
-	#Caso donde la cedula contiene el caracter "/".
+
 	def test_profesorCedulaMalicia(self):
+		'''Esta prueba es de malicia para el atributo cedula
+		   Corresponde al string donde un caracter es "/"
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '256/829',
 			'Apellidos' : 'Rangel Pino',
@@ -256,8 +528,19 @@ class ProfesorTestCase(TestCase):
 		form = ProfesorForm(data = form_data)
 		self.assertFalse(form.is_valid())
 	
-	# Caso donde la cedula contiene el caracter ":".
+	
 	def test_profesorCedulaMalicia1(self):
+		'''Esta prueba es de malicia para el atributo cedula
+		   Corresponde al string donde un caracter es ":"
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '25:6829',
 			'Apellidos' : 'Rangel Pino',
@@ -267,8 +550,19 @@ class ProfesorTestCase(TestCase):
 		form = ProfesorForm(data = form_data)
 		self.assertFalse(form.is_valid())
 	
-	# Caso donde el nombre contiene un "@"
+
 	def test_profesorNombreMalicia(self):
+		'''Esta prueba es de malicia para el atributo nombre
+		   Corresponde al string donde un caracter es "@"
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '256829',
 			'Apellidos' : 'Rangel Pino',
@@ -278,8 +572,19 @@ class ProfesorTestCase(TestCase):
 		form = ProfesorForm(data = form_data)
 		self.assertFalse(form.is_valid())
 
-	#Caso donde el nombre contiene "["	
+
 	def test_profesorNombreMalicia1(self):
+		'''Esta prueba es de malicia para el atributo nombre
+		   Corresponde al string donde un caracter es "["
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+	
 		form_data = {
 			'Id_prof' : '256829',
 			'Apellidos' : 'Rangel Pino',
@@ -288,9 +593,20 @@ class ProfesorTestCase(TestCase):
 		}
 		form = ProfesorForm(data = form_data)
 		self.assertFalse(form.is_valid())
+
 	
-	#Caso donde el nombre contiene "{"	
 	def test_profesorNombreMalicia2(self):
+		'''Esta prueba es de malicia para el atributo nombre
+		   Corresponde al string donde un caracter es "{"
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '256829',
 			'Apellidos' : 'Rangel Pino',
@@ -300,8 +616,19 @@ class ProfesorTestCase(TestCase):
 		form = ProfesorForm(data = form_data)
 		self.assertFalse(form.is_valid())
 	
-		# Caso donde el apellido contiene un "@"
+
 	def test_profesorApellidoMalicia(self):
+		'''Esta prueba es de malicia para el atributo apellido
+		   Corresponde al string donde un caracter es "@"
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '256829',
 			'Apellidos' : 'Ra@ngel Pino',
@@ -311,8 +638,19 @@ class ProfesorTestCase(TestCase):
 		form = ProfesorForm(data = form_data)
 		self.assertFalse(form.is_valid())
 
-	#Caso donde el apellido contiene "["	
+
 	def test_profesorApellidoMalicia1(self):
+		'''Esta prueba es de malicia para el atributo apellido
+		   Corresponde al string donde un caracter es "["
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '256829',
 			'Apellidos' : 'R[ngel Pino',
@@ -322,8 +660,19 @@ class ProfesorTestCase(TestCase):
 		form = ProfesorForm(data = form_data)
 		self.assertFalse(form.is_valid())
 	
-	#Caso donde el apellido contiene "{"	
+	
 	def test_profesorApellidoMalicia2(self):
+		'''Esta prueba es de malicia para el atributo apellido y nombre
+		   Corresponde a los strings donde un caracter es "{"
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (ProfesorTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia profesor
+			   form : objeto del tipo profesor'''
+
 		form_data = {
 			'Id_prof' : '256829',
 			'Apellidos' : 'Rangel Pi{no',
@@ -334,9 +683,29 @@ class ProfesorTestCase(TestCase):
 		self.assertFalse(form.is_valid())
 
 
-# Pruebas de la tabla Ofrece
+'''
+***************************************************
+	CASOS DE PRUEBA PARA LA TABLA DE LAS OFERTAS
+***************************************************
+'''
+
 class OfreceTestCase(TestCase):
+	
 	def setUp(self):
+		'''La funcion setUp se encarga de crear una instancia en la tabla de coordinacion,
+		   una instancia en la tabla asignatura y una instancia en la tabla profesor
+		   para ser utilizadas en todos los casos de prueba que se presentan a continuacion
+		   
+		   Parametros:
+		    	self (OfreceTestCase): es la instancia sobre la que se evaluan los casos
+
+		   Atributos:
+		    	coord (Coordinacion): instancia de coordinacion creada
+				form_data : diccionario con los atributos de la intancia asignatura
+				form : objeto del tipo profesor
+				form_data1 : diccionario con los atributos de la intancia profesor
+				form1 : objeto del tipo profesor'''
+		
 		coord = Coordinacion.objects.create(Cod_coordinacion = "EE", Nombre_coordinacion = "Arquitectura")
 
 		form_data = {
@@ -358,8 +727,19 @@ class OfreceTestCase(TestCase):
 		form1 = ProfesorForm(data = form_data1)
 		form1.save()
 
-	# Caso esquina.
+
 	def test_ofrece_horarioEsquina1(self):
+		'''Esta prueba es de esquina para el atributo horario
+		   Corresponde a la esquina donde el horario es de la forma "1-2"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -373,7 +753,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_horarioEsquina2(self):
+		'''Esta prueba es de esquina para el atributo horario
+		   Corresponde a la esquina donde el horario es de la forma "1-13"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -387,7 +779,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_horarioEsquina3(self):
+		'''Esta prueba es de esquina para el atributo horario
+		   Corresponde a la esquina donde el horario es de la forma "12-13"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -401,8 +805,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
-	# Casos frontera.
+
 	def test_ofrece_horarioFrontera1(self):
+		'''Esta prueba es de frontera para el atributo horario
+		   Corresponde a un horario entre "1-2" y "1-13"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -416,7 +831,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_horarioFrontera2(self):
+		'''Esta prueba es de frontera para el atributo horario
+		   Corresponde a un horario entre "1-2" y "1-13"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -430,7 +857,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_horarioFrontera3(self):
+		'''Esta prueba es de frontera para el atributo horario
+		   Corresponde a un horario entre "1-2" y "12-13"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -444,7 +883,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_horarioFrontera4(self):
+		'''Esta prueba es de frontera para el atributo horario
+		   Corresponde a un horario entre "1-2" y "12-13"
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -458,7 +909,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_anioEsquina1(self):
+		'''Esta prueba es de esquina para el atributo año
+		   Corresponde al año 1970
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -472,7 +935,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_anioEsquina2(self):
+		'''Esta prueba es de esquina para el atributo año
+		   Corresponde al año 2019
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -486,7 +961,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_anioFrontera1(self):
+		'''Esta prueba es de frontera para el atributo año
+		   Corresponde a un año entre 1970 y 2019
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -500,7 +987,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_anioFrontera2(self):
+		'''Esta prueba es de frontera para el atributo año
+		   Corresponde a un año entre 1970 y 2019
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -514,7 +1013,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
+
 	def test_ofrece_anioFrontera3(self):
+		'''Esta prueba es de frontera para el atributo año
+		   Corresponde a un año entre 1970 y 2019
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -528,7 +1039,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
-	def test_ofrece_periodoEsquina1(self):
+
+	def test_ofrece_periodo1(self):
+		'''Esta prueba es de esquina para el atributo periodo
+		   Corresponde al periodo Septiembre-Diciembre que se almacena como SD
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -542,7 +1065,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
-	def test_ofrece_periodoEsquina2(self):
+
+	def test_ofrece_periodo2(self):
+		'''Esta prueba es de esquina para el atributo periodo
+		   Corresponde al periodo Enero-Marzo que se almacena como EM
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -556,7 +1091,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
-	def test_ofrece_periodoEsquina3(self):
+
+	def test_ofrece_periodo3(self):
+		'''Esta prueba es de esquina para el atributo periodo
+		   Corresponde al periodo Abril-Julio que se almacena como AJ
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -570,7 +1117,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 
-	def test_ofrece_periodoEsquina4(self):
+
+	def test_ofrece_periodo4(self):
+		'''Esta prueba es de esquina para el atributo periodo
+		   Corresponde al periodo Verano que se almacena como V
+		   Se espera que la instancia sea creada correctamente
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -584,10 +1143,19 @@ class OfreceTestCase(TestCase):
 		form.save()
 		self.assertTrue(form.is_valid())
 	
-	# Casos de Malicia
-
-	#Caso en el que año es 1969
+	
 	def test_ofrece_anioMalicia(self):
+		'''Esta prueba es de malicia para el atributo año
+		   Corresponde al año 1969
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
@@ -600,8 +1168,19 @@ class OfreceTestCase(TestCase):
 		form = Se_OfreceForm(data = form_data)
 		self.assertFalse(form.is_valid())
 	
-	#Caso en el que año es 2020
+	
 	def test_ofrece_anioMalicia1(self):
+		'''Esta prueba es de malicia para el atributo año
+		   Corresponde al año 2020
+		   Se espera que la instancia no sea creada
+		   
+		   Parametro:
+		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+			      
+		   Atributos:
+		       form_data : diccionario con los atributos de la intancia Se_Ofrece
+			   form : objeto del tipo Se_Ofrece'''
+
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
