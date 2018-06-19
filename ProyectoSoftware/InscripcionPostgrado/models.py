@@ -232,22 +232,6 @@ class Profesor(models.Model):
 	def __str__(self):
 		return "Prof. "  +  str(self.Nombres) + " " + str(self.Apellidos) + " C.I." + str(self.Id_prof)
 
-
-def anio_trimestre_restr(year):
-	""" Verifica si anio ingresado es valido. 
-	Comprueba si el valor esta entre: 1970 y el anio proximo al actual.
-    Devuelve el anio correspondiente.
-
-    Parámetros:
-    year -- Anio en del trimestre a registrar.
-
-    Excepciones:
-    ValidationError -- Si no cumple condicion antes mencionada.
-    """
-	if not (1970 <= year <= (datetime.date.today().year)+1):
-		raise ValidationError(_('Trimestre invalido'))
-	return year
-
 def horario_formato(hora):
 	""" Transforma el formato de la hora, en el deseado.
 
@@ -272,6 +256,55 @@ def horario_formato(hora):
 
 	return str1+'-'+str2
 
+def anio_trimestre_restr(year):
+	""" Verifica si anio ingresado es valido. 
+	Comprueba si el valor esta entre: 1970 y el anio proximo al actual.
+    Devuelve el anio correspondiente.
+
+    Parámetros:
+    year -- Anio en del trimestre a registrar.
+
+    Excepciones:
+    ValidationError -- Si no cumple condicion antes mencionada.
+    """
+	if not (1970 <= year <= (datetime.date.today().year)+1):
+		raise ValidationError(_('Trimestre invalido'))
+	return year
+
+# Tabla de los trimestre, cuya clave es (periodo, anio)
+class Trimestre(models.Model):
+	TRIMESTRE_CHOICES = (
+        ('EM', 'ENE-MAR'),
+        ('AJ', 'ABR-JUL'),
+        ('V', 'VERANO'),
+        ('SD', 'SEP-DIC')
+    )
+	class Meta:
+		unique_together = (('Periodo', 'Anio'))
+	Periodo = models.CharField(max_length=7, choices=TRIMESTRE_CHOICES)
+	Anio = models.IntegerField(validators=[anio_trimestre_restr])
+	def getallfields(self):
+		return [self.Periodo,self.Anio]
+	def __getallfieldNames__(self):
+		return ["Periodo","Anio"]
+	def __gettablename__(self):
+		return "Trimestre"
+	def __createElement__(self,parameters):
+		return Trimestre(
+				Periodo = parameters["Periodo"],
+				Anio = parameters["Anio"]
+		)
+	def returnTrimestre(self):
+		""" Devuelve las opciones de los trimestres para las ofertas"""
+		if "EM" in self.Periodo:
+			return "ENE-MAR"
+		elif "AJ" in self.Periodo:
+			return "ABR-JUL"
+		elif "V" in self.Periodo:
+			return "VERANO"
+		else:
+			return "SEPT-DIC"
+	
 class Cursa(models.Model):
 	""" Consiste en la tabla de la relacion de cursa.
 	Parametros:
@@ -339,8 +372,7 @@ class Se_Ofrece(models.Model):
 		Cod_asignatura : Codigo de la asignatura ofertada.
 		Horario : Horario en que se oferta la materia. 
 		Dia : dia de la semana.
-		Periodo : periodo del trimestre.
-		Anio : anio del trimestre.
+		Periodo : periodo de la oferta.
 		Cod_coordinacion : Codigo de la coordinacion en que oferta.
 	"""
 	DAY_CHOICES = (
@@ -351,27 +383,20 @@ class Se_Ofrece(models.Model):
 		('VIERNES', 'Viernes'),
 		('SABADO', 'Sábado')
     )
-	TRIMESTRE_CHOICES = (
-        ('EM', 'ENE-MAR'),
-        ('AJ', 'ABR-JUL'),
-        ('V', 'VERANO'),
-        ('SD', 'SEP-DIC')
-    )
 	class Meta:
-		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Anio','Cod_coordinacion'))
+		unique_together = (('Id_prof', 'Cod_asignatura','Horario', 'Periodo', 'Cod_coordinacion'))
 	Id_prof = models.ForeignKey(Profesor, on_delete=models.CASCADE)
 	Cod_asignatura = models.ForeignKey(Asignatura, on_delete=models.CASCADE)
 	Horario = models.CharField(max_length=5, validators=[hora_se_ofrece_restr])
 	Dia = models.CharField(max_length = 9,choices=DAY_CHOICES)
-	Periodo = models.CharField(max_length = 7,choices=TRIMESTRE_CHOICES)
-	Anio = models.IntegerField(validators=[anio_trimestre_restr])
+	Periodo = models.ForeignKey(Trimestre, related_name='Trimestre_ofrece_periodo', on_delete=models.CASCADE)
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		""" Devuelve los atributos de la clase """
-		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo,self.Anio, self.Cod_coordinacion]
+		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo, self.Cod_coordinacion]
 	def __getallfieldNames__(self):
 		""" Obtiene los nombres de los atributos de la clase"""
-		return ["Id_prof","Cod_asignatura","Horario","Periodo","Anio", "Cod_coordinacion"]
+		return ["Id_prof","Cod_asignatura","Horario", "Cod_coordinacion"]
 	def __gettablename__(self):
 		""" Obtiene el nombre de la clase"""
 		return "Se_Ofrece"
@@ -392,16 +417,6 @@ class Se_Ofrece(models.Model):
 	def returnDiaMinus(self):
 		"""Devuelve el dia de la semana en que se oferta materia"""
 		return self.Dia.title()
-	def returnTrimestre(self):
-		""" Devuelve las opciones de los trimestres para las ofertas"""
-		if "EM" in self.Periodo:
-			return "ENE-MAR"
-		elif "AJ" in self.Periodo:
-			return "ABR-JUL"
-		elif "V" in self.Periodo:
-			return "VERANO"
-		else:
-			return "SEPT-DIC"
 
 class MedioPago(models.Model):
 	""" Consiste en la tabla del medio de pago.
