@@ -19,6 +19,8 @@ def __redirectCenter__(request):
 		return coordinacion(request)
 	if "ofertas" in request.path:
 		return ofertas(request)
+	if "periodo" in request.path:
+		return periodo(request)
 	else:
 		return index(request)
 
@@ -195,6 +197,23 @@ def orderbyAsignatura(request):
 		context['table'] = context['table'].order_by(attr)
 	context['backPath'] = path
 	return render(request, 'crud/coordinacion.html', context)
+
+def periodo(request):
+	if "delete" in request.path:
+		return deletePeriodo(request)
+	if request.method=="POST":
+		pass
+	else:
+		context = __buildContext__("Trimestre",True)
+		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+		context ["backpath"] = ""
+		return render(request, 'crud/periodo.html', context)
+
+def deletePeriodo(request):
+	[path,Id] = request.path.split("/delete_")
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
+	table.objects.filter(id = Id).delete()
+	return  HttpResponseRedirect(path)
 
 def ofertas(request):
 	if "delete" in request.path:
@@ -525,7 +544,10 @@ def __buildContextAsignatura__(CodCoordinacion):
 def __buildContextOferta__(request):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
 	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Período"]
-	table=model.objects.all()
+	if "ofertas_" in request.path:
+		table=model.objects.filter(Periodo = request.path.split("ofertas_")[1].split("/")[0])
+	else:
+		table=model.objects.all()
 	form = __returnForm__("",request)
 	context = __contextTemplate__("ofertas",column_list,table,False,form)
 	return context

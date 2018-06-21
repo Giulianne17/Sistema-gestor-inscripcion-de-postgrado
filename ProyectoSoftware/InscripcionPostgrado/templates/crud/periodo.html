@@ -256,7 +256,7 @@ $(document).ready(function(){
 						{% if searchBool %}
 						<h2>Buscar <b>{{ table_name }}</b></h2>
 						{% else %}
-						<h2>Manejar <b>{{ table_name }}</b></h2>
+						<h2>Manejar <b>Ofertas</b></h2>
 						{% endif %}
 					</div>
 					<div class="col-sm-6">
@@ -266,7 +266,7 @@ $(document).ready(function(){
 							{% if searchBool or orderBool or "orderby" in request.path %}
 							<a href="{{backPath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% else %}
-							<a href="/periodos" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
+							<a href="/index" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% endif %}
 							<a href="{{request.path}}/printPdf" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Exportar</span></a>
 						{% endif %}
@@ -305,20 +305,10 @@ $(document).ready(function(){
 					{% if table.count != 0 and table != None %}
 						{% for element in table %}
 						<tr>
-							<td> {{element.Cod_asignatura.Cod_asignatura}} </td>
-							<td> {{element.Cod_asignatura.Creditos}} </td>		
-							<td> {{element.Cod_asignatura.Nombre_asig}} </td>
-							<td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>
-							<td> 
-								<a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
-							</td>	
-							<td>
-								<p>{{element.returnDiaMinus}} {{element.Horario}}</p>
-								<p>({{element.returnTime}})</p>
-							</td>
-							<!-- <td> {{element.returnTrimestre}} {{element.Anio}} </td> -->
+							<td> {{element.returnTrimestre}} </td>
+							<td> {{element.Anio}} </td>	
 							<td>		
-							<p><a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
+							<p><a href="{{backpath}}/ofertas_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
 							<p><a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a></p>
 							</td>
 						</tr> {% endfor %}
@@ -366,7 +356,7 @@ $(document).ready(function(){
 					</td>
 					<td><span></span></td>	
 					<td> 
-						<!-- <div class="dropdown">
+						<div class="dropdown">
 							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Periodo
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
@@ -378,7 +368,7 @@ $(document).ready(function(){
 								<li><a href="{{ request.path }}/orderby_Fecha=desc">Descendente</a></li>
 								{% endif%}
 							</ul>
-						</div>	 -->
+						</div>	
 					</td>		
 					<td> </td>		
 					<td> </td>	

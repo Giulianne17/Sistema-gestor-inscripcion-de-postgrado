@@ -284,9 +284,9 @@ class Trimestre(models.Model):
 	Periodo = models.CharField(max_length=7, choices=TRIMESTRE_CHOICES)
 	Anio = models.IntegerField(validators=[anio_trimestre_restr])
 	def getallfields(self):
-		return [self.Periodo,self.Anio]
+		return [self.id,self.Periodo,self.Anio]
 	def __getallfieldNames__(self):
-		return ["Periodo","Anio"]
+		return ["id","Periodo","Anio"]
 	def __gettablename__(self):
 		return "Trimestre"
 	def __createElement__(self,parameters):
@@ -393,10 +393,10 @@ class Se_Ofrece(models.Model):
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
 	def getallfields(self):
 		""" Devuelve los atributos de la clase """
-		return [self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo, self.Cod_coordinacion]
+		return [self.id,self.Id_prof,self.Cod_asignatura,self.Horario,self.Periodo, self.Cod_coordinacion]
 	def __getallfieldNames__(self):
 		""" Obtiene los nombres de los atributos de la clase"""
-		return ["Id_prof","Cod_asignatura","Horario", "Cod_coordinacion"]
+		return ["id","Id_prof","Cod_asignatura","Horario", "Periodo","Cod_coordinacion"]
 	def __gettablename__(self):
 		""" Obtiene el nombre de la clase"""
 		return "Se_Ofrece"
