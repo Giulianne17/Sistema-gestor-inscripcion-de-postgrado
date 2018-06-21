@@ -13,6 +13,7 @@ def dataTemplate(Codasig,NombreAsig,CodCoord,Cred,Prog):
 def addtoDB():
     addtoDBCoordAsig()
     addtoDBprof()
+    addtoDBtrim()
     addtoDBoferta()
 
 def addtoDBCoordAsig():
@@ -65,10 +66,27 @@ def addtoDBprof():
             print(Form.errors)
     f.close()
 
+def addtoDBtrim():
+    f = open('BDdatatxt/trimestre.txt','r')
+    for line in f:
+        [Periodo,Anio] = line.split(',')
+        Anio=Anio.split("\n")[0]
+        dataG = {
+            'Periodo': Periodo,
+            'Anio': Anio
+        }
+        Form = TrimestreForm(data=dataG)
+        if Form.is_valid():
+            Form.save()
+        else:
+            print("form no valido")
+            print(Form.errors)
+    f.close()
+
 def addtoDBoferta():
     f = open('BDdatatxt/oferta.txt','r')
     for line in f:
-        [Id_prof,Cod_asignatura,Horario,Dia,Periodo,Anio,CodCoord] = line.split(',')
+        [Id_prof,Cod_asignatura,Horario,Dia,Periodo,CodCoord] = line.split(',')
         CodCoord=CodCoord.split("\n")[0]
         dataG = {
             'Id_prof': Id_prof,
@@ -76,7 +94,6 @@ def addtoDBoferta():
             'Horario': Horario,
             'Dia': Dia,
             'Periodo': Periodo,
-            'Anio': Anio,
             'Cod_coordinacion': CodCoord
         }
         Form = Se_OfreceForm(data=dataG)
