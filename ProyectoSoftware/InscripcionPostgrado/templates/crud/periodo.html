@@ -262,13 +262,13 @@ $(document).ready(function(){
 					<div class="col-sm-6">
 						{% if not show_all_tables %}	
 							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar oferta</span></a>
-							<a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a> 
+							<!-- <a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a>  -->
 							{% if searchBool or orderBool or "orderby" in request.path %}
 							<a href="{{backPath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% else %}
 							<a href="/index" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% endif %}
-							<a href="{{request.path}}/printPdf" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Exportar</span></a>
+							<!-- <a href="{{request.path}}/printPdf" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Exportar</span></a> -->
 						{% endif %}
 					</div>
                 </div>
@@ -304,14 +304,14 @@ $(document).ready(function(){
                 <tbody>
 					{% if table.count != 0 and table != None %}
 						{% for element in table %}
-						<tr>
+						<tr onclick="{{backpath}}/ofertas_{{element.id}}"><a>
 							<td> {{element.returnTrimestre}} </td>
 							<td> {{element.Anio}} </td>	
 							<td>		
 							<p><a href="{{backpath}}/ofertas_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
 							<p><a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a></p>
 							</td>
-						</tr> {% endfor %}
+						</a> </tr>{% endfor %}
 					{% else %}
 						<td colspan="{{ table_column_list | length }}">
 							No se encontraron elementos.
@@ -324,7 +324,7 @@ $(document).ready(function(){
 				<tbody>
 					<tr>
 					<td> </td>
-					<td> 
+					<!-- <td> 
 						<div class="dropdown">
 							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Código
 							<span class="caret"></span></button>
@@ -369,7 +369,7 @@ $(document).ready(function(){
 								{% endif%}
 							</ul>
 						</div>	
-					</td>		
+					</td>		 -->
 					<td> </td>		
 					<td> </td>	
 					<td><span></span></td>

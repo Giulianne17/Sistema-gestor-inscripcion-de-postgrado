@@ -408,7 +408,6 @@ class Se_Ofrece(models.Model):
 				Horario = parameters["Horario"],
 				Dia = parameters["Dia"],
 				Periodo = parameters["Periodo"],
-				Anio = parameters["Anio"],
 				Cod_coordinacion = parameters["Cod_coordinacion"]
 			)
 	def returnTime(self):

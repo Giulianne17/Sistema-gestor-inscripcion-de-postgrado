@@ -202,11 +202,22 @@ def periodo(request):
 	if "delete" in request.path:
 		return deletePeriodo(request)
 	if request.method=="POST":
-		pass
+		try:
+			__modififyDB__("Trimestre", None,request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			context = __buildContext__("Trimestre",True)
+			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+			context ["backpath"] = ""
+			context["form"] = __returnForm__("Trimestre",request)
+			print(context["form"].errors)
+			return render(request, 'crud/periodo.html', context)
 	else:
 		context = __buildContext__("Trimestre",True)
 		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		context ["backpath"] = ""
+		context["form"] = __returnForm__("Trimestre",request)
 		return render(request, 'crud/periodo.html', context)
 
 def deletePeriodo(request):
@@ -624,7 +635,7 @@ def __returnForm__(name,request):
 		if not request.POST:
 			return Se_OfreceForm()
 		return Se_OfreceForm(request.POST)
-	elif "trimestre" in request.path:
+	elif "trimestre" in request.path or "trimestre" in name.lower():
 		if not request.POST:
 			return TrimestreForm()
 		return TrimestreForm(request.POST)	
