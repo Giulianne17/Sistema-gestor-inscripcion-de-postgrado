@@ -268,7 +268,7 @@ def anio_trimestre_restr(year):
     ValidationError -- Si no cumple condicion antes mencionada.
     """
 	if not (1970 <= year <= (datetime.date.today().year)+1):
-		raise ValidationError(_('Trimestre invalido'))
+		raise ValidationError(_('Año invalido. Introduzca un año entre 1970 y '+str(datetime.date.today().year)))
 	return year
 
 # Tabla de los trimestre, cuya clave es (periodo, anio)

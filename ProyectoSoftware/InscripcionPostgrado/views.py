@@ -201,6 +201,8 @@ def orderbyAsignatura(request):
 def periodo(request):
 	if "delete" in request.path:
 		return deletePeriodo(request)
+	if "edit" in request.path:
+		return editPeriodo(request)
 	if request.method=="POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
@@ -225,6 +227,38 @@ def deletePeriodo(request):
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
 	table.objects.filter(id = Id).delete()
 	return  HttpResponseRedirect(path)
+
+def editPeriodo(request):
+	cod = request.path.split('/edit_')[1]
+	table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
+	element = table.objects.get(id = cod)
+	if request.method=="POST":
+		asignaturasOfertadas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece').objects.filter(Periodo=element.id)
+		return updatePeriodo(request,element,asignaturasOfertadas)
+	else:
+		context = __buildContext__("Trimestre",True)
+		context['editOferta'] = True
+		form = TrimestreForm(instance=element)
+		context['form'] = form
+		return render(request, 'crud/periodo.html', context)
+
+def updatePeriodo(request,oldElement,asignaturasOfertadas):
+	[path,ID] = request.path.split("/edit_")
+	form = __returnForm__("Trimestre",request)
+	if form.is_valid():
+		form.save()
+		table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
+		element = table.objects.get(Periodo = form['Periodo'].value(),Anio=form['Anio'].value())
+		asignaturasOfertadas.update(Periodo=element.id)
+		oldElement.delete()
+		return HttpResponseRedirect(path)
+	else:
+		print("No se pudo modificar la BD")
+		context = __buildContext__("Trimestre",True)
+		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+		context ["backpath"] = ""
+		context["form"] = __returnForm__("Trimestre",request)
+		return render(request, 'crud/periodo.html', context)
 
 def ofertas(request):
 	if "delete" in request.path:

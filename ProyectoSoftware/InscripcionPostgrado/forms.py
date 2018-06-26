@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from InscripcionPostgrado.models import *
+from django.core.exceptions import NON_FIELD_ERRORS
 
 # Form para añadir una instancia a la tabla de asignaturas
 class AsignaturaForm(ModelForm):
@@ -48,6 +49,11 @@ class TrimestreForm(ModelForm):
     class Meta:
         model = Trimestre
         fields = ["Periodo","Anio"]
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                'unique_together': "Ya existe una oferta con estos datos",
+            }
+        }
 
 # Form para añadir una instancia a la tabla de cursa que relaciona un estudiante con una asignatura que
 #cursa, ofertada en cierto periodo y año

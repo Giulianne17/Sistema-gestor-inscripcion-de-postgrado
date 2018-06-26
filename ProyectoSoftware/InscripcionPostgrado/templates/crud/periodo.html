@@ -85,6 +85,7 @@
 	}
 	table.table td a:hover {
 		color: #2196F3;
+		cursor: pointer;
 	}
 	table.table td a.edit {
         color: #FFC107;
@@ -220,6 +221,9 @@
 	.modal form label {
 		font-weight: normal;
 	}	
+	.clickable-row {
+		cursor: pointer
+	}
 </style>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -294,24 +298,31 @@ $(document).ready(function(){
 					});
 				</script>
 			{% endif %}
-            <table class="table table-striped table-hover">
+			<script type="text/javascript">
+				jQuery(document).ready(function($) {
+					$(".clickable-row").click(function() {
+						window.location = $(this).data("href");
+					});
+				});
+			</script>
+			<table class="table table-striped table-hover">
                 <thead>
                     <tr>
                     	{% for columnName in table_column_list %}
                         <th>{{ columnName }}</th>{% endfor %}
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tablagiven">
 					{% if table.count != 0 and table != None %}
 						{% for element in table %}
-						<tr onclick="{{backpath}}/ofertas_{{element.id}}"><a>
+						<tr class='clickable-row' data-href='{{backpath}}/ofertas_{{element.id}}'>
 							<td> {{element.returnTrimestre}} </td>
 							<td> {{element.Anio}} </td>	
 							<td>		
-							<p><a href="{{backpath}}/ofertas_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
+							<p><a href="./edit_{{element.id}}" class="edit" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Edit"  >&#xE254;</i> </a></p>
 							<p><a href="./delete_{{element.id}}" class="delete" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a></p>
 							</td>
-						</a> </tr>{% endfor %}
+						</tr>{% endfor %}
 					{% else %}
 						<td colspan="{{ table_column_list | length }}">
 							No se encontraron elementos.
