@@ -346,15 +346,17 @@ def __returnContextPeriodoWithSearchTable__(currentpath,context):
 	return context
 
 def orderbyPeriodo(request):
+	context = __buildContext__("Trimestre",True)
 	if request.method == "POST":
 		try:
-			__modififyDB__("", None,request)
+			__modififyDB__("Trimestre", None,request)
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
-			context = __getContext__(request,"",False)
-			return render(request, 'crud/oferta.html', context)
-	context = __buildContextOferta__(request)
+			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+			context ["backpath"] = "periodos"
+			context["form"] = __returnForm__("Trimestre",request)
+			return render(request, 'crud/periodo.html', context)
 	[path,orderparam] = request.path.split("/orderby_")
 	[attr,style] = orderparam.split("=")
 	if "asc" in style:
@@ -362,19 +364,13 @@ def orderbyPeriodo(request):
 	else:
 		styleaux = "descendente"
 	if "search_" in request.path:
-		context = __returnContextOfertaWithSearchTable__(request.path,context)
-	if "Nombre_asig" in attr:
-		attr = "Cod_asignatura__" + attr
-		aux = "Nombre de asignatura"
-	if "Fecha" not in attr:
-		if "Nombre_asig" not in attr:
-			aux = "Codigo de asignatura"
+		context = __returnContextPeriodoWithSearchTable__(request.path,context)
+	if "Periodo" in attr:
 		if "desc" in style:
 			context['table'] = context['table'].order_by("-"+attr)
 		elif "asc" in style:
 			context['table'] = context['table'].order_by(attr)
 	else:
-		aux = "Periodo"
 		table = None
 		if "desc" in style:
 			values = context['table'].values_list('Anio',flat=True).order_by('-Anio').distinct()
@@ -385,20 +381,22 @@ def orderbyPeriodo(request):
 			for i in values:
 				table=__appendAnioOrderedByPeriodo__(style,i,context['table'],table)
 		context['table'] = table
-	context['backPath'] = path
-	if "printPdf" in request.path:
-		if "search_" in request.path:
-			[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
-			if "Cod_asig" in attrb:
-				attr = "Codigo de asignatura"
-			elif "Nombre_asig" in attrb:
-				attr = "Nombre de asignatura"
-			elif "Prof" in attrb:
-				attr = "Profesor"
-			return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
-		else:
-			return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
-	return render(request, 'crud/oferta.html', context)
+	context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+	context ["backpath"] = path
+	context["form"] = __returnForm__("Trimestre",request)
+	# if "printPdf" in request.path:
+	# 	if "search_" in request.path:
+	# 		[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
+	# 		if "Cod_asig" in attrb:
+	# 			attr = "Codigo de asignatura"
+	# 		elif "Nombre_asig" in attrb:
+	# 			attr = "Nombre de asignatura"
+	# 		elif "Prof" in attrb:
+	# 			attr = "Profesor"
+	# 		return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
+	# 	else:
+	# 		return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
+	return render(request, 'crud/periodo.html', context)
 
 # def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
 # 	tableAnio = majorTable.filter(Anio=year)

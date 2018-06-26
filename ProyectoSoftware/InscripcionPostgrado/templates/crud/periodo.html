@@ -257,15 +257,15 @@ $(document).ready(function(){
             <div class="table-title">
                 <div class="row">
                     <div class="col-sm-6">
-						{% if searchBool %}
-						<h2>Buscar <b>{{ table_name }}</b></h2>
-						{% else %}
 						<h2>Manejar <b>Ofertas</b></h2>
-						{% endif %}
 					</div>
 					<div class="col-sm-6">
 						{% if not show_all_tables %}	
+							{% if searchBool or orderBool or "orderby" in request.path %}
+							<a href="{{backPath}}#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar oferta</span></a>
+							{% else %}
 							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar oferta</span></a>
+							{% endif %}
 							<a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a> 
 							{% if searchBool or orderBool or "orderby" in request.path %}
 							<a href="{{backPath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
@@ -335,38 +335,37 @@ $(document).ready(function(){
 				<tbody>
 					<tr>
 					<td> </td>
+					<td> 
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar Alfabéticamente
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								{% if "orderby" in request.path %}
+								<li><a href="{{ backPath }}/orderby_Periodo=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Periodo=desc">Descendente</a></li>
+								{% else %}
+								<li><a href="{{ request.path }}/orderby_Periodo=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Periodo=desc">Descendente</a></li>
+								{% endif%}
+							</ul> 
+						</div>	
+					</td>
+					<td> 
+						<div class="dropdown">
+							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Periodo
+							<span class="caret"></span></button>
+							<ul class="dropdown-menu">
+								{% if "orderby" in request.path %}
+								<li><a href="{{ backPath }}/orderby_Trimestre=asc">Ascendente</a></li>
+								<li><a href="{{ backPath }}/orderby_Trimestre=desc">Descendente</a></li>
+								{% else %}
+								<li><a href="{{ request.path }}/orderby_Trimestre=asc">Ascendente</a></li>
+								<li><a href="{{ request.path }}/orderby_Trimestre=desc">Descendente</a></li>
+								{% endif%}
+							</ul> 
+						</div>	
+					</td>
 					<!-- <td> 
-						<div class="dropdown">
-							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Código
-							<span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Cod_asignatura=desc">Descendente</a></li>
-								{% else %}
-								<li><a href="{{ request.path }}/orderby_Cod_asignatura=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}/orderby_Cod_asignatura=desc">Descendente</a></li>
-								{% endif%}
-							</ul> 
-						</div>	
-					</td>
-					<td> 
-						<div class="dropdown">
-							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Denominación
-							<span class="caret"></span></button>
-							<ul class="dropdown-menu">
-								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Nombre_asig=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Nombre_asig=desc">Descendente</a></li>
-								{% else %}
-								<li><a href="{{ request.path }}/orderby_Nombre_asig=asc">Ascendente</a></li>
-								<li><a href="{{ request.path }}/orderby_Nombre_asig=desc">Descendente</a></li>
-								{% endif%}
-							</ul> 
-						</div>	
-					</td>
-					<td><span></span></td>	
-					<td> 
 						<div class="dropdown">
 							<button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Ordenar por Periodo
 							<span class="caret"></span></button>
