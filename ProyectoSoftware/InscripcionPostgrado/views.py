@@ -203,6 +203,14 @@ def periodo(request):
 		return deletePeriodo(request)
 	if "edit" in request.path:
 		return editPeriodo(request)
+	if "orderby" in request.path:
+		return orderbyPeriodo(request)
+	if "search" in request.path:
+		return searchPeriodo(request)
+	if "printPdf" in request.path:
+		pass
+		# context = __buildContextOferta__(request)
+		# return printPdf(request,"TODAS LAS OFERTAS",context)
 	if request.method=="POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
@@ -217,9 +225,9 @@ def periodo(request):
 			return render(request, 'crud/periodo.html', context)
 	else:
 		context = __buildContext__("Trimestre",True)
-		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		context ["backpath"] = ""
 		context["form"] = __returnForm__("Trimestre",request)
+		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		return render(request, 'crud/periodo.html', context)
 
 def deletePeriodo(request):
@@ -240,6 +248,8 @@ def editPeriodo(request):
 		context['editOferta'] = True
 		form = TrimestreForm(instance=element)
 		context['form'] = form
+		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+		context ["backpath"] = "periodos"
 		return render(request, 'crud/periodo.html', context)
 
 def updatePeriodo(request,oldElement,asignaturasOfertadas):
@@ -256,9 +266,154 @@ def updatePeriodo(request,oldElement,asignaturasOfertadas):
 		print("No se pudo modificar la BD")
 		context = __buildContext__("Trimestre",True)
 		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
-		context ["backpath"] = ""
+		context ["backpath"] = "periodos"
 		context["form"] = __returnForm__("Trimestre",request)
 		return render(request, 'crud/periodo.html', context)
+
+def searchPeriodo(request):
+	context = __buildContext__("Trimestre",True)
+	if "/searchInd" in request.path:
+		if request.method == "POST":
+			criterio = request.POST.get("criterio")
+			return HttpResponseRedirect("/periodos/search="+criterio)
+		else:
+			context['searchOferta'] = True
+			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+			context ["backpath"] = "periodos"
+			context["form"] = __returnForm__("Trimestre",request)
+			return render(request, 'crud/periodo.html', context)
+	if request.method == "POST":
+		try:
+			__modififyDB__("Trimestre", None,request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
+			context ["backpath"] = "periodos"
+			context["form"] = __returnForm__("Trimestre",request)
+			return render(request, 'crud/periodo.html', context)
+	context = __returnContextPeriodoWithSearchTable__(request.path,context)
+	# if "printPdf" in request.path:
+	# 	[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
+	# 	if "Cod_asig" in attrb:
+	# 		attr = "Codigo de asignatura"
+	# 	elif "Nombre_asig" in attrb:
+	# 		attr = "Nombre de asignatura"
+	# 	elif "Prof" in attrb:
+	# 		attr = "Profesor"
+	# 	return printPdf(request,"Resultados de la busqueda: "+attrb+" = "+givenSearch,context)
+	context['searchBool'] = True
+	context['backPath'] = request.path.split("/search=")[0]
+	context["table_column_list"] = ["Periodo","Año","Operaciones"]
+	context["backpath"] = "periodos"
+	context["form"] = __returnForm__("Trimestre",request)
+	return render(request, 'crud/periodo.html', context)
+
+def __returnContextPeriodoWithSearchTable__(currentpath,context):
+	[path,searchparam] = currentpath.split("/search=")
+	searchparam = searchparam.split("/")[0].split(" ")
+	table1 = None
+	anios = []
+	for criterio in searchparam:
+		if criterio[0] in "0123456789":
+			try:
+				assert(isinstance(int(criterio),int))
+				anios.append(criterio)
+			except:
+				pass
+		else:
+			for i in ['ENE-MAR', 'ABR-JUL','VERANO','SEPT-DIC','ENERO-MARZO','ABRIL-JULIO','SEPTIEMBRE-DICIEMBRE']:
+				if criterio.lower() in i.lower():
+					if i=='ENE-MAR' or i=='ENERO-MARZO':
+						periodo="EM"
+					elif i=='ABR-JUL' or i =='ABRIL-JULIO':
+						periodo="AJ"
+					elif i=='VERANO':
+						periodo="V"
+					elif i=='SEPT-DIC' or i=='SEPTIEMBRE-DICIEMBRE':
+						periodo="SD"
+					if table1==None:
+						table1=context['table'].filter(Periodo__icontains=periodo)
+					else:
+						table1=table1 | context['table'].filter(Periodo__icontains=periodo)
+					break
+	if len(anios)>0:
+		if table1==None:
+			table1 = context['table'].filter(Anio__icontains=anios[0])
+		else:
+			table1 = table1.filter(Anio__icontains=anios[0])
+	context['table'] = table1
+	return context
+
+def orderbyPeriodo(request):
+	if request.method == "POST":
+		try:
+			__modififyDB__("", None,request)
+			return  HttpResponseRedirect(request.path)
+		except:
+			print("No se pudo modificar la BD")
+			context = __getContext__(request,"",False)
+			return render(request, 'crud/oferta.html', context)
+	context = __buildContextOferta__(request)
+	[path,orderparam] = request.path.split("/orderby_")
+	[attr,style] = orderparam.split("=")
+	if "asc" in style:
+		styleaux = "ascendente"
+	else:
+		styleaux = "descendente"
+	if "search_" in request.path:
+		context = __returnContextOfertaWithSearchTable__(request.path,context)
+	if "Nombre_asig" in attr:
+		attr = "Cod_asignatura__" + attr
+		aux = "Nombre de asignatura"
+	if "Fecha" not in attr:
+		if "Nombre_asig" not in attr:
+			aux = "Codigo de asignatura"
+		if "desc" in style:
+			context['table'] = context['table'].order_by("-"+attr)
+		elif "asc" in style:
+			context['table'] = context['table'].order_by(attr)
+	else:
+		aux = "Periodo"
+		table = None
+		if "desc" in style:
+			values = context['table'].values_list('Anio',flat=True).order_by('-Anio').distinct()
+			for i in values:
+				table=__appendAnioOrderedByPeriodo__(style,i,context['table'],table)
+		elif "asc" in style:
+			values = context['table'].values_list('Anio',flat=True).order_by('Anio').distinct()
+			for i in values:
+				table=__appendAnioOrderedByPeriodo__(style,i,context['table'],table)
+		context['table'] = table
+	context['backPath'] = path
+	if "printPdf" in request.path:
+		if "search_" in request.path:
+			[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
+			if "Cod_asig" in attrb:
+				attr = "Codigo de asignatura"
+			elif "Nombre_asig" in attrb:
+				attr = "Nombre de asignatura"
+			elif "Prof" in attrb:
+				attr = "Profesor"
+			return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
+		else:
+			return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
+	return render(request, 'crud/oferta.html', context)
+
+# def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
+# 	tableAnio = majorTable.filter(Anio=year)
+# 	tableEM = tableAnio.filter(Periodo="EM")
+# 	tableAJ = tableAnio.filter(Periodo="AJ")
+# 	tableV = tableAnio.filter(Periodo="V")
+# 	tableSD = tableAnio.filter(Periodo="SD")
+# 	if "asc" in style:
+# 		result = chain(tableEM,tableAJ,tableV,tableSD)
+# 	else:
+# 		result = chain(tableSD,tableV,tableAJ,tableEM)
+# 	if outputTable==None:
+# 		return result
+# 	else:
+# 		return chain(outputTable,result)
 
 def ofertas(request):
 	if "delete" in request.path:
@@ -302,6 +457,7 @@ def editOferta(request):
 		context['editOferta'] = True
 		form = Se_OfreceForm(instance = element)
 		context['form'] = form
+		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		return render(request, 'crud/oferta.html', context)
 
 def updateOferta(request,oldElement):

@@ -266,7 +266,7 @@ $(document).ready(function(){
 					<div class="col-sm-6">
 						{% if not show_all_tables %}	
 							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar oferta</span></a>
-							<!-- <a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a>  -->
+							<a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a> 
 							{% if searchBool or orderBool or "orderby" in request.path %}
 							<a href="{{backPath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% else %}
@@ -457,14 +457,6 @@ $(document).ready(function(){
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					</div>
 					<div class="modal-body">					
-						<p>Seleccione un atributo para la busqueda:</p>
-						<tr>
-						<p><input checked="checked" name="attr" type="radio" value="Nombre_asig" /> Nombre de asignatura</p>
-						<p><input name="attr" type="radio" value="Cod_asig" /> Codigo de Asignatura</p>
-						<p><input name="attr" type="radio" value="Prof" /> Profesor</p>
-						<p><input name="attr" type="radio" value="Horario" /> Horario</p>
-						<p><input name="attr" type="radio" value="Periodo" /> Periodo</p>
-						</tr>	
 						<p> </p>
 						<p>Criterio de Busqueda: <input type="text" class="form-control" name="criterio" required></p>
 					</div>
