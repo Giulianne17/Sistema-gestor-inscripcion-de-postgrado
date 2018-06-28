@@ -456,7 +456,9 @@ def ofertas(request):
 		return searchOferta(request)
 	if "printPdf" in request.path:
 		context = __buildContextOferta__(request)
-		return printPdf(request,"TODAS LAS OFERTAS",context)
+		cod = request.path.split("/ofertas_")[1].split("/")[0]
+		element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
+		return printPdf(request,element.returnTrimWithAnio(),context)
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
@@ -486,8 +488,8 @@ def editOferta(request):
 		context = __buildContextOferta__(request)
 		context['editOferta'] = True
 		form = Se_OfreceForm(instance = element)
+		form.fields['Periodo'].widget = forms.HiddenInput()
 		context['form'] = form
-		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		return render(request, 'crud/oferta.html', context)
 
 def updateOferta(request,oldElement):
@@ -508,7 +510,8 @@ def searchOferta(request):
 		if request.method == "POST":
 			attr = request.POST.get("attr")
 			criterio = request.POST.get("criterio")
-			return HttpResponseRedirect("/ofertas/search_"+attr+"="+criterio)
+			cod = request.path.split("/ofertas_")[1].split("/")[0]
+			return HttpResponseRedirect("/ofertas_"+cod+"/search_"+attr+"="+criterio)
 		else:
 			context['searchOferta'] = True
 			return render(request, 'crud/oferta.html', context)
@@ -529,7 +532,9 @@ def searchOferta(request):
 			attr = "Nombre de asignatura"
 		elif "Prof" in attrb:
 			attr = "Profesor"
-		return printPdf(request,"Resultados de la busqueda: "+attrb+" = "+givenSearch,context)
+		cod = request.path.split("/ofertas_")[1].split("/")[0]
+		element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
+		return printPdf(request,element.returnTrimWithAnio()+". Resultados de la busqueda: "+attrb+" = \""+givenSearch+"\"",context)
 	context['searchBool'] = True
 	context['backPath'] = request.path.split("/search_")[0]
 	return render(request, 'crud/oferta.html', context)
@@ -580,8 +585,6 @@ def orderbyOferta(request):
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
-			context = __getContext__(request,"",False)
-			return render(request, 'crud/oferta.html', context)
 	context = __buildContextOferta__(request)
 	[path,orderparam] = request.path.split("/orderby_")
 	[attr,style] = orderparam.split("=")
@@ -615,6 +618,8 @@ def orderbyOferta(request):
 		context['table'] = table
 	context['backPath'] = path
 	if "printPdf" in request.path:
+		cod = request.path.split("/ofertas_")[1].split("/")[0]
+		element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
 		if "search_" in request.path:
 			[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
 			if "Cod_asig" in attrb:
@@ -623,9 +628,9 @@ def orderbyOferta(request):
 				attr = "Nombre de asignatura"
 			elif "Prof" in attrb:
 				attr = "Profesor"
-			return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
+			return printPdf(request,element.returnTrimWithAnio()+". Resultados de la busqueda: "+attr+" = \""+givenSearch + "\", ordenado por "+aux+" de manera "+styleaux,context)
 		else:
-			return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
+			return printPdf(request,element.returnTrimWithAnio()+", ordenado por "+aux+" de manera "+styleaux,context)
 	return render(request, 'crud/oferta.html', context)
 
 # Funcion que renderiza un template de un GET request
@@ -754,13 +759,15 @@ def __buildContextAsignatura__(CodCoordinacion):
 
 def __buildContextOferta__(request):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
-	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Período"]
+	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario"]
+	cod = request.path.split("ofertas_")[1].split("/")[0]
 	if "ofertas_" in request.path:
-		table=model.objects.filter(Periodo = request.path.split("ofertas_")[1].split("/")[0])
+		table=model.objects.filter(Periodo = cod)
 	else:
 		table=model.objects.all()
 	form = __returnForm__("",request)
-	context = __contextTemplate__("ofertas",column_list,table,False,form)
+	element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
+	context = __contextTemplate__(element.returnTrimWithAnio(),column_list,table,False,form)
 	return context
 
 # Funcion que dado los parametros listados rellena la plantilla
@@ -831,10 +838,18 @@ def __returnForm__(name,request):
 			return form
 		form = AsignaturaForm(request.POST)
 		return form
-	elif "se_ofrece" in request.path or "ofertas" in request.path:
+	elif "se_ofrece" in request.path:
 		if not request.POST:
 			return Se_OfreceForm()
 		return Se_OfreceForm(request.POST)
+	elif "ofertas" in request.path:
+		if not request.POST:
+			cod = request.path.split("ofertas_")[1].split("/")[0]
+			form = Se_OfreceForm(initial={'Periodo': cod})
+		else:
+			form = Se_OfreceForm(request.POST)
+		form.fields['Periodo'].widget = forms.HiddenInput()
+		return form
 	elif "trimestre" in request.path or "trimestre" in name.lower():
 		if not request.POST:
 			return TrimestreForm()
