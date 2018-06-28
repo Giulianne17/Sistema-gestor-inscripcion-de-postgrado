@@ -106,11 +106,11 @@ class Asignatura(models.Model):
 		Programa : Link del programa de la asignatura.
 	"""
 	Cod_asignatura = models.CharField(primary_key=True, max_length=7,
-					validators=[RegexValidator(regex='[A-Z]{2}-[0-9]{4}', message="Código inválido")])
-	Nombre_asig = models.CharField(max_length=250, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre inválido'), 'invalid')])
+					validators=[RegexValidator(regex='[A-Z]{2}-[0-9]{4}', message="Código inválido. El formato debe ser dos letras en mayúscula, seguidos de \"-\" y 4 números. Ej: CI-2322.")])
+	Nombre_asig = models.CharField(max_length=250, validators=[RegexValidator(re.compile('^[\w+\s]+$'), _('Nombre inválido. Debe haber a lo sumo 250 caracteres en este campo.'), 'invalid')])
 		#validators=[RegexValidator(regex='^\w+$', message="Nombre inválido")])
 	Cod_coordinacion = models.ForeignKey(Coordinacion, max_length=2, on_delete=models.CASCADE)
-	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de creditos inválidos."),MinValueValidator(1,message="Número de creditos inválidos.")])
+	Creditos = models.IntegerField(validators=[MaxValueValidator(30, message="Número de créditos inválido. El máximo de créditos para una materia es 30."),MinValueValidator(1,message="Número de creditos inválidos. El mínimo de créditos para una materia es 1.")])
 	Fecha = models.DateField(auto_now_add=True) 
 	Visto = models.BooleanField(default=False)
 	Programa = models.URLField()
@@ -268,7 +268,7 @@ def anio_trimestre_restr(year):
     ValidationError -- Si no cumple condicion antes mencionada.
     """
 	if not (1970 <= year <= (datetime.date.today().year)+1):
-		raise ValidationError(_('Año invalido. Introduzca un año entre 1970 y '+str(datetime.date.today().year)))
+		raise ValidationError(_('Año invalido. Introduzca un año entre 1970 y '+str(datetime.date.today().year+1)))
 	return year
 
 # Tabla de los trimestre, cuya clave es (periodo, anio)
@@ -362,7 +362,7 @@ def hora_se_ofrece_restr(hora):
     """
 	hora = hora.split('-')
 	if not (0 < int(hora[0]) < int(hora[1]) <14):
-		raise ValidationError(_('Horario invalido'))
+		raise ValidationError(_('Horario invalido. Sólo se permiten dos bloques de horas entre 1 y 13, separados por \'-\', diferentes entre sí, con el primer bloque menor que el segundo.'))
 	return hora
 
 class Se_Ofrece(models.Model):

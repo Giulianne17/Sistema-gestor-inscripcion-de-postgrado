@@ -251,6 +251,13 @@ $(document).ready(function(){
 });
 </script>
 {% endblock head %}
+{% if messages %}
+<ul class="messages">
+	{% for message in messages %}
+	<li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+	{% endfor %}
+</ul>
+{% endif %}
 {%block body %}
     <div class="container">
         <div class="table-wrapper">
@@ -315,7 +322,7 @@ $(document).ready(function(){
                 <tbody id="tablagiven">
 					{% if table.count != 0 and table != None %}
 						{% for element in table %}
-						<tr class='clickable-row' data-href='{{backpath}}/ofertas_{{element.id}}'>
+						<tr class='clickable-row' data-href='/ofertas_{{element.id}}'>
 							<td> {{element.returnTrimestre}} </td>
 							<td> {{element.Anio}} </td>	
 							<td>		
@@ -417,8 +424,8 @@ $(document).ready(function(){
 						</div>			
 					</div>
 					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-success" value="Add">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+						<input type="submit" class="btn btn-success" value="Agregar">
 					</div>
 				</form>
 			</div>
@@ -438,8 +445,8 @@ $(document).ready(function(){
 						{{ form.as_p }}			
 					</div>
 					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-info" value="Save">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
+						<input type="submit" class="btn btn-info" value="Guardar">
 					</div>
 				</form>
 			</div>
@@ -460,7 +467,7 @@ $(document).ready(function(){
 						<p>Criterio de Busqueda: <input type="text" class="form-control" name="criterio" required></p>
 					</div>
 					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancelar">
 						<input type="submit" class="btn btn-info" value="Buscar">
 					</div>
 				</form>

@@ -7,6 +7,7 @@ from .forms import *
 from itertools import chain
 from .render import *
 import os
+from django.contrib import messages
 
 # Atributo auxiliar que indica al template si se van a
 # mostrar todas las tablas existentes.
@@ -49,6 +50,7 @@ def coordinacion(request):
 		try:
 			name = __getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
+			messages.info(request, 'Se ha agregado la asignatura de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -98,16 +100,20 @@ def editAsignatura(request):
 
 # Vista para actualizar una asignatura.
 def updateAsignatura(request,oldElement):
+	name = request.path.split("/coordinacion_")[1].split("/")[0]
 	[path,codasig] = request.path.split("/edit_")
-	form = AsignaturaForm(request.POST)
+	form = __returnForm__("",request)
 	if form.is_valid():
 		form.save()
+		messages.info(request, 'Se ha modificado la asignatura de manera exitosa.')
 		return HttpResponseRedirect(path)
 	else:
 		oldElement.Cod_asignatura = codasig
 		oldElement.save()
 		print("No se pudo modificar la BD")
-		return HttpResponseRedirect(path)
+		context = __buildContextAsignatura__(name)
+		context['form'] = form
+		return render(request, 'crud/coordinacion.html', context)
 
 # Vista para buscar una asignatura dados unos parametros en el request
 # *Si SearchInd esta en el path:
@@ -128,7 +134,8 @@ def searchAsignatura(request):
 		if request.method == "POST":
 			attr = request.POST.get("attr")
 			criterio = request.POST.get("criterio")
-			return HttpResponseRedirect("/coordinacion_"+CodCoordinacion+"/search_"+attr+"="+criterio)
+			if attr:
+				return HttpResponseRedirect("/coordinacion_"+CodCoordinacion+"/search_"+attr+"="+criterio)
 		else:
 			context['searchAsig'] = True
 			return render(request, 'crud/coordinacion.html', context)
@@ -136,6 +143,7 @@ def searchAsignatura(request):
 		try:
 			name = __getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
+			messages.info(request, 'Se ha agregado la asignatura de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -177,6 +185,7 @@ def orderbyAsignatura(request):
 		try:
 			name = __getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
+			messages.info(request, 'Se ha agregado la asignatura de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -225,6 +234,7 @@ def periodo(request):
 	if request.method=="POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
+			messages.info(request, 'Se ha agregado la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -285,6 +295,7 @@ def updatePeriodo(request,oldElement,asignaturasOfertadas):
 		element = table.objects.get(Periodo = form['Periodo'].value(),Anio=form['Anio'].value())
 		asignaturasOfertadas.update(Periodo=element.id)
 		oldElement.delete()
+		messages.info(request, 'Se ha modificado la oferta de manera exitosa.')
 		return HttpResponseRedirect(path)
 	else:
 		print("No se pudo modificar la BD")
@@ -299,7 +310,8 @@ def searchPeriodo(request):
 	if "/searchInd" in request.path:
 		if request.method == "POST":
 			criterio = request.POST.get("criterio")
-			return HttpResponseRedirect("/periodos/search="+criterio)
+			if criterio:
+				return HttpResponseRedirect("/periodos/search="+criterio)
 		else:
 			context['searchOferta'] = True
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
@@ -309,6 +321,7 @@ def searchPeriodo(request):
 	if request.method == "POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
+			messages.info(request, 'Se ha agregado la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -380,6 +393,7 @@ def orderbyPeriodo(request):
 	if request.method == "POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
+			messages.info(request, 'Se ha agregado la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -462,6 +476,7 @@ def ofertas(request):
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
+			messages.info(request, 'Se ha agregado la asignatura a la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -497,12 +512,15 @@ def updateOferta(request,oldElement):
 	form = __returnForm__("",request)
 	if form.is_valid():
 		form.save()
+		messages.info(request, 'Se ha modificado la oferta de la asignatura de manera exitosa.')
 		return HttpResponseRedirect(path)
 	else:
 		oldElement.id = ID
 		oldElement.save()
 		print("No se pudo modificar la BD")
-		return HttpResponseRedirect(path)
+		context = __buildContextOferta__(request)
+		context['form'] = form
+		return render(request, 'crud/oferta.html', context)
 
 def searchOferta(request):
 	context = __buildContextOferta__(request)
@@ -511,13 +529,15 @@ def searchOferta(request):
 			attr = request.POST.get("attr")
 			criterio = request.POST.get("criterio")
 			cod = request.path.split("/ofertas_")[1].split("/")[0]
-			return HttpResponseRedirect("/ofertas_"+cod+"/search_"+attr+"="+criterio)
+			if attr:
+				return HttpResponseRedirect("/ofertas_"+cod+"/search_"+attr+"="+criterio)
 		else:
 			context['searchOferta'] = True
 			return render(request, 'crud/oferta.html', context)
 	if request.method == "POST":
 		try:
 			__modififyDB__("", None,request)
+			messages.info(request, 'Se ha agregado la asignatura a la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -582,6 +602,7 @@ def orderbyOferta(request):
 	if request.method == "POST":
 		try:
 			__modififyDB__("", None,request)
+			messages.info(request, 'Se ha agregado la asignatura a la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -657,6 +678,7 @@ def __renderViewPOST__(request,initialpath,auxpath):
 	try:
 		name = __getTableName__(request)
 		__modififyDB__(name, __getParameters__(name,request),request)
+		messages.info(request, 'Se ha agregado el elemento a la tabla de manera exitosa.')
 		return  HttpResponseRedirect(auxpath+name)
 	except:
 		print("No se pudo modificar la BD")
