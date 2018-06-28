@@ -360,10 +360,13 @@ def hora_se_ofrece_restr(hora):
     Excepciones:
     ValidationError -- Si no cumple condicion antes mencionada.
     """
-	hora = hora.split('-')
-	if not (0 < int(hora[0]) < int(hora[1]) <14):
-		raise ValidationError(_('Horario invalido. Sólo se permiten dos bloques de horas entre 1 y 13, separados por \'-\', diferentes entre sí, con el primer bloque menor que el segundo.'))
-	return hora
+	try:
+		hora = hora.split('-')
+		if not (0 < int(hora[0]) < int(hora[1]) <14):
+			raise ValidationError(_('Horario invalido. Sólo se permiten dos bloques de horas entre 1 y 13, separados por \'-\', diferentes entre sí, con el primer bloque menor que el segundo.'))
+		return hora
+	except:
+		raise ValidationError(_('Horario invalido. Sólo se permiten dos bloques de horas entre 1 y 13, separados por \'-\', diferentes entre sí, con el primer bloque menor que el segundo.'))	
 
 class Se_Ofrece(models.Model):
 	""" Consiste en la tabla de la relacion de los ofertas.
