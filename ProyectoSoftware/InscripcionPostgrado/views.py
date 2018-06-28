@@ -208,9 +208,20 @@ def periodo(request):
 	if "search" in request.path:
 		return searchPeriodo(request)
 	if "printPdf" in request.path:
-		pass
-		# context = __buildContextOferta__(request)
-		# return printPdf(request,"TODAS LAS OFERTAS",context)
+		context = __buildContext__("Trimestre",True)
+		values = context['table'].values_list('Anio',flat=True).order_by('Anio').distinct()
+		table = None
+		for i in values:
+			table=__appendAnioOrderedByPeriodo__("asc",i,context['table'],table)
+		context['table'] = table
+		tableOfertas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece')
+		tablesList = []
+		if context['table']!=None:
+			for i in context['table']:
+				tablesList.append(tableOfertas.objects.filter(Periodo__id = i.id))
+		context['table'] = tablesList
+		context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Periodo"]
+		return printPdf(request,"TODAS LAS ASIGNATURAS OFERTADAS EN TODOS LOS PERIODOS DISPONIBLES",context)
 	if request.method=="POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
@@ -221,7 +232,6 @@ def periodo(request):
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 			context ["backpath"] = ""
 			context["form"] = __returnForm__("Trimestre",request)
-			print(context["form"].errors)
 			return render(request, 'crud/periodo.html', context)
 	else:
 		context = __buildContext__("Trimestre",True)
@@ -229,6 +239,20 @@ def periodo(request):
 		context["form"] = __returnForm__("Trimestre",request)
 		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		return render(request, 'crud/periodo.html', context)
+
+def printPdf(request,givenFilter,context):
+	context['givenFilter'] = givenFilter
+	context['os'] = os
+	if "periodo" in request.path:
+		if len(context['table'])>1:
+			context['isPeriodoList'] = True
+		elif len(context['table'])==1:
+			context['table']=context['table'][0]
+			context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario"]
+		else:
+			context['isPeriodoList'] = True
+			context['isEmpty'] = True
+	return render_to_pdf('crud/pdfTemplate.html',context)
 
 def deletePeriodo(request):
 	[path,Id] = request.path.split("/delete_")
@@ -289,23 +313,28 @@ def searchPeriodo(request):
 		except:
 			print("No se pudo modificar la BD")
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
-			context ["backpath"] = "periodos"
+			context ["backpath"] = request.path.split("/search=")[0]
 			context["form"] = __returnForm__("Trimestre",request)
 			return render(request, 'crud/periodo.html', context)
 	context = __returnContextPeriodoWithSearchTable__(request.path,context)
-	# if "printPdf" in request.path:
-	# 	[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
-	# 	if "Cod_asig" in attrb:
-	# 		attr = "Codigo de asignatura"
-	# 	elif "Nombre_asig" in attrb:
-	# 		attr = "Nombre de asignatura"
-	# 	elif "Prof" in attrb:
-	# 		attr = "Profesor"
-	# 	return printPdf(request,"Resultados de la busqueda: "+attrb+" = "+givenSearch,context)
+	if "printPdf" in request.path:
+		givenSearch = request.path.split("/search=")[1].split("/")[0]
+		values = context['table'].values_list('Anio',flat=True).order_by('Anio').distinct()
+		table = None
+		for i in values:
+			table=__appendAnioOrderedByPeriodo__("asc",i,context['table'],table)
+		context['table'] = table
+		tableOfertas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece')
+		tablesList = []
+		if context['table']!=None:
+			for i in context['table']:
+				tablesList.append(tableOfertas.objects.filter(Periodo__id = i.id))
+		context['table'] = tablesList
+		context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Periodo"]
+		return printPdf(request,"Resultados de la busqueda: \""+givenSearch+"\"",context)
 	context['searchBool'] = True
-	context['backPath'] = request.path.split("/search=")[0]
+	context['backpath'] = request.path.split("/search=")[0]
 	context["table_column_list"] = ["Periodo","Año","Operaciones"]
-	context["backpath"] = "periodos"
 	context["form"] = __returnForm__("Trimestre",request)
 	return render(request, 'crud/periodo.html', context)
 
@@ -347,6 +376,7 @@ def __returnContextPeriodoWithSearchTable__(currentpath,context):
 
 def orderbyPeriodo(request):
 	context = __buildContext__("Trimestre",True)
+	[path,orderparam] = request.path.split("/orderby_")
 	if request.method == "POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
@@ -354,23 +384,24 @@ def orderbyPeriodo(request):
 		except:
 			print("No se pudo modificar la BD")
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
-			context ["backpath"] = "periodos"
+			context ["backpath"] = path
 			context["form"] = __returnForm__("Trimestre",request)
 			return render(request, 'crud/periodo.html', context)
-	[path,orderparam] = request.path.split("/orderby_")
 	[attr,style] = orderparam.split("=")
 	if "asc" in style:
 		styleaux = "ascendente"
 	else:
 		styleaux = "descendente"
-	if "search_" in request.path:
+	if "search=" in request.path:
 		context = __returnContextPeriodoWithSearchTable__(request.path,context)
 	if "Periodo" in attr:
+		aux = "ordenando el periodo alfabéticamente"
 		if "desc" in style:
 			context['table'] = context['table'].order_by("-"+attr)
 		elif "asc" in style:
 			context['table'] = context['table'].order_by(attr)
 	else:
+		aux = "ordenado por periodo"
 		table = None
 		if "desc" in style:
 			values = context['table'].values_list('Anio',flat=True).order_by('-Anio').distinct()
@@ -384,34 +415,35 @@ def orderbyPeriodo(request):
 	context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 	context ["backpath"] = path
 	context["form"] = __returnForm__("Trimestre",request)
-	# if "printPdf" in request.path:
-	# 	if "search_" in request.path:
-	# 		[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
-	# 		if "Cod_asig" in attrb:
-	# 			attr = "Codigo de asignatura"
-	# 		elif "Nombre_asig" in attrb:
-	# 			attr = "Nombre de asignatura"
-	# 		elif "Prof" in attrb:
-	# 			attr = "Profesor"
-	# 		return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
-	# 	else:
-	# 		return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
+	if "printPdf" in request.path:
+		tableOfertas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece')
+		tablesList = []
+		if context['table']!=None:
+			for i in context['table']:
+				tablesList.append(tableOfertas.objects.filter(Periodo__id = i.id))
+		context['table'] = tablesList
+		context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Periodo"]
+		if "search" in request.path:
+			givenSearch = request.path.split("/search=")[1].split("/")[0]
+			return printPdf(request,"Resultados de la busqueda: \"" + givenSearch + "\", "+aux+" de manera "+styleaux,context)
+		else:
+			return printPdf(request,"TODAS LAS OFERTAS, "+aux+" de manera "+styleaux,context)
 	return render(request, 'crud/periodo.html', context)
 
-# def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
-# 	tableAnio = majorTable.filter(Anio=year)
-# 	tableEM = tableAnio.filter(Periodo="EM")
-# 	tableAJ = tableAnio.filter(Periodo="AJ")
-# 	tableV = tableAnio.filter(Periodo="V")
-# 	tableSD = tableAnio.filter(Periodo="SD")
-# 	if "asc" in style:
-# 		result = chain(tableEM,tableAJ,tableV,tableSD)
-# 	else:
-# 		result = chain(tableSD,tableV,tableAJ,tableEM)
-# 	if outputTable==None:
-# 		return result
-# 	else:
-# 		return chain(outputTable,result)
+def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
+	tableAnio = majorTable.filter(Anio=year)
+	tableEM = tableAnio.filter(Periodo="EM")
+	tableAJ = tableAnio.filter(Periodo="AJ")
+	tableV = tableAnio.filter(Periodo="V")
+	tableSD = tableAnio.filter(Periodo="SD")
+	if "asc" in style:
+		result = chain(tableEM,tableAJ,tableV,tableSD)
+	else:
+		result = chain(tableSD,tableV,tableAJ,tableEM)
+	if outputTable==None:
+		return result
+	else:
+		return chain(outputTable,result)
 
 def ofertas(request):
 	if "delete" in request.path:
@@ -595,26 +627,6 @@ def orderbyOferta(request):
 		else:
 			return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
 	return render(request, 'crud/oferta.html', context)
-
-def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
-	tableAnio = majorTable.filter(Anio=year)
-	tableEM = tableAnio.filter(Periodo="EM")
-	tableAJ = tableAnio.filter(Periodo="AJ")
-	tableV = tableAnio.filter(Periodo="V")
-	tableSD = tableAnio.filter(Periodo="SD")
-	if "asc" in style:
-		result = chain(tableEM,tableAJ,tableV,tableSD)
-	else:
-		result = chain(tableSD,tableV,tableAJ,tableEM)
-	if outputTable==None:
-		return result
-	else:
-		return chain(outputTable,result)
-
-def printPdf(request,givenFilter,context):
-	context['givenFilter'] = givenFilter
-	context['os'] = os
-	return render_to_pdf('crud/pdfTemplate.html',context)
 
 # Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):

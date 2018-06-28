@@ -416,6 +416,9 @@ class Se_Ofrece(models.Model):
 	def returnDiaMinus(self):
 		"""Devuelve el dia de la semana en que se oferta materia"""
 		return self.Dia.title()
+	def returnTrimWithAnio(self):
+		""" Devuelve las opciones de los trimestres para las ofertas junto con el año """
+		return self.Periodo.returnTrimestre() + " " + str(self.Periodo.Anio)
 
 class MedioPago(models.Model):
 	""" Consiste en la tabla del medio de pago.
