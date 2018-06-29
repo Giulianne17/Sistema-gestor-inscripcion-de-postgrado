@@ -451,6 +451,7 @@ def searchPeriodo(request):
 		return printPdf(request,"Resultados de la busqueda: \""+givenSearch+"\"",context)
 	context['searchBool'] = True
 	context['backpath'] = request.path.split("/search=")[0]
+	context['backpath2'] = request.path.split("/periodos/search=")[0]
 	context["table_column_list"] = ["Periodo","Año","Operaciones"]
 	context["form"] = __returnForm__("Trimestre",request)
 	return render(request, 'crud/periodo.html', context)

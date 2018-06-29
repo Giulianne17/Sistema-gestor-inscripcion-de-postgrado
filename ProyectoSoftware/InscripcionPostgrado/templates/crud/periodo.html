@@ -315,7 +315,11 @@ $(document).ready(function(){
                 <tbody id="tablagiven">
 					{% if table.count != 0 and table != None %}
 						{% for element in table %}
+						{% if searchBool %}
+						<tr class='clickable-row' data-href='{{backpath2}}/ofertas_{{element.id}}'>
+						{% else %}
 						<tr class='clickable-row' data-href='{{backpath}}/ofertas_{{element.id}}'>
+						{% endif %}
 							<td> {{element.returnTrimestre}} </td>
 							<td> {{element.Anio}} </td>	
 							<td>		
