@@ -727,6 +727,13 @@ class OfreceTestCase(TestCase):
 		form1 = ProfesorForm(data = form_data1)
 		form1.save()
 
+		form_data2 = {
+			'Periodo': 'EM',
+			'Anio': 2018
+		}
+		form2 = TrimestreForm(data = form_data2)
+		form2.save()
+
 
 	def test_ofrece_horarioEsquina1(self):
 		'''Esta prueba es de esquina para el atributo horario
@@ -745,8 +752,7 @@ class OfreceTestCase(TestCase):
 			'Cod_asignatura' : 'EE-1020',
 			'Horario' : '1-2',
 			'Dia' : 'LUNES',
-			'Periodo' : 'EM',
-			'Anio': 2018,
+			'Periodo' : 1,
 			'Cod_coordinacion': 'EE'
 		}
 		form = Se_OfreceForm(data = form_data)
@@ -769,10 +775,9 @@ class OfreceTestCase(TestCase):
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '1-13',
+			'Horario' : '1-2',
 			'Dia' : 'LUNES',
-			'Periodo' : 'EM',
-			'Anio': 2018,
+			'Periodo' : 1,
 			'Cod_coordinacion': 'EE'
 		}
 		form = Se_OfreceForm(data = form_data)
@@ -791,14 +796,12 @@ class OfreceTestCase(TestCase):
 		   Atributos:
 		       form_data : diccionario con los atributos de la intancia Se_Ofrece
 			   form : objeto del tipo Se_Ofrece'''
-
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '12-13',
+			'Horario' : '1-2',
 			'Dia' : 'LUNES',
-			'Periodo' : 'EM',
-			'Anio': 2018,
+			'Periodo' : 1,
 			'Cod_coordinacion': 'EE'
 		}
 		form = Se_OfreceForm(data = form_data)
@@ -821,16 +824,14 @@ class OfreceTestCase(TestCase):
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '1-5',
+			'Horario' : '1-2',
 			'Dia' : 'LUNES',
-			'Periodo' : 'AJ',
-			'Anio': 2018,
+			'Periodo' : 1,
 			'Cod_coordinacion': 'EE'
 		}
 		form = Se_OfreceForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
-
 
 	def test_ofrece_horarioFrontera2(self):
 		'''Esta prueba es de frontera para el atributo horario
@@ -847,10 +848,9 @@ class OfreceTestCase(TestCase):
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '7-13',
+			'Horario' : '1-2',
 			'Dia' : 'LUNES',
-			'Periodo' : 'EM',
-			'Anio': '2018',
+			'Periodo' : 1,
 			'Cod_coordinacion': 'EE'
 		}
 		form = Se_OfreceForm(data = form_data)
@@ -873,10 +873,9 @@ class OfreceTestCase(TestCase):
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '7-8',
+			'Horario' : '1-2',
 			'Dia' : 'LUNES',
-			'Periodo' : 'V',
-			'Anio': 2018,
+			'Periodo' : 1,
 			'Cod_coordinacion': 'EE'
 		}
 		form = Se_OfreceForm(data = form_data)
@@ -899,277 +898,232 @@ class OfreceTestCase(TestCase):
 		form_data = {
 			'Id_prof' : '24553623',
 			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
+			'Horario' : '1-2',
 			'Dia' : 'LUNES',
-			'Periodo' : 'EM',
-			'Anio': 2018,
+			'Periodo' : 1,
 			'Cod_coordinacion': 'EE'
 		}
 		form = Se_OfreceForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
+class TrimestreTestCase(TestCase):
 
-	def test_ofrece_anioEsquina1(self):
+	''' Para los casos de prueba de la tabla Trimestre no es necesario establecer un SetUp 
+		ya que no es necesario que haya una estancia de alguna otra tabla para poder
+		inicializar esta, debido a que los campos no poseen referencias a otros campos.
+	'''
+
+	def test_trimestre_anioEsquina1(self):
 		'''Esta prueba es de esquina para el atributo año
 		   Corresponde al año 1970
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'SD',
-			'Anio': 1970,
-			'Cod_coordinacion': 'EE'
+			'Anio': 1970
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_anioEsquina2(self):
+	def test_trimestre_anioEsquina2(self):
 		'''Esta prueba es de esquina para el atributo año
 		   Corresponde al año 2019
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'SD',
-			'Anio': 2019,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2019
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_anioFrontera1(self):
+	def test_trimestre_anioFrontera1(self):
 		'''Esta prueba es de frontera para el atributo año
 		   Corresponde a un año entre 1970 y 2019
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'SD',
-			'Anio': 2000,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2000
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_anioFrontera2(self):
+	def test_trimestre_anioFrontera2(self):
 		'''Esta prueba es de frontera para el atributo año
 		   Corresponde a un año entre 1970 y 2019
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'SD',
-			'Anio': 1990,
-			'Cod_coordinacion': 'EE'
+			'Anio': 1990
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_anioFrontera3(self):
+	def test_trimestre_anioFrontera3(self):
 		'''Esta prueba es de frontera para el atributo año
 		   Corresponde a un año entre 1970 y 2019
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'SD',
-			'Anio': 2018,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2018
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_periodo1(self):
+	def test_trimestre_periodo1(self):
 		'''Esta prueba es de esquina para el atributo periodo
 		   Corresponde al periodo Septiembre-Diciembre que se almacena como SD
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'SD',
-			'Anio': 2018,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2018
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_periodo2(self):
+	def test_trimestre_periodo2(self):
 		'''Esta prueba es de esquina para el atributo periodo
 		   Corresponde al periodo Enero-Marzo que se almacena como EM
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'EM',
-			'Anio': 2018,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2018
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_periodo3(self):
+	def test_trimestre_periodo3(self):
 		'''Esta prueba es de esquina para el atributo periodo
 		   Corresponde al periodo Abril-Julio que se almacena como AJ
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'AJ',
-			'Anio': 2018,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2018
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 
 
-	def test_ofrece_periodo4(self):
+	def test_trimestre_periodo4(self):
 		'''Esta prueba es de esquina para el atributo periodo
 		   Corresponde al periodo Verano que se almacena como V
 		   Se espera que la instancia sea creada correctamente
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'V',
-			'Anio': 2018,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2018
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		form.save()
 		self.assertTrue(form.is_valid())
 	
 	
-	def test_ofrece_anioMalicia(self):
+	def test_trimestre_anioMalicia(self):
 		'''Esta prueba es de malicia para el atributo año
 		   Corresponde al año 1969
 		   Se espera que la instancia no sea creada
 		   
 		   Parametro:
-		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
+		       self (TrimestreTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo STrimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'V',
-			'Anio': 1969,
-			'Cod_coordinacion': 'EE'
+			'Anio': 1969
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		self.assertFalse(form.is_valid())
 	
 	
-	def test_ofrece_anioMalicia1(self):
+	def test_trimestre_anioMalicia1(self):
 		'''Esta prueba es de malicia para el atributo año
 		   Corresponde al año 2020
 		   Se espera que la instancia no sea creada
@@ -1178,17 +1132,13 @@ class OfreceTestCase(TestCase):
 		       self (OfreceTestCase): es la instancia sobre la que se evalua el caso
 			      
 		   Atributos:
-		       form_data : diccionario con los atributos de la intancia Se_Ofrece
-			   form : objeto del tipo Se_Ofrece'''
+		       form_data : diccionario con los atributos de la intancia Trimestre
+			   form : objeto del tipo Trimestre'''
 
 		form_data = {
-			'Id_prof' : '24553623',
-			'Cod_asignatura' : 'EE-1020',
-			'Horario' : '5-6',
-			'Dia' : 'LUNES',
 			'Periodo' : 'V',
-			'Anio': 2020,
-			'Cod_coordinacion': 'EE'
+			'Anio': 2020
 		}
-		form = Se_OfreceForm(data = form_data)
+		form = TrimestreForm(data = form_data)
 		self.assertFalse(form.is_valid())
+
