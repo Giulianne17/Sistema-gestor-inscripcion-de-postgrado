@@ -7,14 +7,17 @@ from .forms import *
 from itertools import chain
 from .render import *
 import os
+from django.contrib import messages
+from .writeToFile import *
 
-# Atributo auxiliar que indica al template si se van a
-# mostrar todas las tablas existentes.
+'''Atributo auxiliar que indica al template si se van a
+mostrar todas las tablas existentes.'''
 show_all_tables = True
 
-# Funcion que redirecciona a los views dependiendo del path
-# solicitado.
 def __redirectCenter__(request):
+	'''Funcion que redirecciona a los views dependiendo del path
+	solicitado.'''
+	writeFilePath(request.path,"__redirectCenter__")
 	if "coordinacion_" in request.path:
 		return coordinacion(request)
 	if "ofertas" in request.path:
@@ -24,10 +27,11 @@ def __redirectCenter__(request):
 	else:
 		return index(request)
 
-# Vista del index.
-# Aqui se redirigen todos los request que no vayan a una
-# coordinacion particular.
 def index(request):
+	'''Vista del index.
+	Aqui se redirigen todos los request que no vayan a una
+	coordinacion particular.	writeFilePath(request.path,"index")'''
+	writeFilePath(request.path,"index")
 	if request.method=="POST":
 		return __renderViewPOST__(request,'/superuser','/')
 	else:
@@ -37,6 +41,7 @@ def index(request):
 # Aqui se redirigen los request que van a una coordinacion en
 # particular.
 def coordinacion(request):
+	writeFilePath(request.path,"coordinacion")
 	if "delete" in request.path:
 		return deleteAsignatura(request)
 	if "edit" in request.path:
@@ -49,6 +54,7 @@ def coordinacion(request):
 		try:
 			name = __getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
+			messages.info(request, 'Se ha agregado la asignatura de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -64,6 +70,7 @@ def coordinacion(request):
 # Aqui llegan los request para borrar una entrada de la tabla de
 # asignaturas de una coordinacion
 def deleteAsignatura(request):
+	writeFilePath(request.path,"deleteAsignatura")
 	[path,codasig] = request.path.split("/delete_")
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
 	table.objects.filter(Cod_asignatura = codasig).delete()
@@ -80,6 +87,7 @@ def deleteAsignatura(request):
 #		el formulario para el elemento y un booleano para indicar
 #		que se debe abrir el modal directamente.
 def editAsignatura(request):
+	writeFilePath(request.path,"editAsignatura")
 	name = __getTableName__(request)
 	cod = request.path.split('/edit_')[1]
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
@@ -98,16 +106,21 @@ def editAsignatura(request):
 
 # Vista para actualizar una asignatura.
 def updateAsignatura(request,oldElement):
+	writeFilePath(request.path,"updateAsignatura")
+	name = request.path.split("/coordinacion_")[1].split("/")[0]
 	[path,codasig] = request.path.split("/edit_")
-	form = AsignaturaForm(request.POST)
+	form = __returnForm__("",request)
 	if form.is_valid():
 		form.save()
+		messages.info(request, 'Se ha modificado la asignatura de manera exitosa.')
 		return HttpResponseRedirect(path)
 	else:
 		oldElement.Cod_asignatura = codasig
 		oldElement.save()
 		print("No se pudo modificar la BD")
-		return HttpResponseRedirect(path)
+		context = __buildContextAsignatura__(name)
+		context['form'] = form
+		return render(request, 'crud/coordinacion.html', context)
 
 # Vista para buscar una asignatura dados unos parametros en el request
 # *Si SearchInd esta en el path:
@@ -122,13 +135,15 @@ def updateAsignatura(request,oldElement):
 #		Se ha llegado por una ruta como "/search_attr=value". Filtra la tabla
 #		completa de la coordinacion con estos datos y se le pasa al template.
 def searchAsignatura(request):
+	writeFilePath(request.path,"searchAsignatura")
 	CodCoordinacion = __getTableName__(request)
 	context = __buildContextAsignatura__(CodCoordinacion)
 	if "/searchInd" in request.path:
 		if request.method == "POST":
 			attr = request.POST.get("attr")
 			criterio = request.POST.get("criterio")
-			return HttpResponseRedirect("/coordinacion_"+CodCoordinacion+"/search_"+attr+"="+criterio)
+			if attr:
+				return HttpResponseRedirect("/coordinacion_"+CodCoordinacion+"/search_"+attr+"="+criterio)
 		else:
 			context['searchAsig'] = True
 			return render(request, 'crud/coordinacion.html', context)
@@ -136,6 +151,7 @@ def searchAsignatura(request):
 		try:
 			name = __getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
+			messages.info(request, 'Se ha agregado la asignatura de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -151,6 +167,7 @@ def searchAsignatura(request):
 
 # Funcion que retorna la tabla dado un criterio de busqueda
 def __returnContextWithSearchTable__(currentpath,context):
+	writeFilePath(request.path,"__returnContextWithSearchTable__")
 	[path,searchparam] = currentpath.split("/search_")
 	searchparam = searchparam.split("/")[0]
 	[attrb,givenSearch] = searchparam.split("=")
@@ -173,10 +190,12 @@ def __returnContextWithSearchTable__(currentpath,context):
 #		Se ha llegado por una ruta como "/orderby_attr". Filtra la tabla completa
 #		de la coordinacion con estos datos y se le pasa al template.
 def orderbyAsignatura(request):
+	writeFilePath(request.path,"orderbyAsignatura")
 	if request.method == "POST":
 		try:
 			name = __getTableName__(request)
 			__modififyDB__(name, __getParameters__(name,request),request)
+			messages.info(request, 'Se ha agregado la asignatura de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -199,6 +218,12 @@ def orderbyAsignatura(request):
 	return render(request, 'crud/coordinacion.html', context)
 
 def periodo(request):
+	''' Vista de periodo de oferta.
+	Aqui se redirigen todos los request que van al path /periodos, y desde aquí se
+	vuelve a redirigir a todas las funcionalidades correspondientes, según la ruta
+	del path.
+	'''
+	writeFilePath(request.path,"periodo")
 	if "delete" in request.path:
 		return deletePeriodo(request)
 	if "edit" in request.path:
@@ -208,12 +233,33 @@ def periodo(request):
 	if "search" in request.path:
 		return searchPeriodo(request)
 	if "printPdf" in request.path:
-		pass
-		# context = __buildContextOferta__(request)
-		# return printPdf(request,"TODAS LAS OFERTAS",context)
+		# Se consigue el contexto de acuerdo a la tabla
+		context = __buildContext__("Trimestre",True)
+		# El siguiente bloque consigue todas las periodos de oferta, ordenados de
+		# de manera ascendente según el periodo
+		values = context['table'].values_list('Anio',flat=True).order_by('Anio').distinct()
+		table = None
+		for i in values:
+			table=__appendAnioOrderedByPeriodo__("asc",i,context['table'],table)
+		# Se axtualiza la tabla en el contexto
+		context['table'] = table
+		# El siguiente bloque de codigo consigue todas las asignaturas de las
+		# ofertas conseguidas arriba, en el mismo orden en que aparecen dichos
+		# periodos en la tabla
+		tableOfertas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece')
+		tablesList = []
+		if context['table']!=None:
+			for i in context['table']:
+				tablesList.append(tableOfertas.objects.filter(Periodo__id = i.id))
+		# Se actualiza la lista de querys en el contexto
+		context['table'] = tablesList
+		# Se actualizan las columnas a mostrar en el pdf
+		context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Periodo"]
+		return printPdf(request,"TODAS LAS ASIGNATURAS OFERTADAS EN TODOS LOS PERIODOS DISPONIBLES",context)
 	if request.method=="POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
+			messages.info(request, 'Se ha agregado la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -221,7 +267,6 @@ def periodo(request):
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 			context ["backpath"] = ""
 			context["form"] = __returnForm__("Trimestre",request)
-			print(context["form"].errors)
 			return render(request, 'crud/periodo.html', context)
 	else:
 		context = __buildContext__("Trimestre",True)
@@ -230,13 +275,54 @@ def periodo(request):
 		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		return render(request, 'crud/periodo.html', context)
 
+def printPdf(request,givenFilter,context):
+	
+	''' Funcion que dado un request identifica desde donde ha llegado (puede llegar)
+	desde /periodos o desde /ofertas_X con X entero, para renderizar el pdf
+	correspondiente
+	'''
+	writeFilePath(request.path,"printPdf")
+	context['givenFilter'] = givenFilter
+	context['os'] = os
+	if "periodo" in request.path:
+		if len(context['table'])>1:
+			context['isPeriodoList'] = True
+		elif len(context['table'])==1:
+			context['table']=context['table'][0]
+			context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario"]
+		else:
+			context['isPeriodoList'] = True
+			context['isEmpty'] = True
+	return render_to_pdf('crud/pdfTemplate.html',context)
+
 def deletePeriodo(request):
+	''' Función que borra un periodo.
+	Dado un request, consigue el elemento desde la tabla correspondiente y lo
+	elimina
+	'''
+	writeFilePath(request.path,"deletePeriodo")
 	[path,Id] = request.path.split("/delete_")
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
 	table.objects.filter(id = Id).delete()
 	return  HttpResponseRedirect(path)
 
 def editPeriodo(request):
+	''' Función que maneja las modificaciones de elementos en la tabla de periodos de
+	oferta. Trabaja de la siguiente manera:
+	
+	* Si el método del request es GET ->
+			Se tiene que abrir el modal de modificación con los datos del elemento
+		cargados. Se consigue el elemento desde la tabla según su id, y posteriormente
+		se instancia el form de ese elemento para retornarlo en el contexto.
+			Además, se envía un booleano editOferta para que el template abra el modal
+		correspondiente
+	
+	* Si el método del request es POST ->
+			Se ha modificado el form, y es necesario verificar si es válido. Se consigue
+		la tabla de asignaturas ofertadas para ese periodo, y se redirige el request
+		junto con esta tabla a la función updatePeriodo
+	'''
+	writeFilePath(request.path,"editPeriodo")
 	cod = request.path.split('/edit_')[1]
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
 	element = table.objects.get(id = cod)
@@ -253,6 +339,20 @@ def editPeriodo(request):
 		return render(request, 'crud/periodo.html', context)
 
 def updatePeriodo(request,oldElement,asignaturasOfertadas):
+	''' Función que maneja las modificaciones y el update de elementos en la tabla de
+	periodos de	oferta, cuando el usuario ha hecho click en salvar en el modal.
+	
+	Consigue el form a partir de lo recuperado desde el POST, y procede como sigue:
+	
+	* Si el form es válido ->
+			Se guarda el elemento como un nuevo elemento, y se proceden a conseguir
+		todos las asignaturas ofertadas en el viejo periodo son actualizadas con la
+		referencia al nuevo.
+	
+	* Si el form no es válido ->
+			Se retorna el form para que los errores aparezcan en el template.
+	'''
+	writeFilePath(request.path,"updatePeriodo")
 	[path,ID] = request.path.split("/edit_")
 	form = __returnForm__("Trimestre",request)
 	if form.is_valid():
@@ -261,6 +361,7 @@ def updatePeriodo(request,oldElement,asignaturasOfertadas):
 		element = table.objects.get(Periodo = form['Periodo'].value(),Anio=form['Anio'].value())
 		asignaturasOfertadas.update(Periodo=element.id)
 		oldElement.delete()
+		messages.info(request, 'Se ha modificado la oferta de manera exitosa.')
 		return HttpResponseRedirect(path)
 	else:
 		print("No se pudo modificar la BD")
@@ -271,11 +372,50 @@ def updatePeriodo(request,oldElement,asignaturasOfertadas):
 		return render(request, 'crud/periodo.html', context)
 
 def searchPeriodo(request):
+	''' Función que maneja las búsquedas sobre las ofertas en la tabla.
+
+	Existen diferentes formas de trabajo de esta función:
+
+	* Si "/searchInd" está en el path:
+			Se refiere a que se está trabajando con el modal de búsqueda. A su vez, hay dos
+		opciones:
+
+		** Si el método del request es GET -> 
+				El usuario ha hecho click en el botón Buscar del template, se debe abrir
+			el modal. Para ello, se carga el contexto junto con un booleano searchOferta
+			seteado en True.
+
+		** Si el método del request es POST ->
+				Se han introducido criterios de búsqueda. Se recuperan del template
+			y se redirige al path con los mismos.
+	
+	* Si "/searchInd" no está en el path:
+			Se está llegando desde un path con los criterios de búsqueda. Se consigue el
+		contexto según los mismos.
+
+		** Si el método del request es GET -> 
+				Se envia la tabla correspondiente al template para ser mostrada.
+
+		** Si el método del request es POST ->
+				Luego de realizar una búsqueda, el usuario quiere agregar un elemento a
+			la tabla general. Se consiguen los datos y se modifica la tabla si son válidos,
+			de lo contrario envía el form con los errores al mismo path.
+
+	Además, se agrega una funcionalidad:
+
+	* Si "printPdf" está en path:
+			Se quiere imprimir las asignaturas ofertadas en los periodos que aparecieron en la
+		búsqueda. Se consigue la tabla, se ordena según el periodo, y luego se hace el query
+		en la tabla se_ofrece para conseguir las asignaturas y mandarlas a la función que
+		imprime el pdf.
+	'''
+	writeFilePath(request.path,"searchPeriodo")
 	context = __buildContext__("Trimestre",True)
 	if "/searchInd" in request.path:
 		if request.method == "POST":
 			criterio = request.POST.get("criterio")
-			return HttpResponseRedirect("/periodos/search="+criterio)
+			if criterio:
+				return HttpResponseRedirect("/periodos/search="+criterio)
 		else:
 			context['searchOferta'] = True
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
@@ -285,31 +425,40 @@ def searchPeriodo(request):
 	if request.method == "POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
+			messages.info(request, 'Se ha agregado la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
-			context ["backpath"] = "periodos"
+			context ["backpath"] = request.path.split("/search=")[0]
 			context["form"] = __returnForm__("Trimestre",request)
 			return render(request, 'crud/periodo.html', context)
 	context = __returnContextPeriodoWithSearchTable__(request.path,context)
-	# if "printPdf" in request.path:
-	# 	[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
-	# 	if "Cod_asig" in attrb:
-	# 		attr = "Codigo de asignatura"
-	# 	elif "Nombre_asig" in attrb:
-	# 		attr = "Nombre de asignatura"
-	# 	elif "Prof" in attrb:
-	# 		attr = "Profesor"
-	# 	return printPdf(request,"Resultados de la busqueda: "+attrb+" = "+givenSearch,context)
+	if "printPdf" in request.path:
+		givenSearch = request.path.split("/search=")[1].split("/")[0]
+		values = context['table'].values_list('Anio',flat=True).order_by('Anio').distinct()
+		table = None
+		for i in values:
+			table=__appendAnioOrderedByPeriodo__("asc",i,context['table'],table)
+		context['table'] = table
+		tableOfertas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece')
+		tablesList = []
+		if context['table']!=None:
+			for i in context['table']:
+				tablesList.append(tableOfertas.objects.filter(Periodo__id = i.id))
+		context['table'] = tablesList
+		context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Periodo"]
+		return printPdf(request,"Resultados de la busqueda: \""+givenSearch+"\"",context)
 	context['searchBool'] = True
-	context['backPath'] = request.path.split("/search=")[0]
+	context['backpath'] = request.path.split("/search=")[0]
 	context["table_column_list"] = ["Periodo","Año","Operaciones"]
-	context["backpath"] = "periodos"
 	context["form"] = __returnForm__("Trimestre",request)
 	return render(request, 'crud/periodo.html', context)
 
 def __returnContextPeriodoWithSearchTable__(currentpath,context):
+	''' Función que dado un path de búsqueda, retorna el contexto de ese path junto con la
+	tabla de búsqueda correspondiente a los criterios dados en el path.
+	'''
 	[path,searchparam] = currentpath.split("/search=")
 	searchparam = searchparam.split("/")[0].split(" ")
 	table1 = None
@@ -346,31 +495,53 @@ def __returnContextPeriodoWithSearchTable__(currentpath,context):
 	return context
 
 def orderbyPeriodo(request):
+	''' Función que maneja las búsquedas sobre las ofertas en la tabla.
+
+	Existen diferentes formas de trabajo de esta función:
+
+	* Si el método del request es GET -> 
+			Aquí, se ve si se está ordenando una tabla con criterios de búsqueda,
+		en cuyo caso se consigue la tabla de búsqueda y luego se ordena.
+		Además:
+			* Si "printPdf" está en path:
+					Se quiere imprimir las asignaturas ofertadas en los periodos que aparecieron en la
+				búsqueda. Se consigue la tabla, se ordena según el periodo, y luego se hace el query
+				en la tabla se_ofrece para conseguir las asignaturas y mandarlas a la función que
+				imprime el pdf.
+
+	* Si el método del request es POST ->
+			Luego de ordenar una tabla, el usuario quiere agregar un elemento a
+		la tabla general. Se consiguen los datos y se modifica la tabla si son válidos,
+		de lo contrario envía el form con los errores al mismo path.
+	'''
 	context = __buildContext__("Trimestre",True)
+	[path,orderparam] = request.path.split("/orderby_")
 	if request.method == "POST":
 		try:
 			__modififyDB__("Trimestre", None,request)
+			messages.info(request, 'Se ha agregado la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
 			context ["table_column_list"] = ["Periodo","Año","Operaciones"]
-			context ["backpath"] = "periodos"
+			context ["backpath"] = path
 			context["form"] = __returnForm__("Trimestre",request)
 			return render(request, 'crud/periodo.html', context)
-	[path,orderparam] = request.path.split("/orderby_")
 	[attr,style] = orderparam.split("=")
 	if "asc" in style:
 		styleaux = "ascendente"
 	else:
 		styleaux = "descendente"
-	if "search_" in request.path:
+	if "search=" in request.path:
 		context = __returnContextPeriodoWithSearchTable__(request.path,context)
 	if "Periodo" in attr:
+		aux = "ordenando el periodo alfabéticamente"
 		if "desc" in style:
 			context['table'] = context['table'].order_by("-"+attr)
 		elif "asc" in style:
 			context['table'] = context['table'].order_by(attr)
 	else:
+		aux = "ordenado por periodo"
 		table = None
 		if "desc" in style:
 			values = context['table'].values_list('Anio',flat=True).order_by('-Anio').distinct()
@@ -384,36 +555,45 @@ def orderbyPeriodo(request):
 	context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 	context ["backpath"] = path
 	context["form"] = __returnForm__("Trimestre",request)
-	# if "printPdf" in request.path:
-	# 	if "search_" in request.path:
-	# 		[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
-	# 		if "Cod_asig" in attrb:
-	# 			attr = "Codigo de asignatura"
-	# 		elif "Nombre_asig" in attrb:
-	# 			attr = "Nombre de asignatura"
-	# 		elif "Prof" in attrb:
-	# 			attr = "Profesor"
-	# 		return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
-	# 	else:
-	# 		return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
+	if "printPdf" in request.path:
+		tableOfertas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece')
+		tablesList = []
+		if context['table']!=None:
+			for i in context['table']:
+				tablesList.append(tableOfertas.objects.filter(Periodo__id = i.id))
+		context['table'] = tablesList
+		context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Periodo"]
+		if "search" in request.path:
+			givenSearch = request.path.split("/search=")[1].split("/")[0]
+			return printPdf(request,"Resultados de la busqueda: \"" + givenSearch + "\", "+aux+" de manera "+styleaux,context)
+		else:
+			return printPdf(request,"TODAS LAS OFERTAS, "+aux+" de manera "+styleaux,context)
 	return render(request, 'crud/periodo.html', context)
 
-# def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
-# 	tableAnio = majorTable.filter(Anio=year)
-# 	tableEM = tableAnio.filter(Periodo="EM")
-# 	tableAJ = tableAnio.filter(Periodo="AJ")
-# 	tableV = tableAnio.filter(Periodo="V")
-# 	tableSD = tableAnio.filter(Periodo="SD")
-# 	if "asc" in style:
-# 		result = chain(tableEM,tableAJ,tableV,tableSD)
-# 	else:
-# 		result = chain(tableSD,tableV,tableAJ,tableEM)
-# 	if outputTable==None:
-# 		return result
-# 	else:
-# 		return chain(outputTable,result)
+def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
+	''' Función que dado un style (ascendente o descendente), consigue todos los periodos dentro de
+	un año dado, ordenados según su trimestre.
+	'''
+	tableAnio = majorTable.filter(Anio=year)
+	tableEM = tableAnio.filter(Periodo="EM")
+	tableAJ = tableAnio.filter(Periodo="AJ")
+	tableV = tableAnio.filter(Periodo="V")
+	tableSD = tableAnio.filter(Periodo="SD")
+	if "asc" in style:
+		result = chain(tableEM,tableAJ,tableV,tableSD)
+	else:
+		result = chain(tableSD,tableV,tableAJ,tableEM)
+	if outputTable==None:
+		return result
+	else:
+		return chain(outputTable,result)
 
 def ofertas(request):
+	''' Vista de asignaturas ofertadas.
+	Aqui se redirigen todos los request que van al path /ofertas_X con X entero, y desde aquí
+	se vuelve a redirigir a todas las funcionalidades correspondientes, según la ruta del
+	path.
+	'''
 	if "delete" in request.path:
 		return deleteOferta(request)
 	if "edit" in request.path:
@@ -424,10 +604,13 @@ def ofertas(request):
 		return searchOferta(request)
 	if "printPdf" in request.path:
 		context = __buildContextOferta__(request)
-		return printPdf(request,"TODAS LAS OFERTAS",context)
+		cod = request.path.split("/ofertas_")[1].split("/")[0]
+		element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
+		return printPdf(request,element.returnTrimWithAnio(),context)
 	if request.method =="POST":
 		try:
 			__modififyDB__("", None,request)
+			messages.info(request, 'Se ha agregado la asignatura a la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -438,12 +621,31 @@ def ofertas(request):
 		return render(request, 'crud/oferta.html', context)
 
 def deleteOferta(request):
+	''' Función que borra una asignatura de una oferta.
+	Dado un request, consigue el elemento desde la tabla correspondiente y lo
+	elimina
+	'''
 	[path,Id] = request.path.split("/delete_")
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
 	table.objects.filter(id = Id).delete()
 	return  HttpResponseRedirect(path)
 
 def editOferta(request):
+	''' Función que maneja las modificaciones de elementos en la tabla de asignaturas de
+	la oferta. Trabaja de la siguiente manera:
+	
+	* Si el método del request es GET ->
+			Se tiene que abrir el modal de modificación con los datos del elemento
+		cargados. Se consigue el elemento desde la tabla según su id, y posteriormente
+		se instancia el form de ese elemento para retornarlo en el contexto.
+			Además, se envía un booleano editOferta para que el template abra el modal
+		correspondiente.
+	
+	* Si el método del request es POST ->
+			Se ha modificado el form, y es necesario verificar si es válido. Se consigue
+		la tabla de asignaturas ofertadas para ese periodo, y se redirige el request
+		junto con esta tabla a la función updatePeriodo
+	'''
 	cod = request.path.split('/edit_')[1]
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
 	element = table.objects.get(id = cod)
@@ -454,35 +656,89 @@ def editOferta(request):
 		context = __buildContextOferta__(request)
 		context['editOferta'] = True
 		form = Se_OfreceForm(instance = element)
+		form.fields['Periodo'].widget = forms.HiddenInput()
 		context['form'] = form
-		context ["table_column_list"] = ["Periodo","Año","Operaciones"]
 		return render(request, 'crud/oferta.html', context)
 
 def updateOferta(request,oldElement):
+	''' Función que maneja las modificaciones y el update de elementos en la tabla de
+	asignaturas de la oferta, cuando el usuario ha hecho click en salvar en el modal.
+	
+	Consigue el form a partir de lo recuperado desde el POST, y procede como sigue:
+	
+	* Si el form es válido ->
+			Se guarda el elemento como un nuevo elemento, y se redirige al path de la tabla
+		de asignaturas de ofertas.
+	
+	* Si el form no es válido ->
+			Se guarda el elemento viejo y se retorna el form para que los errores
+		aparezcan en el template.
+	'''
 	[path,ID] = request.path.split("/edit_")
 	form = __returnForm__("",request)
 	if form.is_valid():
 		form.save()
+		messages.info(request, 'Se ha modificado la oferta de la asignatura de manera exitosa.')
 		return HttpResponseRedirect(path)
 	else:
 		oldElement.id = ID
 		oldElement.save()
 		print("No se pudo modificar la BD")
-		return HttpResponseRedirect(path)
+		context = __buildContextOferta__(request)
+		context['form'] = form
+		return render(request, 'crud/oferta.html', context)
 
 def searchOferta(request):
+	''' Función que maneja las búsquedas sobre las asignaturas ofertadas en la tabla.
+
+	Existen diferentes formas de trabajo de esta función:
+
+	* Si "/searchInd" está en el path:
+			Se refiere a que se está trabajando con el modal de búsqueda. A su vez, hay dos
+		opciones:
+
+		** Si el método del request es GET -> 
+				El usuario ha hecho click en el botón Buscar del template, se debe abrir
+			el modal. Para ello, se carga el contexto junto con un booleano searchOferta
+			seteado en True.
+
+		** Si el método del request es POST ->
+				Se han introducido criterios de búsqueda. Se recuperan del template
+			y se redirige al path con los mismos.
+	
+	* Si "/searchInd" no está en el path:
+			Se está llegando desde un path con los criterios de búsqueda. Se consigue el
+		contexto según los mismos.
+
+		** Si el método del request es GET -> 
+				Se envia la tabla correspondiente al template para ser mostrada.
+
+		** Si el método del request es POST ->
+				Luego de realizar una búsqueda, el usuario quiere agregar un elemento a
+			la tabla general. Se consiguen los datos y se modifica la tabla si son válidos,
+			de lo contrario envía el form con los errores al mismo path.
+
+	Además, se agrega una funcionalidad:
+
+	* Si "printPdf" está en path:
+			Se quiere imprimir las asignaturas ofertadas en los periodos que aparecieron en la
+		búsqueda. Se consigue la tabla, y se manda a la función que imprime el pdf.
+	'''
 	context = __buildContextOferta__(request)
 	if "/searchInd" in request.path:
 		if request.method == "POST":
 			attr = request.POST.get("attr")
 			criterio = request.POST.get("criterio")
-			return HttpResponseRedirect("/ofertas/search_"+attr+"="+criterio)
+			cod = request.path.split("/ofertas_")[1].split("/")[0]
+			if attr:
+				return HttpResponseRedirect("/ofertas_"+cod+"/search_"+attr+"="+criterio)
 		else:
 			context['searchOferta'] = True
 			return render(request, 'crud/oferta.html', context)
 	if request.method == "POST":
 		try:
 			__modififyDB__("", None,request)
+			messages.info(request, 'Se ha agregado la asignatura a la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
@@ -497,12 +753,17 @@ def searchOferta(request):
 			attr = "Nombre de asignatura"
 		elif "Prof" in attrb:
 			attr = "Profesor"
-		return printPdf(request,"Resultados de la busqueda: "+attrb+" = "+givenSearch,context)
+		cod = request.path.split("/ofertas_")[1].split("/")[0]
+		element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
+		return printPdf(request,element.returnTrimWithAnio()+". Resultados de la busqueda: "+attrb+" = \""+givenSearch+"\"",context)
 	context['searchBool'] = True
 	context['backPath'] = request.path.split("/search_")[0]
 	return render(request, 'crud/oferta.html', context)
 
 def __returnContextOfertaWithSearchTable__(currentpath,context):
+	''' Función que dado un path de búsqueda, retorna el contexto de ese path junto con la
+	tabla de búsqueda correspondiente a los criterios dados en el path.
+	'''
 	[path,searchparam] = currentpath.split("/search_")
 	searchparam = searchparam.split("/")[0]
 	[attrb,givenSearch] = searchparam.split("=")
@@ -542,14 +803,30 @@ def __returnContextOfertaWithSearchTable__(currentpath,context):
 	return context
 
 def orderbyOferta(request):
+	''' Función que maneja las búsquedas sobre las ofertas en la tabla.
+
+	Existen diferentes formas de trabajo de esta función:
+
+	* Si el método del request es GET -> 
+			Aquí, se ve si se está ordenando una tabla con criterios de búsqueda,
+		en cuyo caso se consigue la tabla de búsqueda y luego se ordena.
+		Además:
+			* Si "printPdf" está en path:
+					Se quiere imprimir las asignaturas ofertadas en los periodos que aparecieron en la
+				búsqueda. Se consigue la tabla para mandarla a la función que	imprime el pdf.
+
+	* Si el método del request es POST ->
+			Luego de ordenar una tabla, el usuario quiere agregar un elemento a
+		la tabla general. Se consiguen los datos y se modifica la tabla si son válidos,
+		de lo contrario envía el form con los errores al mismo path.
+	'''
 	if request.method == "POST":
 		try:
 			__modififyDB__("", None,request)
+			messages.info(request, 'Se ha agregado la asignatura a la oferta de manera exitosa.')
 			return  HttpResponseRedirect(request.path)
 		except:
 			print("No se pudo modificar la BD")
-			context = __getContext__(request,"",False)
-			return render(request, 'crud/oferta.html', context)
 	context = __buildContextOferta__(request)
 	[path,orderparam] = request.path.split("/orderby_")
 	[attr,style] = orderparam.split("=")
@@ -583,6 +860,8 @@ def orderbyOferta(request):
 		context['table'] = table
 	context['backPath'] = path
 	if "printPdf" in request.path:
+		cod = request.path.split("/ofertas_")[1].split("/")[0]
+		element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
 		if "search_" in request.path:
 			[attrb,givenSearch] = request.path.split("/search_")[1].split("/")[0].split("=")
 			if "Cod_asig" in attrb:
@@ -591,33 +870,15 @@ def orderbyOferta(request):
 				attr = "Nombre de asignatura"
 			elif "Prof" in attrb:
 				attr = "Profesor"
-			return printPdf(request,"Resultados de la busqueda: "+attr+" = "+givenSearch + ", ordenado por "+aux+" de manera "+styleaux,context)
+			return printPdf(request,element.returnTrimWithAnio()+". Resultados de la busqueda: "+attr+" = \""+givenSearch + "\", ordenado por "+aux+" de manera "+styleaux,context)
 		else:
-			return printPdf(request,"TODAS LAS OFERTAS, ordenado por "+aux+" de manera "+styleaux,context)
+			return printPdf(request,element.returnTrimWithAnio()+", ordenado por "+aux+" de manera "+styleaux,context)
 	return render(request, 'crud/oferta.html', context)
 
-def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
-	tableAnio = majorTable.filter(Anio=year)
-	tableEM = tableAnio.filter(Periodo="EM")
-	tableAJ = tableAnio.filter(Periodo="AJ")
-	tableV = tableAnio.filter(Periodo="V")
-	tableSD = tableAnio.filter(Periodo="SD")
-	if "asc" in style:
-		result = chain(tableEM,tableAJ,tableV,tableSD)
-	else:
-		result = chain(tableSD,tableV,tableAJ,tableEM)
-	if outputTable==None:
-		return result
-	else:
-		return chain(outputTable,result)
 
-def printPdf(request,givenFilter,context):
-	context['givenFilter'] = givenFilter
-	context['os'] = os
-	return render_to_pdf('crud/pdfTemplate.html',context)
-
-# Funcion que renderiza un template de un GET request
 def __renderViewGET__(request):
+	''' Funcion que renderiza un template de un GET request
+	'''
 	newpath = __decideNewPath__(request.path)
 	if request.path!="" and request.path!="/" and "index" not in request.path and "favicon" not in request.path:
 		if "/superuser" in request.path:
@@ -632,14 +893,15 @@ def __renderViewGET__(request):
 		name="Inicio"
 		return render(request, 'crud/inicio.html', None)
 
-# Funcion que renderiza un template de un POST request.
-# Toma dos path que se utilizan según el caso
-#	* initialpath	= 	La base de datos no pudo ser modificada
-#	* auxpath		=	La base de datos fue modificada 
 def __renderViewPOST__(request,initialpath,auxpath):
+	""" 	Funcion que renderiza un template de un POST request.
+	Toma dos path que se utilizan según el caso
+		* initialpath	= 	La base de datos no pudo ser modificada
+		* auxpath		=	La base de datos fue modificada  """
 	try:
 		name = __getTableName__(request)
 		__modififyDB__(name, __getParameters__(name,request),request)
+		messages.info(request, 'Se ha agregado el elemento a la tabla de manera exitosa.')
 		return  HttpResponseRedirect(auxpath+name)
 	except:
 		print("No se pudo modificar la BD")
@@ -652,12 +914,12 @@ def __renderViewPOST__(request,initialpath,auxpath):
 			context['form'] = form
 		return render(request, 'crud/index.html', context)
 
-# Funcion que consigue un string dependiendo del caso:
-# * Si se esta en una coordinacion:
-#		El nombre que retorna es el codigo de la coordinacion
-# * En el resto de los casos:
-#		Retorna el nombre de la tabla que indica el path
 def __getTableName__(request):
+	""" 	Funcion que consigue un string dependiendo del caso:
+	* Si se esta en una coordinacion:
+			El nombre que retorna es el codigo de la coordinacion
+	* En el resto de los casos:
+			Retorna el nombre de la tabla que indica el path """
 	if "coordinacion_" in request.path:
 		return request.path.split("/")[1].split("_")[1]
 	else:
@@ -666,9 +928,10 @@ def __getTableName__(request):
 		else:
 			return request.path.split("/")[1]
 
-# Funcion que dado la ruta actual retorna la ruta del template
-# que debe renderizarse.
+
 def __decideNewPath__(stringPath):
+	""" Funcion que dado la ruta actual retorna la ruta del template
+	que debe renderizarse. """
 	string = "crud/"
 	if "coordinacion_" in stringPath:
 		return string + "coordinacion.html"
@@ -742,13 +1005,15 @@ def __buildContextAsignatura__(CodCoordinacion):
 
 def __buildContextOferta__(request):
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
-	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Período"]
+	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario"]
+	cod = request.path.split("ofertas_")[1].split("/")[0]
 	if "ofertas_" in request.path:
-		table=model.objects.filter(Periodo = request.path.split("ofertas_")[1].split("/")[0])
+		table=model.objects.filter(Periodo = cod)
 	else:
 		table=model.objects.all()
 	form = __returnForm__("",request)
-	context = __contextTemplate__("ofertas",column_list,table,False,form)
+	element = apps.get_model(app_label='InscripcionPostgrado', model_name='trimestre').objects.get(id=cod)
+	context = __contextTemplate__(element.returnTrimWithAnio(),column_list,table,False,form)
 	return context
 
 # Funcion que dado los parametros listados rellena la plantilla
@@ -819,10 +1084,18 @@ def __returnForm__(name,request):
 			return form
 		form = AsignaturaForm(request.POST)
 		return form
-	elif "se_ofrece" in request.path or "ofertas" in request.path:
+	elif "se_ofrece" in request.path:
 		if not request.POST:
 			return Se_OfreceForm()
 		return Se_OfreceForm(request.POST)
+	elif "ofertas" in request.path:
+		if not request.POST:
+			cod = request.path.split("ofertas_")[1].split("/")[0]
+			form = Se_OfreceForm(initial={'Periodo': cod})
+		else:
+			form = Se_OfreceForm(request.POST)
+		form.fields['Periodo'].widget = forms.HiddenInput()
+		return form
 	elif "trimestre" in request.path or "trimestre" in name.lower():
 		if not request.POST:
 			return TrimestreForm()
