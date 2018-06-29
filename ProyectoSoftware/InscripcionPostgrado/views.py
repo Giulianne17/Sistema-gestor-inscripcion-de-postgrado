@@ -233,39 +233,27 @@ def periodo(request):
 	if "search" in request.path:
 		return searchPeriodo(request)
 	if "printPdf" in request.path:
-<<<<<<< HEAD
 		# Se consigue el contexto de acuerdo a la tabla
 		context = __buildContext__("Trimestre",True)
 		# El siguiente bloque consigue todas las periodos de oferta, ordenados de
 		# de manera ascendente según el periodo
-=======
-		context = __buildContext__("Trimestre",True)
->>>>>>> 7303999a4552c46de7b911870f774e1c734f7b8c
 		values = context['table'].values_list('Anio',flat=True).order_by('Anio').distinct()
 		table = None
 		for i in values:
 			table=__appendAnioOrderedByPeriodo__("asc",i,context['table'],table)
-<<<<<<< HEAD
 		# Se axtualiza la tabla en el contexto
 		context['table'] = table
 		# El siguiente bloque de codigo consigue todas las asignaturas de las
 		# ofertas conseguidas arriba, en el mismo orden en que aparecen dichos
 		# periodos en la tabla
-=======
-		context['table'] = table
->>>>>>> 7303999a4552c46de7b911870f774e1c734f7b8c
 		tableOfertas = apps.get_model(app_label='InscripcionPostgrado', model_name='Se_ofrece')
 		tablesList = []
 		if context['table']!=None:
 			for i in context['table']:
 				tablesList.append(tableOfertas.objects.filter(Periodo__id = i.id))
-<<<<<<< HEAD
 		# Se actualiza la lista de querys en el contexto
 		context['table'] = tablesList
 		# Se actualizan las columnas a mostrar en el pdf
-=======
-		context['table'] = tablesList
->>>>>>> 7303999a4552c46de7b911870f774e1c734f7b8c
 		context['table_column_list'] = ["Código", "U.C","Denominación","Profesor","Programa","Horario","Periodo"]
 		return printPdf(request,"TODAS LAS ASIGNATURAS OFERTADAS EN TODOS LOS PERIODOS DISPONIBLES",context)
 	if request.method=="POST":
@@ -288,15 +276,12 @@ def periodo(request):
 		return render(request, 'crud/periodo.html', context)
 
 def printPdf(request,givenFilter,context):
-<<<<<<< HEAD
 	
 	''' Funcion que dado un request identifica desde donde ha llegado (puede llegar)
 	desde /periodos o desde /ofertas_X con X entero, para renderizar el pdf
 	correspondiente
 	'''
 	writeFilePath(request.path,"printPdf")
-=======
->>>>>>> 7303999a4552c46de7b911870f774e1c734f7b8c
 	context['givenFilter'] = givenFilter
 	context['os'] = os
 	if "periodo" in request.path:
@@ -586,12 +571,9 @@ def orderbyPeriodo(request):
 	return render(request, 'crud/periodo.html', context)
 
 def __appendAnioOrderedByPeriodo__(style,year,majorTable,outputTable):
-<<<<<<< HEAD
 	''' Función que dado un style (ascendente o descendente), consigue todos los periodos dentro de
 	un año dado, ordenados según su trimestre.
 	'''
-=======
->>>>>>> 7303999a4552c46de7b911870f774e1c734f7b8c
 	tableAnio = majorTable.filter(Anio=year)
 	tableEM = tableAnio.filter(Periodo="EM")
 	tableAJ = tableAnio.filter(Periodo="AJ")
@@ -748,12 +730,8 @@ def searchOferta(request):
 			attr = request.POST.get("attr")
 			criterio = request.POST.get("criterio")
 			cod = request.path.split("/ofertas_")[1].split("/")[0]
-<<<<<<< HEAD
 			if attr:
 				return HttpResponseRedirect("/ofertas_"+cod+"/search_"+attr+"="+criterio)
-=======
-			return HttpResponseRedirect("/ofertas_"+cod+"/search_"+attr+"="+criterio)
->>>>>>> 7303999a4552c46de7b911870f774e1c734f7b8c
 		else:
 			context['searchOferta'] = True
 			return render(request, 'crud/oferta.html', context)
@@ -897,11 +875,6 @@ def orderbyOferta(request):
 			return printPdf(request,element.returnTrimWithAnio()+", ordenado por "+aux+" de manera "+styleaux,context)
 	return render(request, 'crud/oferta.html', context)
 
-<<<<<<< HEAD
-
-=======
-# Funcion que renderiza un template de un GET request
->>>>>>> 7303999a4552c46de7b911870f774e1c734f7b8c
 def __renderViewGET__(request):
 	''' Funcion que renderiza un template de un GET request
 	'''
