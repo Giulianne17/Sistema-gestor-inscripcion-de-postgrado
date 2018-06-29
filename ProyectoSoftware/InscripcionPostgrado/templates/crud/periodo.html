@@ -262,17 +262,17 @@ $(document).ready(function(){
 					<div class="col-sm-6">
 						{% if not show_all_tables %}	
 							{% if searchBool or orderBool or "orderby" in request.path %}
-							<a href="{{backPath}}#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar oferta</span></a>
+							<a href="{{backpath}}#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar oferta</span></a>
 							{% else %}
 							<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Agregar oferta</span></a>
 							{% endif %}
 							<a href="./searchInd" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Buscar</span></a> 
 							{% if searchBool or orderBool or "orderby" in request.path %}
-							<a href="{{backPath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
+							<a href="{{backpath}}" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% else %}
 							<a href="/index" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Volver</span></a>
 							{% endif %}
-							<!-- <a href="{{request.path}}/printPdf" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Exportar</span></a> -->
+							<a href="{{request.path}}/printPdf" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Exportar</span></a>
 						{% endif %}
 					</div>
                 </div>
@@ -341,8 +341,8 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Periodo=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Periodo=desc">Descendente</a></li>
+								<li><a href="{{ backpath }}/orderby_Periodo=asc">Ascendente</a></li>
+								<li><a href="{{ backpath }}/orderby_Periodo=desc">Descendente</a></li>
 								{% else %}
 								<li><a href="{{ request.path }}/orderby_Periodo=asc">Ascendente</a></li>
 								<li><a href="{{ request.path }}/orderby_Periodo=desc">Descendente</a></li>
@@ -356,8 +356,8 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Trimestre=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Trimestre=desc">Descendente</a></li>
+								<li><a href="{{ backpath }}/orderby_Trimestre=asc">Ascendente</a></li>
+								<li><a href="{{ backpath }}/orderby_Trimestre=desc">Descendente</a></li>
 								{% else %}
 								<li><a href="{{ request.path }}/orderby_Trimestre=asc">Ascendente</a></li>
 								<li><a href="{{ request.path }}/orderby_Trimestre=desc">Descendente</a></li>
@@ -371,8 +371,8 @@ $(document).ready(function(){
 							<span class="caret"></span></button>
 							<ul class="dropdown-menu">
 								{% if "orderby" in request.path %}
-								<li><a href="{{ backPath }}/orderby_Fecha=asc">Ascendente</a></li>
-								<li><a href="{{ backPath }}/orderby_Fecha=desc">Descendente</a></li>
+								<li><a href="{{ backpath }}/orderby_Fecha=asc">Ascendente</a></li>
+								<li><a href="{{ backpath }}/orderby_Fecha=desc">Descendente</a></li>
 								{% else %}
 								<li><a href="{{ request.path }}/orderby_Fecha=asc">Ascendente</a></li>
 								<li><a href="{{ request.path }}/orderby_Fecha=desc">Descendente</a></li>

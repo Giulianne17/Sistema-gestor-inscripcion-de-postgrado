@@ -57,40 +57,86 @@
         <h1 align="center">Coordinación de postgrado</h1>
         <p></p>
         <p></p>
-        <div class="card-header">
-            <h3>Ofertas - {{ givenFilter }}</h3>
-        </div>
-        <!-- <div class="list-group">
-            <p>Name: {{ request.user.first_name }} {{ request.user.last_name }}</p>
-        </div> -->
-
-        <table class="table">
-            <thead>
-            <tr>
-                {% for i in table_column_list %}
-                    <th>{{i}}</th>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for element in table %}
+        {% if isPeriodoList %}
+            <div class="card-header">
+                <h3>Ofertas - {{ givenFilter }}</h3>
+            </div>
+            <!-- <div class="list-group">
+                <p>Name: {{ request.user.first_name }} {{ request.user.last_name }}</p>
+            </div> -->
+            <table class="table">
+                <thead>
                 <tr>
-                    <td> {{element.Cod_asignatura.Cod_asignatura}} </td>
-                    <td> {{element.Cod_asignatura.Creditos}} </td>		
-                    <td> {{element.Cod_asignatura.Nombre_asig}} </td>
-                    <td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>
-                    <td> 
-                        <a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
-                    </td>	
-                    <td>
-                        <p>{{element.returnDiaMinus}} {{element.Horario}}</p>
-                        <p>({{element.returnTime}})</p>
-                    </td>
-                    <td> {{element.returnTrimestre}} {{element.Anio}} </td>
+                    {% for i in table_column_list %}
+                        <th>{{i}}</th>
+                    {% endfor %}
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for innerTable in table %}
+                        {% for element in innerTable %}
+                            <tr>
+                                <td> {{element.Cod_asignatura.Cod_asignatura}} </td>
+                                <td> {{element.Cod_asignatura.Creditos}} </td>		
+                                <td> {{element.Cod_asignatura.Nombre_asig}} </td>
+                                <td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>
+                                <td> 
+                                    <a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
+                                </td>	
+                                <td>
+                                    <p>{{element.returnDiaMinus}} {{element.Horario}}</p>
+                                    <p>({{element.returnTime}})</p>
+                                </td>
+                                <td> {{element.returnTrimWithAnio}} </td>
+                            </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if isEmpty %}
+                <p>No existen elementos</p>
+            {% endif %}
+            <p></p>
+            <p></p>
+            
+        {% else %}
+            <div class="card-header">
+                <h3>Ofertas - {{ givenFilter }}</h3>
+            </div>
+            <!-- <div class="list-group">
+                <p>Name: {{ request.user.first_name }} {{ request.user.last_name }}</p>
+            </div> -->
+
+            <table class="table">
+                <thead>
+                <tr>
+                    {% for i in table_column_list %}
+                        <th>{{i}}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                    {% for element in table %}
+                        <tr>
+                            <td> {{element.Cod_asignatura.Cod_asignatura}} </td>
+                            <td> {{element.Cod_asignatura.Creditos}} </td>		
+                            <td> {{element.Cod_asignatura.Nombre_asig}} </td>
+                            <td> Prof. {{element.Id_prof.Nombres}} {{element.Id_prof.Apellidos}} </td>
+                            <td> 
+                                <a target="_blank" href="{{element.Cod_asignatura.Programa}}"> Link </a>
+                            </td>	
+                            <td>
+                                <p>{{element.returnDiaMinus}} {{element.Horario}}</p>
+                                <p>({{element.returnTime}})</p>
+                            </td>
+                            <!-- <td> {{element.returnTrimestre}} {{element.Anio}} </td> -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p></p>
+            <p></p>
+        {% endif %}
     </div>
 </div>
 {% endblock body %}
