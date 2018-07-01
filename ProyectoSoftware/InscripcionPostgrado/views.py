@@ -8,7 +8,6 @@ from itertools import chain
 from .render import *
 import os
 from django.contrib import messages
-from .writeToFile import *
 
 '''Atributo auxiliar que indica al template si se van a
 mostrar todas las tablas existentes.'''
@@ -16,8 +15,8 @@ show_all_tables = True
 
 def __redirectCenter__(request):
 	'''Funcion que redirecciona a los views dependiendo del path
-	solicitado.'''
-	writeFilePath(request.path,"__redirectCenter__")
+	solicitado.
+	'''
 	if "coordinacion_" in request.path:
 		return coordinacion(request)
 	if "ofertas" in request.path:
@@ -30,18 +29,18 @@ def __redirectCenter__(request):
 def index(request):
 	'''Vista del index.
 	Aqui se redirigen todos los request que no vayan a una
-	coordinacion particular.	writeFilePath(request.path,"index")'''
-	writeFilePath(request.path,"index")
+	coordinacion particular.
+	'''
 	if request.method=="POST":
 		return __renderViewPOST__(request,'/superuser','/')
 	else:
 		return __renderViewGET__(request)
 
-# Vista de la coordinacion.
-# Aqui se redirigen los request que van a una coordinacion en
-# particular.
 def coordinacion(request):
-	writeFilePath(request.path,"coordinacion")
+	"""	Vista de la coordinacion.
+	Aqui se redirigen los request que van a una coordinacion en
+	particular.
+	"""
 	if "delete" in request.path:
 		return deleteAsignatura(request)
 	if "edit" in request.path:
@@ -66,28 +65,28 @@ def coordinacion(request):
 	else:
 		return __renderViewGET__(request)
 
-# Vista para borrar asignaturas
-# Aqui llegan los request para borrar una entrada de la tabla de
-# asignaturas de una coordinacion
 def deleteAsignatura(request):
-	writeFilePath(request.path,"deleteAsignatura")
+	""" Vista para borrar asignaturas
+	Aqui llegan los request para borrar una entrada de la tabla de
+	asignaturas de una coordinacion.
+	"""
 	[path,codasig] = request.path.split("/delete_")
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
 	table.objects.filter(Cod_asignatura = codasig).delete()
 	return  HttpResponseRedirect(path)
 
-#Vista para editar asignaturas
-# Aqui llegan los request para editar una asignatura.
-# *Si es un POST:
-# 		Ya el usuario ha enviado datos a traves del modal, se
-# 		redirige a la funcion para el update.
-# *Si es un GET:
-#		El usuario ha hecho click en el edit de un elemento,
-#		se debe renderizar el template pasando como contexto
-#		el formulario para el elemento y un booleano para indicar
-#		que se debe abrir el modal directamente.
 def editAsignatura(request):
-	writeFilePath(request.path,"editAsignatura")
+	""" Vista para editar asignaturas
+	Aqui llegan los request para editar una asignatura.
+	*Si es un POST:
+			Ya el usuario ha enviado datos a traves del modal, se
+			redirige a la funcion para el update.
+	*Si es un GET:
+			El usuario ha hecho click en el edit de un elemento,
+			se debe renderizar el template pasando como contexto
+			el formulario para el elemento y un booleano para indicar
+			que se debe abrir el modal directamente.
+	"""
 	name = __getTableName__(request)
 	cod = request.path.split('/edit_')[1]
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
@@ -104,9 +103,10 @@ def editAsignatura(request):
 		context['form'] = form
 		return render(request, 'crud/coordinacion.html', context)
 
-# Vista para actualizar una asignatura.
+
 def updateAsignatura(request,oldElement):
-	writeFilePath(request.path,"updateAsignatura")
+	""" Vista para actualizar una asignatura.
+	"""
 	name = request.path.split("/coordinacion_")[1].split("/")[0]
 	[path,codasig] = request.path.split("/edit_")
 	form = __returnForm__("",request)
@@ -122,20 +122,20 @@ def updateAsignatura(request,oldElement):
 		context['form'] = form
 		return render(request, 'crud/coordinacion.html', context)
 
-# Vista para buscar una asignatura dados unos parametros en el request
-# *Si SearchInd esta en el path:
-#		Esto indica que se esta interactuando con el modal de busqueda.
-#		->Si es POST:
-#			El modal de busqueda ha sido rellenado y debe redirigirse a
-# 			la ruta de busqueda correspondiente.
-# 		->Si es GET:
-# 			Se quiere abrir el modal. Se renderiza el template con un booleano
-# 			para indicar que debe abrise.		
-# *En otros casos:
-#		Se ha llegado por una ruta como "/search_attr=value". Filtra la tabla
-#		completa de la coordinacion con estos datos y se le pasa al template.
 def searchAsignatura(request):
-	writeFilePath(request.path,"searchAsignatura")
+	""" Vista para buscar una asignatura dados unos parametros en el request
+	*Si SearchInd esta en el path:
+			Esto indica que se esta interactuando con el modal de busqueda.
+			->Si es POST:
+				El modal de busqueda ha sido rellenado y debe redirigirse a
+				la ruta de busqueda correspondiente.
+			->Si es GET:
+				Se quiere abrir el modal. Se renderiza el template con un booleano
+				para indicar que debe abrise.		
+	*En otros casos:
+			Se ha llegado por una ruta como "/search_attr=value". Filtra la tabla
+			completa de la coordinacion con estos datos y se le pasa al template.
+	"""
 	CodCoordinacion = __getTableName__(request)
 	context = __buildContextAsignatura__(CodCoordinacion)
 	if "/searchInd" in request.path:
@@ -165,9 +165,10 @@ def searchAsignatura(request):
 	context['backPath'] = request.path.split("/search_")[0]
 	return render(request, 'crud/coordinacion.html', context)
 
-# Funcion que retorna la tabla dado un criterio de busqueda
+
 def __returnContextWithSearchTable__(currentpath,context):
-	writeFilePath(request.path,"__returnContextWithSearchTable__")
+	""" Funcion que retorna la tabla dado un criterio de busqueda.
+	"""
 	[path,searchparam] = currentpath.split("/search_")
 	searchparam = searchparam.split("/")[0]
 	[attrb,givenSearch] = searchparam.split("=")
@@ -177,20 +178,20 @@ def __returnContextWithSearchTable__(currentpath,context):
 		context['table'] = context['table'].filter(Nombre_asig__icontains=givenSearch)
 	return context
 
-# Vista para ordenar las asignaturas segun corresponda.
-# *Si orderbyInd esta en el path:
-#		Esto indica que se esta interactuando con el modal de orderby.
-#		->Si es POST:
-#			El modal de orderby ha sido rellenado y debe redirigirse a
-# 			la ruta de orderby correspondiente.
-# 		->Si es GET:
-# 			Se quiere abrir el modal. Se renderiza el template con un booleano
-# 			para indicar que debe abrise.		
-# *En otros casos:
-#		Se ha llegado por una ruta como "/orderby_attr". Filtra la tabla completa
-#		de la coordinacion con estos datos y se le pasa al template.
 def orderbyAsignatura(request):
-	writeFilePath(request.path,"orderbyAsignatura")
+	""" Vista para ordenar las asignaturas segun corresponda.
+	*Si orderbyInd esta en el path:
+			Esto indica que se esta interactuando con el modal de orderby.
+			->Si es POST:
+				El modal de orderby ha sido rellenado y debe redirigirse a
+				la ruta de orderby correspondiente.
+			->Si es GET:
+				Se quiere abrir el modal. Se renderiza el template con un booleano
+				para indicar que debe abrise.		
+	*En otros casos:
+			Se ha llegado por una ruta como "/orderby_attr". Filtra la tabla completa
+			de la coordinacion con estos datos y se le pasa al template.
+	"""
 	if request.method == "POST":
 		try:
 			name = __getTableName__(request)
@@ -223,7 +224,6 @@ def periodo(request):
 	vuelve a redirigir a todas las funcionalidades correspondientes, según la ruta
 	del path.
 	'''
-	writeFilePath(request.path,"periodo")
 	if "delete" in request.path:
 		return deletePeriodo(request)
 	if "edit" in request.path:
@@ -281,7 +281,6 @@ def printPdf(request,givenFilter,context):
 	desde /periodos o desde /ofertas_X con X entero, para renderizar el pdf
 	correspondiente
 	'''
-	writeFilePath(request.path,"printPdf")
 	context['givenFilter'] = givenFilter
 	context['os'] = os
 	if "periodo" in request.path:
@@ -300,7 +299,6 @@ def deletePeriodo(request):
 	Dado un request, consigue el elemento desde la tabla correspondiente y lo
 	elimina
 	'''
-	writeFilePath(request.path,"deletePeriodo")
 	[path,Id] = request.path.split("/delete_")
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
 	table.objects.filter(id = Id).delete()
@@ -322,7 +320,6 @@ def editPeriodo(request):
 		la tabla de asignaturas ofertadas para ese periodo, y se redirige el request
 		junto con esta tabla a la función updatePeriodo
 	'''
-	writeFilePath(request.path,"editPeriodo")
 	cod = request.path.split('/edit_')[1]
 	table = apps.get_model(app_label='InscripcionPostgrado', model_name='Trimestre')
 	element = table.objects.get(id = cod)
@@ -352,7 +349,6 @@ def updatePeriodo(request,oldElement,asignaturasOfertadas):
 	* Si el form no es válido ->
 			Se retorna el form para que los errores aparezcan en el template.
 	'''
-	writeFilePath(request.path,"updatePeriodo")
 	[path,ID] = request.path.split("/edit_")
 	form = __returnForm__("Trimestre",request)
 	if form.is_valid():
@@ -409,7 +405,6 @@ def searchPeriodo(request):
 		en la tabla se_ofrece para conseguir las asignaturas y mandarlas a la función que
 		imprime el pdf.
 	'''
-	writeFilePath(request.path,"searchPeriodo")
 	context = __buildContext__("Trimestre",True)
 	if "/searchInd" in request.path:
 		if request.method == "POST":
@@ -535,6 +530,8 @@ def orderbyPeriodo(request):
 		styleaux = "descendente"
 	if "search=" in request.path:
 		context = __returnContextPeriodoWithSearchTable__(request.path,context)
+		context ['searchBool'] = True
+		context['backpath2'] = request.path.split("/periodos/search=")[0]
 	if "Periodo" in attr:
 		aux = "ordenando el periodo alfabéticamente"
 		if "desc" in style:
@@ -919,7 +916,8 @@ def __getTableName__(request):
 	* Si se esta en una coordinacion:
 			El nombre que retorna es el codigo de la coordinacion
 	* En el resto de los casos:
-			Retorna el nombre de la tabla que indica el path """
+			Retorna el nombre de la tabla que indica el path.
+	"""
 	if "coordinacion_" in request.path:
 		return request.path.split("/")[1].split("_")[1]
 	else:
@@ -931,16 +929,18 @@ def __getTableName__(request):
 
 def __decideNewPath__(stringPath):
 	""" Funcion que dado la ruta actual retorna la ruta del template
-	que debe renderizarse. """
+	que debe renderizarse.
+	"""
 	string = "crud/"
 	if "coordinacion_" in stringPath:
 		return string + "coordinacion.html"
 	else:
 		return string + "index.html"
 
-# Funcion que retorna una lista con todas las tablas disponibles
-# en la BD
 def __getDBList__():
+	""" Funcion que retorna una lista con todas las tablas disponibles
+	en la BD.
+	"""
 	all_tables = connection.introspection.table_names()
 	tables_to_use = []
 	for i in all_tables:
@@ -948,17 +948,18 @@ def __getDBList__():
 			tables_to_use.append(i.split("_",1)[1])
 	return tables_to_use
 
-# Funcion que retorna el contexto que se va a pasar al render
-# dado el caso:
-# * Si se esta haciendo el request desde una coordinacion:
-#		Se busca mostrar asignaturas de esa coordinacion.
-#		Redireccionar a la funcion que filtra por su codigo.
-#		ismodel no es utilizado en este caso.
-# * En otros casos:
-#		El request se esta haciendo desde cualquier otra tabla.
-#		En este caso, se pasa a la funcion correspondiente.
-#		Se requiere ismodel como parametro para la misma.
 def __getContext__(request, name, ismodel):
+	""" Funcion que retorna el contexto que se va a pasar al render
+	dado el caso:
+	* Si se esta haciendo el request desde una coordinacion:
+			Se busca mostrar asignaturas de esa coordinacion.
+			Redireccionar a la funcion que filtra por su codigo.
+			ismodel no es utilizado en este caso.
+	* En otros casos:
+			El request se esta haciendo desde cualquier otra tabla.
+			En este caso, se pasa a la funcion correspondiente.
+			Se requiere ismodel como parametro para la misma.
+	"""
 	if "coordinacion_" in request.path:
 		return __buildContextAsignatura__(name)
 	elif "ofertas" in request.path:
@@ -966,17 +967,18 @@ def __getContext__(request, name, ismodel):
 	else:
 		return __buildContext__(name,ismodel)
 
-# Funcion que retorna el contexto que se va a pasar al render
-# dado el caso:
-# * Si ismodel == True:
-#		Esto indica que se quiere mostrar una tabla (modelo)
-#		en particular. Se busca el modelo por medio de name
-#		y se consiguen todos los elementos de la misma.
-# * En otros casos:
-#		Se quiere mostrar todas las tablas existentes, no un
-#		solo modelo. Se consigue una lista de todas las tablas
-#		existentes por otra funcion.
 def __buildContext__(name,ismodel):
+	""" Funcion que retorna el contexto que se va a pasar al render
+	dado el caso:
+	* Si ismodel == True:
+			Esto indica que se quiere mostrar una tabla (modelo)
+			en particular. Se busca el modelo por medio de name
+			y se consiguen todos los elementos de la misma.
+	* En otros casos:
+			Se quiere mostrar todas las tablas existentes, no un
+			solo modelo. Se consigue una lista de todas las tablas
+			existentes por otra funcion.
+	"""
 	if ismodel:
 		model = apps.get_model(app_label='InscripcionPostgrado', model_name=name)
 		column_list=model.__getallfieldNames__(model)
@@ -988,10 +990,11 @@ def __buildContext__(name,ismodel):
 		show_all_tables=True
 	return __contextTemplate__(name,column_list,table,show_all_tables,None)
 
-# Funcion que dado el Codigo de una coordinacion retorna el
-# contexto para el template con solo las asignaturas de dicha
-# coordinacion.
 def __buildContextAsignatura__(CodCoordinacion):
+	""" Funcion que dado el Codigo de una coordinacion retorna el
+	contexto para el template con solo las asignaturas de dicha
+	coordinacion.
+	"""
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='asignatura')
 	column_list = ["Codigo", "U.C","Denominacion","Programa","Visto","Operaciones"]
 	table = model.objects.filter(Cod_coordinacion = CodCoordinacion)
@@ -1004,6 +1007,9 @@ def __buildContextAsignatura__(CodCoordinacion):
 	return context
 
 def __buildContextOferta__(request):
+	""" Función que construye el contexto para un periodo de oferta
+	específico.
+	"""
 	model = apps.get_model(app_label='InscripcionPostgrado', model_name='se_ofrece')
 	column_list = ["Código", "U.C","Denominación","Profesor","Programa","Horario"]
 	cod = request.path.split("ofertas_")[1].split("/")[0]
@@ -1016,9 +1022,10 @@ def __buildContextOferta__(request):
 	context = __contextTemplate__(element.returnTrimWithAnio(),column_list,table,False,form)
 	return context
 
-# Funcion que dado los parametros listados rellena la plantilla
-# de contexto que se va a pasar al front.
 def __contextTemplate__(tableName, columnList,table,show_all_tables,givenForm):
+	""" Funcion que dado los parametros listados rellena la plantilla
+	de contexto que se va a pasar al front. 
+	"""
 	context = {
 			'table_name' : tableName,
 			'table_column_list' : columnList,
@@ -1028,9 +1035,10 @@ def __contextTemplate__(tableName, columnList,table,show_all_tables,givenForm):
 		}
 	return context
 
-# Funcion que construye una lista de parametros a partir
-# de lo devuelto en el POST.
 def __getParameters__(name,request):
+	""" Funcion que construye una lista de parametros a partir
+	de lo devuelto en el POST.
+	"""
 	context=__getContext__(request,name,True)
 	parameters = { }
 	#Consigue los parametros uno por uno a partir del POST
@@ -1042,9 +1050,10 @@ def __getParameters__(name,request):
 		parameters["Cod_coordinacion"] = name
 	return parameters
 
-# Funcion que dependiendo de la tabla que se esta viendo
-# crea los formularios respectivos para modificarla.
 def __modififyDB__(name, parameters,request):
+	""" Funcion que dependiendo de la tabla que se esta viendo
+	crea los formularios respectivos para modificarla. 
+	"""
 	form = __returnForm__(name,request)
 	if form != None :
 		if form.is_valid():
@@ -1058,9 +1067,10 @@ def __modififyDB__(name, parameters,request):
 		element=table.__createElement__(parameters)
 		element.save()
 
-# Funcion que dependiendo de la tabla retorna el fomulario
-# correspondiente, o None si no es de los casos dados.
 def __returnForm__(name,request):
+	""" Funcion que dependiendo de la tabla retorna el fomulario
+	correspondiente, o None si no es de los casos dados.
+	"""
 	if "coordinacion" in name:
 		if not request.POST:
 			return CoordinacionForm()

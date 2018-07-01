@@ -7,6 +7,12 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 
+""" En el presente archivo se presentan las configuraciones de las
+tablas en la base de datos. No todos son utilizados para este
+proyecto, pero se han dejado implementados para la extensión del mismo
+en el futuro.
+"""
+
 class Decanato(models.Model):
 	""" Consiste en la tabla de los decanatos.
 	Parametros:
