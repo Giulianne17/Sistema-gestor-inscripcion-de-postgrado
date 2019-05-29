@@ -3,6 +3,8 @@
 
 El presente trabajo consiste en el desarrollo de un sistema gestor de inscripción de cursos de postgrado, utilizando solamente el framework Django. Las especificaciones de los diferentes sprints del proyecto, entre su implementación, casos de uso, distrubición de tareas, y otros detalles, pueden encontrarse en [la carpeta de documentación](https://github.com/Giulianne17/Coordinacion-de-computacion-API/tree/master/Documentacion).
 
+No fueron usadas librerias para las vistas ni autenticación. En su mayoría el proyecto fue desarrollado por el equipo de trabajo.
+
 ### Autores:
 
 * Manuel Rodriguez (13-11223@usb.ve)
